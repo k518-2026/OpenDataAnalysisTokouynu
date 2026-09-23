@@ -37,10 +37,10 @@ on:
         description: 'Publishing method (wordpress_rest / wordpress_mail / markdown_only)'
         type: choice
         options:
-          - wordpress_rest
           - wordpress_mail
+          - wordpress_rest
           - markdown_only
-        default: wordpress_rest
+        default: wordpress_mail
 
 permissions:
   contents: write
@@ -76,17 +76,17 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_TEXT_MODEL: ${{ vars.GEMINI_TEXT_MODEL || 'gemini-2.5-flash' }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          WP_SITE_URL: ${{ secrets.WP_SITE_URL || 'https://kouynu.wordpress.com' }}
-          WP_USER: ${{ secrets.WP_USER }}
-          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
-          WP_POST_STATUS: ${{ vars.WP_POST_STATUS || 'publish' }}
-          DEFAULT_CATEGORIES: ${{ vars.DEFAULT_CATEGORIES || 'Open Data Analysis,Educational Policy,Empirical Research' }}
+          WP_SITE_URL: ${{ secrets.WP_SITE_URL || 'https://seda68.wordpress.com' }}
           WP_POST_EMAIL: ${{ secrets.WP_POST_EMAIL }}
           SMTP_HOST: ${{ vars.SMTP_HOST || 'smtp.gmail.com' }}
           SMTP_PORT: ${{ vars.SMTP_PORT || '587' }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
-          BLOG_PUBLISHER_TYPE: ${{ github.event.inputs.publisher || vars.BLOG_PUBLISHER_TYPE || 'wordpress_rest' }}
+          WP_USER: ${{ secrets.WP_USER }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+          WP_POST_STATUS: ${{ vars.WP_POST_STATUS || 'publish' }}
+          DEFAULT_CATEGORIES: ${{ vars.DEFAULT_CATEGORIES || 'Open Data Analysis,Educational Policy,Empirical Research' }}
+          BLOG_PUBLISHER_TYPE: ${{ github.event.inputs.publisher || vars.BLOG_PUBLISHER_TYPE || 'wordpress_mail' }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_BRANCH: ${{ github.ref_name }}
         run: |

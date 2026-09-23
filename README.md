@@ -1,6 +1,6 @@
 # OpenDataAnalysisTokouynu: Japanese Open Data Empirical Analysis & English Academic Paper Auto-Publisher
 
-Autonomous GitHub Actions continuous pipeline that extracts official open datasets released by the Japanese government (MEXT, NIER, Statistics Bureau e-Stat, Digital Agency), performs rigorous statistical modeling (Descriptive, OLS Trend Regressions, Bivariate Correlations, Bayes Factors), synthesizes **peer-reviewed working papers in English (IMRaD format)** via Google Gemini AI / academic templates, compiles publication-ready figures & PDFs, and **automatically publishes 1 paper per day to WordPress** ([kouynu.wordpress.com](https://kouynu.wordpress.com/)).
+Autonomous GitHub Actions continuous pipeline that extracts official open datasets released by the Japanese government (MEXT, NIER, Statistics Bureau e-Stat, Digital Agency), performs rigorous statistical modeling (Descriptive, OLS Trend Regressions, Bivariate Correlations, Bayes Factors), synthesizes **peer-reviewed working papers in English (IMRaD format)** via Google Gemini AI / academic templates, compiles publication-ready figures & PDFs, and **automatically publishes 1 paper per day via email to WordPress** ([seda68.wordpress.com](https://seda68.wordpress.com/)).
 
 ---
 
@@ -42,8 +42,8 @@ Autonomous GitHub Actions continuous pipeline that extracts official open datase
    - Reviewer 1 (Quantitative Modeling) & Reviewer 2 (Educational Policy) evaluations with an editorial synthesis decision (*"Accept with Minor Revision"*).
 
 6. **Full-Featured WordPress Publishing (`src/publishers/`)**:
-   - **WordPress REST API** (Recommended): Uploads media figures to WP Media Library, sets featured image, creates categories, and publishes responsive HTML posts with Booktabs statistical tables.
-   - **WordPress Post by Email** (SMTP): Email fallback with attached figures and PDFs.
+   - **WordPress Post by Email** (Default for seda68.wordpress.com): Sends styled HTML with inline CID images, category/tag shortcodes, and attached PDF via SMTP.
+   - **WordPress REST API**: Direct publishing via application password with media upload.
    - **Local Markdown & PDF Persistence**: Stored under `reports/` with automatic GitHub repository commits.
 
 7. **Daily Rotation & Continuous Archiving (`src/storage.py`)**:
@@ -114,13 +114,13 @@ In your GitHub repository, navigate to **Settings** -> **Secrets and variables**
 
 | Secret Name | Required | Description |
 | :--- | :---: | :--- |
+| `WP_POST_EMAIL` | **Yes** | WordPress Post by Email secret address (from seda68 WP Admin -> Settings -> Writing -> Post by Email) |
+| `SMTP_USER` | **Yes** | Sender email address (e.g., your Gmail address) |
+| `SMTP_PASS` | **Yes** | Sender email app password (16-digit Gmail App Password) |
+| `SMTP_HOST` | Optional | SMTP Host (default: `smtp.gmail.com`) |
+| `SMTP_PORT` | Optional | SMTP Port (default: `587`) |
+| `WP_SITE_URL` | Optional | Target WordPress URL (default: `https://seda68.wordpress.com`) |
 | `GEMINI_API_KEY` | Recommended | Google AI Studio API key for Gemini 2.5 Flash synthesis |
-| `WP_SITE_URL` | **Yes** | Your WordPress site URL (e.g., `https://kouynu.wordpress.com`) |
-| `WP_USER` | **Yes** | WordPress admin username |
-| `WP_APP_PASSWORD` | **Yes** | WordPress Application Password (Users -> Profile -> Application Passwords) |
-| `WP_POST_EMAIL` | Optional | WordPress Post by Email secret address (if using email publisher) |
-| `SMTP_USER` | Optional | Sender email address (if using email publisher) |
-| `SMTP_PASS` | Optional | Sender email app password (if using email publisher) |
 
 *(Note: If `GEMINI_API_KEY` is omitted, the system seamlessly uses the built-in deterministic academic template engine with zero quota cost).*
 

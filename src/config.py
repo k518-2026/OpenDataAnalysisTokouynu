@@ -36,11 +36,11 @@ class Config:
     ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "").strip()
     ANTHROPIC_MODEL: str = os.getenv("ANTHROPIC_MODEL", "claude-3-7-sonnet-latest").strip()
 
-    # Blog publishing mode: 'wordpress_rest', 'wordpress_mail', or 'markdown_only'
-    BLOG_PUBLISHER_TYPE: str = os.getenv("BLOG_PUBLISHER_TYPE", "wordpress_rest").strip().lower()
+    # Blog publishing mode: 'wordpress_mail' (Default), 'wordpress_rest', or 'markdown_only'
+    BLOG_PUBLISHER_TYPE: str = os.getenv("BLOG_PUBLISHER_TYPE", "wordpress_mail").strip().lower()
 
-    # WordPress REST API settings
-    WP_SITE_URL: str = os.getenv("WP_SITE_URL", "https://kouynu.wordpress.com").strip().rstrip("/")
+    # WordPress site settings
+    WP_SITE_URL: str = os.getenv("WP_SITE_URL", "https://seda68.wordpress.com").strip().rstrip("/")
     WP_USER: str = os.getenv("WP_USER", "").strip()
     WP_APP_PASSWORD: str = os.getenv("WP_APP_PASSWORD", "").replace(" ", "").strip()
     WP_POST_STATUS: str = os.getenv("WP_POST_STATUS", "publish").strip()
