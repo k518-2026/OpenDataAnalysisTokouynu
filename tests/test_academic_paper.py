@@ -21,10 +21,12 @@ def test_paper_generation_and_formatting():
     assert len(paper.section_1_intro) > 50
     assert len(paper.section_4_results) > 50
     assert len(paper.references) >= 3
+    assert "Society for Educational Data Analysis (SEDA)" in paper.authors
 
     # Check Markdown formatting
     md = paper.to_markdown()
     assert f"# {paper.title}" in md
+    assert "Society for Educational Data Analysis (SEDA)" in md
     assert "## 1. Introduction & Background" in md
     assert "## 7. References" in md
 
@@ -32,6 +34,7 @@ def test_paper_generation_and_formatting():
     html = paper.to_html()
     assert '<div class="academic-paper-container"' in html
     assert f">{paper.title}</h1>" in html
+    assert "Society for Educational Data Analysis (SEDA)" in html
 
 
 def test_paper_has_no_japanese_characters():

@@ -109,7 +109,10 @@ class AcademicPaperPdfGeneratorEn:
 
             # Title & Meta
             story.append(Paragraph(paper.title, title_style))
-            story.append(Paragraph(f"<b>Authors:</b> {paper.authors} &bull; <i>{paper.affiliation}</i>", meta_style))
+            if paper.affiliation and paper.affiliation != paper.authors:
+                story.append(Paragraph(f"<b>Authors:</b> {paper.authors} &bull; <i>{paper.affiliation}</i>", meta_style))
+            else:
+                story.append(Paragraph(f"<b>Authors / Organization:</b> {paper.authors}", meta_style))
             story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#cbd5e1"), spaceAfter=14))
 
             # Abstract

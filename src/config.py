@@ -55,6 +55,14 @@ class Config:
     SMTP_USER: str = os.getenv("SMTP_USER", "").strip()
     SMTP_PASS: str = os.getenv("SMTP_PASS", "").replace(" ", "").strip()
 
+    # Academic Author & Affiliation settings
+    DEFAULT_AUTHORS: str = os.getenv(
+        "DEFAULT_AUTHORS", "Society for Educational Data Analysis (SEDA)"
+    ).strip()
+    DEFAULT_AFFILIATION: str = os.getenv(
+        "DEFAULT_AFFILIATION", "Society for Educational Data Analysis (SEDA)"
+    ).strip()
+
     # Defaults
     DEFAULT_TOPIC: str = os.getenv("DEFAULT_TOPIC", "all").strip().lower()
 

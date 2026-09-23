@@ -52,10 +52,14 @@ class AcademicPaperEn:
         kw_str = ", ".join(self.keywords)
         ref_str = "\n".join([f"- {r}" for r in self.references])
 
+        if self.affiliation and self.affiliation != self.authors:
+            meta_str = f"**Authors**: {self.authors}  \n**Affiliation**: {self.affiliation}  "
+        else:
+            meta_str = f"**Authors / Organization**: {self.authors}  "
+
         return f"""# {self.title}
 
-**Authors**: {self.authors}  
-**Affiliation**: {self.affiliation}  
+{meta_str}
 
 ---
 
@@ -95,6 +99,11 @@ class AcademicPaperEn:
         )
         ref_items = "".join([f'<li style="margin-bottom:8px;line-height:1.5;">{r}</li>' for r in self.references])
 
+        if self.affiliation and self.affiliation != self.authors:
+            meta_line = f"<strong>{self.authors}</strong> &bull; {self.affiliation}"
+        else:
+            meta_line = f"<strong>{self.authors}</strong>"
+
         return f"""<div class="academic-paper-container" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b; line-height: 1.75;">
 
   <!-- Paper Header -->
@@ -102,7 +111,7 @@ class AcademicPaperEn:
     <div style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.8em; color: #93c5fd; margin-bottom: 8px; font-weight: 600;">Peer-Reviewed Working Paper | Japanese Open Data Series</div>
     <h1 style="font-size: 1.85em; font-weight: 700; margin: 0 0 16px 0; color: #ffffff; line-height: 1.35;">{self.title}</h1>
     <div style="font-size: 0.95em; color: #cbd5e1;">
-      <strong>{self.authors}</strong> &bull; {self.affiliation}
+      {meta_line}
     </div>
   </div>
 
@@ -225,6 +234,15 @@ class AcademicPaperGeneratorEn:
             return s
 
         paper.title = clean_str(paper.title)
+        paper.authors = clean_str(paper.authors)
+        paper.affiliation = clean_str(paper.affiliation)
+
+        # Enforce SEDA branding
+        if any(term in paper.authors for term in ["Yamamoto", "Yokohama", "YNU"]):
+            paper.authors = Config.DEFAULT_AUTHORS
+        if any(term in paper.affiliation for term in ["Yamamoto", "Yokohama", "YNU"]):
+            paper.affiliation = Config.DEFAULT_AFFILIATION
+
         paper.abstract = clean_str(paper.abstract)
         paper.keywords = [clean_str(k) for k in paper.keywords]
         paper.section_1_intro = clean_str(paper.section_1_intro)
@@ -273,8 +291,8 @@ Write a comprehensive, rigorous English academic paper adhering strictly to inte
 Respond ONLY with a valid JSON object matching the following structure (do NOT enclose in triple backticks if possible, or use standard json markdown):
 {{
   "title": "A precise, informative academic paper title in English (10-18 words)",
-  "authors": "Ko Yamamoto Laboratory at YNU",
-  "affiliation": "Yokohama National University, Open Data & Computational Learning Science Group",
+  "authors": "{Config.DEFAULT_AUTHORS}",
+  "affiliation": "{Config.DEFAULT_AFFILIATION}",
   "abstract": "A 200-250 word structured abstract describing Background, Methods, Key Findings (including numerical regression slope, R^2, or correlation values), and Policy/Educational Significance.",
   "keywords": ["Keyword1", "Keyword2", "Keyword3", "Keyword4", "Keyword5"],
   "section_1_intro": "2-3 comprehensive academic paragraphs introducing the societal/policy background in Japan, relevant educational context, and literature foundation.",
@@ -310,8 +328,8 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
 
         return AcademicPaperEn(
             title=data.get("title", f"Empirical Analysis of {dataset.title}"),
-            authors=data.get("authors", "Ko Yamamoto Laboratory at YNU"),
-            affiliation=data.get("affiliation", "Yokohama National University"),
+            authors=data.get("authors", Config.DEFAULT_AUTHORS),
+            affiliation=data.get("affiliation", Config.DEFAULT_AFFILIATION),
             abstract=data.get("abstract", ""),
             keywords=data.get("keywords", ["Open Data", "Japan", "Empirical Analysis", "Educational Technology"]),
             section_1_intro=data.get("section_1_intro", ""),
@@ -454,8 +472,8 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
 
         return AcademicPaperEn(
             title=title,
-            authors="Ko Yamamoto Laboratory at YNU",
-            affiliation="Yokohama National University, Open Data & Computational Learning Science Group",
+            authors=Config.DEFAULT_AUTHORS,
+            affiliation=Config.DEFAULT_AFFILIATION,
             abstract=abstract,
             keywords=keywords,
             section_1_intro=intro,
