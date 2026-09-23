@@ -14,8 +14,15 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 from scipy import stats
-import statsmodels.api as sm
-from statsmodels.stats.outliers_influence import variance_inflation_factor
+
+try:
+    import statsmodels.api as sm
+    from statsmodels.stats.outliers_influence import variance_inflation_factor
+    HAS_STATSMODELS = True
+except ImportError:
+    sm = None
+    variance_inflation_factor = None
+    HAS_STATSMODELS = False
 
 from src.fetchers.base import DatasetResearchAngle, EducationDataset
 
@@ -421,12 +428,25 @@ class EduDataAnalyzer:
                 if any(np.std(X[c]) == 0 for c in preds):
                     break
 
-                X_const = sm.add_constant(X)
                 try:
                     vifs = {}
-                    for idx, col in enumerate(X_const.columns):
-                        if col != "const":
-                            vif = float(variance_inflation_factor(X_const.values, idx))
+                    if HAS_STATSMODELS and sm is not None and variance_inflation_factor is not None:
+                        X_const = sm.add_constant(X)
+                        for idx, col in enumerate(X_const.columns):
+                            if col != "const":
+                                vif = float(variance_inflation_factor(X_const.values, idx))
+                                vifs[col] = float(round(vif, 2))
+                    else:
+                        for col in preds:
+                            other_cols = [p for p in preds if p != col]
+                            X_other = np.column_stack([np.ones(len(sub_df)), sub_df[other_cols].values])
+                            target = sub_df[col].values
+                            beta_aux, _, _, _ = np.linalg.lstsq(X_other, target, rcond=None)
+                            pred_val = X_other @ beta_aux
+                            ss_tot = np.sum((target - np.mean(target)) ** 2)
+                            ss_res = np.sum((target - pred_val) ** 2)
+                            r_sq = max(0.0, min(1.0 - (ss_res / ss_tot), 0.9999)) if ss_tot > 0 else 0.0
+                            vif = 1.0 / (1.0 - r_sq)
                             vifs[col] = float(round(vif, 2))
 
                     max_vif_col = max(vifs, key=vifs.get)
@@ -434,11 +454,41 @@ class EduDataAnalyzer:
 
                     if max_vif_val < 5.0:
                         # Clean model! Fit OLS
-                        ols_fit = sm.OLS(y, X_const).fit()
-                        coeffs = {k: float(round(v, 3)) for k, v in ols_fit.params.items() if k != "const"}
-                        stderrs = {k: float(round(v, 3)) for k, v in ols_fit.bse.items() if k != "const"}
-                        tstats = {k: float(round(v, 2)) for k, v in ols_fit.tvalues.items() if k != "const"}
-                        pvals = {k: float(round(v, 4)) for k, v in ols_fit.pvalues.items() if k != "const"}
+                        if HAS_STATSMODELS and sm is not None:
+                            X_const = sm.add_constant(X)
+                            ols_fit = sm.OLS(y, X_const).fit()
+                            coeffs = {k: float(round(v, 3)) for k, v in ols_fit.params.items() if k != "const"}
+                            stderrs = {k: float(round(v, 3)) for k, v in ols_fit.bse.items() if k != "const"}
+                            tstats = {k: float(round(v, 2)) for k, v in ols_fit.tvalues.items() if k != "const"}
+                            pvals = {k: float(round(v, 4)) for k, v in ols_fit.pvalues.items() if k != "const"}
+                            r_sq_val = float(round(ols_fit.rsquared, 3))
+                            adj_r_sq_val = float(round(ols_fit.rsquared_adj, 3))
+                            f_stat_val = float(round(ols_fit.fvalue, 2)) if not np.isnan(ols_fit.fvalue) else 0.0
+                            f_pval_val = float(round(ols_fit.f_pvalue, 4)) if not np.isnan(ols_fit.f_pvalue) else 1.0
+                        else:
+                            n = len(sub_df)
+                            p = len(preds)
+                            X_mat = np.column_stack([np.ones(n), sub_df[preds].values])
+                            y_vec = y.values
+                            beta, _, _, _ = np.linalg.lstsq(X_mat, y_vec, rcond=None)
+                            y_hat = X_mat @ beta
+                            resid = y_vec - y_hat
+                            ss_res = np.sum(resid ** 2)
+                            ss_tot = np.sum((y_vec - np.mean(y_vec)) ** 2)
+                            df_e = max(1, n - p - 1)
+                            s2 = ss_res / df_e
+                            cov_beta = s2 * np.linalg.pinv(X_mat.T @ X_mat)
+                            se_beta = np.sqrt(np.maximum(0.0, np.diag(cov_beta)))
+
+                            coeffs = {col: float(round(beta[i + 1], 3)) for i, col in enumerate(preds)}
+                            stderrs = {col: float(round(se_beta[i + 1], 3)) for i, col in enumerate(preds)}
+                            tstats = {col: float(round(coeffs[col] / max(se_beta[i + 1], 1e-9), 2)) for i, col in enumerate(preds)}
+                            pvals = {col: float(round(2 * stats.t.sf(abs(tstats[col]), df=df_e), 4)) for col in preds}
+                            r_sq_val = float(round(max(0.0, 1.0 - (ss_res / ss_tot)), 3)) if ss_tot > 0 else 0.0
+                            adj_r_sq_val = float(round(max(0.0, 1.0 - (ss_res / df_e) / (ss_tot / (n - 1))), 3)) if n > 1 and ss_tot > 0 else 0.0
+                            ms_reg = (ss_tot - ss_res) / p if p > 0 else 0.0
+                            f_stat_val = float(round(ms_reg / s2, 2)) if s2 > 0 else 0.0
+                            f_pval_val = float(round(stats.f.sf(f_stat_val, p, df_e), 4))
 
                         # Synthesize discovery insights
                         insights = []
@@ -461,10 +511,10 @@ class EduDataAnalyzer:
                             p_values=pvals,
                             vif_values=vifs,
                             max_vif=float(round(max_vif_val, 2)),
-                            r_squared=float(round(ols_fit.rsquared, 3)),
-                            adj_r_squared=float(round(ols_fit.rsquared_adj, 3)),
-                            f_stat=float(round(ols_fit.fvalue, 2)) if not np.isnan(ols_fit.fvalue) else 0.0,
-                            f_pvalue=float(round(ols_fit.f_pvalue, 4)) if not np.isnan(ols_fit.f_pvalue) else 1.0,
+                            r_squared=r_sq_val,
+                            adj_r_squared=adj_r_sq_val,
+                            f_stat=f_stat_val,
+                            f_pvalue=f_pval_val,
                             n_obs=int(len(sub_df)),
                             collinearity_status=status_str,
                             is_clean_vif=True,
