@@ -3,7 +3,7 @@
   "title": "UNESCO / ITU Global ICT Skills: Youth Programming and Digital Competency Benchmarks",
   "category": "info",
   "region": "global",
-  "source_name": "UNESCO・ITU",
+  "source_name": "UNESCO Institute for Statistics & International Telecommunication Union (ITU)",
   "source_url": "http://data.uis.unesco.org/",
   "description": "Cross-national indicators measuring youth and adult digital proficiency, computational programming skills, advanced spreadsheet modeling, and presentation creation across global economies.",
   "unit": "%",
@@ -25,14 +25,14 @@
     },
     {
       "Year": 2023,
-      "Country": "オランダ",
+      "Country": "Netherlands",
       "Programming_Skill_Rate_Pct": 26.1,
       "Advanced_Spreadsheet_Usage_Pct": 59.8,
       "Presentation_Creation_Rate_Pct": 71.5
     },
     {
       "Year": 2023,
-      "Country": "エストニア",
+      "Country": "Estonia",
       "Programming_Skill_Rate_Pct": 25.8,
       "Advanced_Spreadsheet_Usage_Pct": 58.4,
       "Presentation_Creation_Rate_Pct": 69.2
@@ -46,21 +46,21 @@
     },
     {
       "Year": 2023,
-      "Country": "スウェーデン",
+      "Country": "Sweden",
       "Programming_Skill_Rate_Pct": 23.9,
       "Advanced_Spreadsheet_Usage_Pct": 56.7,
       "Presentation_Creation_Rate_Pct": 68.4
     },
     {
       "Year": 2023,
-      "Country": "イギリス",
+      "Country": "United Kingdom",
       "Programming_Skill_Rate_Pct": 19.8,
       "Advanced_Spreadsheet_Usage_Pct": 51.2,
       "Presentation_Creation_Rate_Pct": 64.1
     },
     {
       "Year": 2023,
-      "Country": "ドイツ",
+      "Country": "Germany",
       "Programming_Skill_Rate_Pct": 18.2,
       "Advanced_Spreadsheet_Usage_Pct": 49.3,
       "Presentation_Creation_Rate_Pct": 61.9
@@ -81,7 +81,7 @@
     },
     {
       "Year": 2023,
-      "Country": "OECD平均",
+      "Country": "OECD Average",
       "Programming_Skill_Rate_Pct": 17.5,
       "Advanced_Spreadsheet_Usage_Pct": 48.6,
       "Presentation_Creation_Rate_Pct": 62.0

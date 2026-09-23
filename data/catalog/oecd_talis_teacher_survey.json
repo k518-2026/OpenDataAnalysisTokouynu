@@ -3,7 +3,7 @@
   "title": "OECD TALIS Teacher Survey: ICT Instruction and Collaborative Professional Development",
   "category": "math",
   "region": "global",
-  "source_name": "OECD（経済協力開発機構）TALIS国際指導環境調査",
+  "source_name": "OECD (Organization for Economic Co-operation and Development) TALIS International Study",
   "source_url": "https://www.oecd.org/education/talis/",
   "description": "Comparative cross-national analysis of teacher professional development in ICT, self-efficacy in critical thinking facilitation, and inter-teacher collaborative lesson study across OECD nations.",
   "unit": "%",
@@ -25,7 +25,7 @@
     },
     {
       "Year": 2018,
-      "Country": "韓国",
+      "Country": "South Korea",
       "ICT_Instruction_Self_Efficacy_Pct": 30.1,
       "Critical_Thinking_Facilitation_Pct": 68.8,
       "Collaborative_Lesson_Study_Pct": 35.8
@@ -46,21 +46,21 @@
     },
     {
       "Year": 2018,
-      "Country": "スウェーデン",
+      "Country": "Sweden",
       "ICT_Instruction_Self_Efficacy_Pct": 78.4,
       "Critical_Thinking_Facilitation_Pct": 77.2,
       "Collaborative_Lesson_Study_Pct": 43.1
     },
     {
       "Year": 2018,
-      "Country": "アメリカ",
+      "Country": "United States",
       "ICT_Instruction_Self_Efficacy_Pct": 61.2,
       "Critical_Thinking_Facilitation_Pct": 84.3,
       "Collaborative_Lesson_Study_Pct": 36.4
     },
     {
       "Year": 2018,
-      "Country": "イギリス(イングランド)",
+      "Country": "United Kingdom(イングランド)",
       "ICT_Instruction_Self_Efficacy_Pct": 54.7,
       "Critical_Thinking_Facilitation_Pct": 76.9,
       "Collaborative_Lesson_Study_Pct": 38.9

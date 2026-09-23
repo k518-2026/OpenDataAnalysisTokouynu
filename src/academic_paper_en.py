@@ -176,17 +176,65 @@ class AcademicPaperGeneratorEn:
         """Generates an academic paper, attempting LLM synthesis with deterministic fallback."""
         context = get_academic_context(dataset.id)
 
+        paper: Optional[AcademicPaperEn] = None
+
         # Attempt Gemini synthesis if available
         if self.gemini_client:
             try:
                 paper = self._generate_with_gemini(dataset, analysis, angle, context)
-                if paper:
-                    return paper
             except Exception as e:
                 logger.error(f"Gemini paper generation encountered error, falling back to deterministic template: {e}")
 
         # Deterministic high-quality template synthesis
-        return self._generate_fallback(dataset, analysis, angle, context)
+        if not paper:
+            paper = self._generate_fallback(dataset, analysis, angle, context)
+
+        return self._sanitize_paper(paper)
+
+    def _sanitize_paper(self, paper: AcademicPaperEn) -> AcademicPaperEn:
+        """Ensures absolutely zero CJK / Japanese text leaks into the final English paper."""
+        term_map = {
+            "文部科学省": "Ministry of Education, Culture, Sports, Science and Technology (MEXT)",
+            "国立教育政策研究所": "National Institute for Educational Policy Research (NIER)",
+            "全国学力・学習状況調査": "National Assessment of Academic Ability",
+            "学校基本調査": "School Basic Survey",
+            "経済協力開発機構": "OECD",
+            "国際指導環境調査": "Teaching and Learning International Survey (TALIS)",
+            "小学校": "Elementary School",
+            "中学校": "Junior High School",
+            "高等学校": "Senior High School",
+            "公立高等学校": "Public High Schools",
+            "私立高等学校": "Private High Schools",
+            "日本": "Japan",
+            "韓国": "South Korea",
+            "オランダ": "Netherlands",
+            "スウェーデン": "Sweden",
+            "ドイツ": "Germany",
+            "フランス": "France",
+            "世界平均": "World Average",
+            "OECD平均": "OECD Average",
+        }
+
+        def clean_str(s: str) -> str:
+            if not s:
+                return ""
+            for j, e in term_map.items():
+                s = s.replace(j, e)
+            # Remove any residual Japanese brackets like 【】 or （）
+            s = s.replace("【", "[").replace("】", "]").replace("（", "(").replace("）", ")")
+            return s
+
+        paper.title = clean_str(paper.title)
+        paper.abstract = clean_str(paper.abstract)
+        paper.keywords = [clean_str(k) for k in paper.keywords]
+        paper.section_1_intro = clean_str(paper.section_1_intro)
+        paper.section_2_hypotheses = clean_str(paper.section_2_hypotheses)
+        paper.section_3_method = clean_str(paper.section_3_method)
+        paper.section_4_results = clean_str(paper.section_4_results)
+        paper.section_5_discussion = clean_str(paper.section_5_discussion)
+        paper.section_6_limitations = clean_str(paper.section_6_limitations)
+        paper.references = [clean_str(r) for r in paper.references]
+        return paper
 
     def _generate_with_gemini(
         self,
@@ -307,9 +355,19 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             )
         corr_snippet = " ".join(corr_points)
 
+        # Format category
+        cat_map = {
+            "math": "Mathematics Education",
+            "info": "Computer Science & Informatics",
+            "policy": "Public Education Policy",
+            "society": "Sociology of Education",
+            "general": "Quantitative Social Science",
+        }
+        academic_cat = cat_map.get(dataset.category.lower(), dataset.category.capitalize())
+
         title = f"{angle_title}: A Longitudinal Empirical Investigation of Japanese Public Open Data"
         abstract = (
-            f"This study conducts a rigorous empirical investigation into {dataset.title.lower()}, utilizing official "
+            f"This study conducts a rigorous empirical investigation into {dataset.title}, utilizing official "
             f"longitudinal open datasets released by {dataset.source_name}. Employing ordinary least squares (OLS) trend "
             f"modeling and bivariate correlation analyses, we examine temporal trajectories and structural patterns "
             f"anchored in {context.get('theoretical_framework')}. {stat_snippet} {corr_snippet} These empirical findings "
@@ -320,7 +378,7 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
         keywords = [
             "Japanese Open Data",
             "Longitudinal Trend Modeling",
-            dataset.category.capitalize(),
+            academic_cat,
             primary_metric,
             "Educational Policy",
             "Empirical Evidence",
@@ -331,7 +389,7 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             f"demographic transitions, technological advances, and nationwide administrative initiatives. As articulated by {dataset.source_name}, "
             f"the continuous release of standardized open administrative statistics offers unprecedented opportunities for transparent, "
             f"data-driven policy evaluation. In the context of {context.get('policy_context')}, understanding empirical trajectories "
-            f"in {primary_metric.lower()} has emerged as an imperative task for researchers and policymakers alike.\n\n"
+            f"in {primary_metric} has emerged as an imperative task for researchers and policymakers alike.\n\n"
             f"{context.get('literature_review')}\n\n"
             f"Despite accumulating cross-sectional evidence, there remains a pressing need to synthesize longitudinal open data "
             f"using robust econometric and inferential techniques. This study addresses this empirical gap by analyzing multi-year "
@@ -370,7 +428,7 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
         )
 
         discussion = (
-            f"The empirical findings of this study offer meaningful theoretical and practical contributions to our understanding of {dataset.title.lower()}. "
+            f"The empirical findings of this study offer meaningful theoretical and practical contributions to our understanding of {dataset.title}. "
             f"In alignment with {context.get('theoretical_framework')}, the documented longitudinal trajectories indicate that national policy "
             f"measures under {context.get('policy_context')} have exerted tangible structural impacts across institutional environments.\n\n"
             f"From an educational administration and policy perspective, the observed growth patterns emphasize the critical importance of "

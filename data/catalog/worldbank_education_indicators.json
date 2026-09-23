@@ -3,7 +3,7 @@
   "title": "World Bank EdStats: Public Education Expenditure and Minimum Proficiency Benchmarks",
   "category": "math",
   "region": "global",
-  "source_name": "世界銀行（World Bank）",
+  "source_name": "The World Bank EdStats & Development Data Group",
   "source_url": "https://databank.worldbank.org/source/education-statistics-%5eedstats%5e",
   "description": "Global longitudinal indicators from the World Bank assessing public education expenditure as a percentage of GDP, mathematics baseline proficiency attainment, and Internet penetration rates across leading economies.",
   "unit": "%",
@@ -25,35 +25,35 @@
     },
     {
       "Year": 2023,
-      "Country": "シンガポール",
+      "Country": "Singapore",
       "Math_Proficiency_Attainment_Pct": 94.5,
       "Govt_Edu_Expenditure_Pct_GDP": 2.9,
       "Internet_Usage_Rate_Pct": 92.8
     },
     {
       "Year": 2023,
-      "Country": "エストニア",
+      "Country": "Estonia",
       "Math_Proficiency_Attainment_Pct": 88.7,
       "Govt_Edu_Expenditure_Pct_GDP": 5.8,
       "Internet_Usage_Rate_Pct": 93.1
     },
     {
       "Year": 2023,
-      "Country": "韓国",
+      "Country": "South Korea",
       "Math_Proficiency_Attainment_Pct": 89.6,
       "Govt_Edu_Expenditure_Pct_GDP": 5.1,
       "Internet_Usage_Rate_Pct": 97.2
     },
     {
       "Year": 2023,
-      "Country": "フィンランド",
+      "Country": "Finland",
       "Math_Proficiency_Attainment_Pct": 85.3,
       "Govt_Edu_Expenditure_Pct_GDP": 5.6,
       "Internet_Usage_Rate_Pct": 96.5
     },
     {
       "Year": 2023,
-      "Country": "カナダ",
+      "Country": "Canada",
       "Math_Proficiency_Attainment_Pct": 83.1,
       "Govt_Edu_Expenditure_Pct_GDP": 5.2,
       "Internet_Usage_Rate_Pct": 93.8
@@ -67,7 +67,7 @@
     },
     {
       "Year": 2023,
-      "Country": "ドイツ",
+      "Country": "Germany",
       "Math_Proficiency_Attainment_Pct": 78.5,
       "Govt_Edu_Expenditure_Pct_GDP": 4.8,
       "Internet_Usage_Rate_Pct": 91.5
@@ -81,14 +81,14 @@
     },
     {
       "Year": 2023,
-      "Country": "フランス",
+      "Country": "France",
       "Math_Proficiency_Attainment_Pct": 76.8,
       "Govt_Edu_Expenditure_Pct_GDP": 5.2,
       "Internet_Usage_Rate_Pct": 86.4
     },
     {
       "Year": 2023,
-      "Country": "オーストラリア",
+      "Country": "Australia",
       "Math_Proficiency_Attainment_Pct": 81.6,
       "Govt_Edu_Expenditure_Pct_GDP": 5.3,
       "Internet_Usage_Rate_Pct": 91.1
