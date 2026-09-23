@@ -1,12 +1,12 @@
 """
 English Academic Paper PDF Generator using ReportLab.
-Produces styled multi-page PDF documents for empirical working papers.
+Produces styled multi-page PDF documents for empirical working papers with embedded figures.
 """
 from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from src.academic_paper_en import AcademicPaperEn
 from src.config import PDF_REPORTS_DIR
@@ -15,14 +15,16 @@ logger = logging.getLogger(__name__)
 
 
 class AcademicPaperPdfGeneratorEn:
-    """Generates PDF versions of English academic papers."""
+    """Generates PDF versions of English academic papers with in-paper figures."""
 
     def __init__(self, output_dir: Optional[Path] = None):
         self.output_dir = output_dir or PDF_REPORTS_DIR
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-    def generate(self, paper: AcademicPaperEn) -> Optional[Path]:
-        """Creates a styled PDF document from the academic paper."""
+    def generate(
+        self, paper: AcademicPaperEn, figure_paths: Optional[List[Path]] = None
+    ) -> Optional[Path]:
+        """Creates a styled PDF document from the academic paper with embedded figures."""
         pdf_filename = f"{paper.dataset_id}_{paper.angle_id}_paper.pdf"
         output_path = self.output_dir / pdf_filename
 
@@ -35,6 +37,7 @@ class AcademicPaperPdfGeneratorEn:
                 Paragraph,
                 Spacer,
                 HRFlowable,
+                Image,
             )
 
             doc = SimpleDocTemplate(
@@ -92,8 +95,8 @@ class AcademicPaperPdfGeneratorEn:
                 fontSize=13,
                 leading=17,
                 textColor=colors.HexColor("#1e3a8a"),
-                spaceBefore=12,
-                spaceAfter=6,
+                spaceBefore=14,
+                spaceAfter=8,
             )
             body_style = ParagraphStyle(
                 "BodyTextCustom",
@@ -103,6 +106,16 @@ class AcademicPaperPdfGeneratorEn:
                 leading=14,
                 textColor=colors.HexColor("#1e293b"),
                 spaceAfter=10,
+            )
+            caption_style = ParagraphStyle(
+                "FigCaption",
+                parent=styles["Normal"],
+                fontName="Helvetica-Oblique",
+                fontSize=8.5,
+                leading=12,
+                textColor=colors.HexColor("#64748b"),
+                alignment=1,  # Center
+                spaceAfter=12,
             )
 
             story = []
@@ -136,6 +149,22 @@ class AcademicPaperPdfGeneratorEn:
                 for p in content.split("\n\n"):
                     if p.strip():
                         story.append(Paragraph(p.strip(), body_style))
+
+                # Embed Figures directly in Section 4: Quantitative Results
+                if "4. Quantitative Results" in heading and figure_paths:
+                    for idx, fig_path in enumerate(figure_paths):
+                        if fig_path and Path(fig_path).exists():
+                            try:
+                                story.append(Spacer(1, 8))
+                                # Width 460 pt, height 260 pt
+                                story.append(Image(str(fig_path), width=460, height=260))
+                                story.append(Spacer(1, 4))
+                                caption = f"Figure {idx + 1}: Empirical Quantitative Trajectory & Relational Fit for {paper.dataset_id}."
+                                story.append(Paragraph(caption, caption_style))
+                                story.append(Spacer(1, 10))
+                            except Exception as img_err:
+                                logger.warning(f"Could not embed figure {fig_path} in PDF: {img_err}")
+
                 story.append(Spacer(1, 8))
 
             # References
@@ -144,7 +173,7 @@ class AcademicPaperPdfGeneratorEn:
                 story.append(Paragraph(f"&bull; {ref}", body_style))
 
             doc.build(story)
-            logger.info(f"Successfully generated PDF: {output_path.name}")
+            logger.info(f"Successfully generated PDF with figures: {output_path.name}")
             return output_path
 
         except Exception as e:

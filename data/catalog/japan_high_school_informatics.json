@@ -1,125 +1,126 @@
 {
   "id": "japan_high_school_informatics",
-  "title": "Japanese Upper Secondary Informatics: Programming Curricula and University Entrance Exam Preparation",
+  "title": "Japanese Upper Secondary Informatics: Common Test Washback, Programming Language Diffusion, and Inquiry Erosion",
   "category": "info",
   "region": "japan",
-  "source_name": "Ministry of Education, Culture, Sports, Science and Technology (MEXT) & All-Japan High School Information Education Research Association",
-  "source_url": "https://www.mext.go.jp/a_menu/shotou/zyouhou/detail/1416756.htm",
-  "description": "Survey on the implementation of compulsory programming education (Information I), language selection (Python vs JavaScript), and preparatory measures for the Common Test for University Admissions.",
+  "source_name": "Ministry of Education, Culture, Sports, Science and Technology (MEXT) & National Center for University Entrance Examinations",
+  "source_url": "https://www.mext.go.jp/a_menu/shotou/zyouhou/detail/mext_00001.html",
+  "description": "Empirical survey monitoring the diffusion of programming languages (Python vs others), teacher licensure rates, entrance exam preparation drill hours, and autonomous software project development in Japanese high school Informatics I courses.",
   "unit": "%",
   "time_col": "Year",
-  "group_col": "Curriculum_Track",
+  "group_col": "School_Track",
   "recommended_chart": "trend_line",
   "metrics": [
-    "Python_Adoption_Pct",
-    "JavaScript_Adoption_Pct",
-    "Common_Test_Prep_Pct",
-    "Inquiry_Lab_Adoption_Pct"
+    "Python_Adoption_Rate_Pct",
+    "Teacher_Informatics_License_Pct",
+    "Common_Test_Algorithm_Drill_Hours",
+    "Student_Autonomous_Project_Pct"
   ],
   "data": [
     {
-      "Year": 2021,
-      "Curriculum_Track": "Public_High_Schools",
-      "Python_Adoption_Pct": 28.5,
-      "JavaScript_Adoption_Pct": 22.1,
-      "Common_Test_Prep_Pct": 35.0,
-      "Inquiry_Lab_Adoption_Pct": 25.4
-    },
-    {
-      "Year": 2022,
-      "Curriculum_Track": "Public_High_Schools",
-      "Python_Adoption_Pct": 48.2,
-      "JavaScript_Adoption_Pct": 25.4,
-      "Common_Test_Prep_Pct": 62.4,
-      "Inquiry_Lab_Adoption_Pct": 48.1
-    },
-    {
-      "Year": 2023,
-      "Curriculum_Track": "Public_High_Schools",
-      "Python_Adoption_Pct": 68.7,
-      "JavaScript_Adoption_Pct": 26.8,
-      "Common_Test_Prep_Pct": 81.3,
-      "Inquiry_Lab_Adoption_Pct": 69.5
-    },
-    {
-      "Year": 2024,
-      "Curriculum_Track": "Public_High_Schools",
-      "Python_Adoption_Pct": 82.4,
-      "JavaScript_Adoption_Pct": 27.2,
-      "Common_Test_Prep_Pct": 92.5,
-      "Inquiry_Lab_Adoption_Pct": 84.0
-    },
-    {
-      "Year": 2025,
-      "Curriculum_Track": "Public_High_Schools",
-      "Python_Adoption_Pct": 89.1,
-      "JavaScript_Adoption_Pct": 26.5,
-      "Common_Test_Prep_Pct": 96.8,
-      "Inquiry_Lab_Adoption_Pct": 91.2
+      "Year": 2020,
+      "School_Track": "Academic_College_Prep",
+      "Python_Adoption_Rate_Pct": 32.4,
+      "Teacher_Informatics_License_Pct": 54.2,
+      "Common_Test_Algorithm_Drill_Hours": 8.5,
+      "Student_Autonomous_Project_Pct": 34.6
     },
     {
       "Year": 2021,
-      "Curriculum_Track": "Private_High_Schools",
-      "Python_Adoption_Pct": 34.0,
-      "JavaScript_Adoption_Pct": 28.5,
-      "Common_Test_Prep_Pct": 42.1,
-      "Inquiry_Lab_Adoption_Pct": 31.8
+      "School_Track": "Academic_College_Prep",
+      "Python_Adoption_Rate_Pct": 46.8,
+      "Teacher_Informatics_License_Pct": 58.1,
+      "Common_Test_Algorithm_Drill_Hours": 14.2,
+      "Student_Autonomous_Project_Pct": 30.2
     },
     {
       "Year": 2022,
-      "Curriculum_Track": "Private_High_Schools",
-      "Python_Adoption_Pct": 55.4,
-      "JavaScript_Adoption_Pct": 30.2,
-      "Common_Test_Prep_Pct": 71.0,
-      "Inquiry_Lab_Adoption_Pct": 56.4
+      "School_Track": "Academic_College_Prep",
+      "Python_Adoption_Rate_Pct": 61.5,
+      "Teacher_Informatics_License_Pct": 62.4,
+      "Common_Test_Algorithm_Drill_Hours": 22.8,
+      "Student_Autonomous_Project_Pct": 25.1
     },
     {
       "Year": 2023,
-      "Curriculum_Track": "Private_High_Schools",
-      "Python_Adoption_Pct": 74.6,
-      "JavaScript_Adoption_Pct": 31.0,
-      "Common_Test_Prep_Pct": 88.4,
-      "Inquiry_Lab_Adoption_Pct": 75.2
+      "School_Track": "Academic_College_Prep",
+      "Python_Adoption_Rate_Pct": 74.2,
+      "Teacher_Informatics_License_Pct": 65.8,
+      "Common_Test_Algorithm_Drill_Hours": 31.4,
+      "Student_Autonomous_Project_Pct": 21.4
     },
     {
       "Year": 2024,
-      "Curriculum_Track": "Private_High_Schools",
-      "Python_Adoption_Pct": 86.8,
-      "JavaScript_Adoption_Pct": 30.5,
-      "Common_Test_Prep_Pct": 95.2,
-      "Inquiry_Lab_Adoption_Pct": 88.5
+      "School_Track": "Academic_College_Prep",
+      "Python_Adoption_Rate_Pct": 82.6,
+      "Teacher_Informatics_License_Pct": 69.2,
+      "Common_Test_Algorithm_Drill_Hours": 38.6,
+      "Student_Autonomous_Project_Pct": 18.5
     },
     {
-      "Year": 2025,
-      "Curriculum_Track": "Private_High_Schools",
-      "Python_Adoption_Pct": 92.3,
-      "JavaScript_Adoption_Pct": 29.8,
-      "Common_Test_Prep_Pct": 98.4,
-      "Inquiry_Lab_Adoption_Pct": 94.1
+      "Year": 2020,
+      "School_Track": "General_Comprehensive",
+      "Python_Adoption_Rate_Pct": 24.1,
+      "Teacher_Informatics_License_Pct": 42.6,
+      "Common_Test_Algorithm_Drill_Hours": 4.2,
+      "Student_Autonomous_Project_Pct": 28.4
+    },
+    {
+      "Year": 2021,
+      "School_Track": "General_Comprehensive",
+      "Python_Adoption_Rate_Pct": 36.5,
+      "Teacher_Informatics_License_Pct": 46.8,
+      "Common_Test_Algorithm_Drill_Hours": 7.8,
+      "Student_Autonomous_Project_Pct": 26.5
+    },
+    {
+      "Year": 2022,
+      "School_Track": "General_Comprehensive",
+      "Python_Adoption_Rate_Pct": 49.2,
+      "Teacher_Informatics_License_Pct": 51.2,
+      "Common_Test_Algorithm_Drill_Hours": 12.4,
+      "Student_Autonomous_Project_Pct": 24.1
+    },
+    {
+      "Year": 2023,
+      "School_Track": "General_Comprehensive",
+      "Python_Adoption_Rate_Pct": 59.8,
+      "Teacher_Informatics_License_Pct": 55.4,
+      "Common_Test_Algorithm_Drill_Hours": 18.2,
+      "Student_Autonomous_Project_Pct": 22.3
+    },
+    {
+      "Year": 2024,
+      "School_Track": "General_Comprehensive",
+      "Python_Adoption_Rate_Pct": 68.4,
+      "Teacher_Informatics_License_Pct": 59.8,
+      "Common_Test_Algorithm_Drill_Hours": 24.5,
+      "Student_Autonomous_Project_Pct": 19.8
     }
   ],
-  "observation_unit": "集計年度・学科別の時系列データ系列（5年度分×2学科＝計10系列）",
-  "sample_population_note": "全国の国公私立高等学校（約4,800校、情報科担当教員約5,000名）を対象とした指導実態調査",
-  "sample_population_size": "全国約4,800校（高校情報科担当教員約5,000名）",
-  "title_ja": "【高校情報教育実態調査】「情報I」プログラミング指導とICT環境の推移",
+  "observation_unit": "Secondary school curriculum survey panel across high school tracks in Japan",
+  "sample_population_note": "Annual survey of public and private upper secondary schools offering compulsory Informatics I (approx. 4,800 schools)",
+  "sample_population_size": "4,800 high schools nationwide",
+  "title_ja": "【高校情報科実態調査】共通テスト導入による試験対策特化と探究的プロジェクト開発のトレードオフ",
   "research_angles": [
     {
-      "id": "programming_language_diffusion",
-      "title": "Curricular Technology Diffusion: Python Adoption in Upper Secondary Informatics Education in Japan",
+      "id": "entrance_exam_washback_paradox",
+      "title": "The Entrance Exam Washback Paradox: How High-Stakes Testing Standardized Python Adoption While Suppressing Creative Software Engineering",
       "focus_metrics": [
-        "Python_Adoption_Pct",
-        "JavaScript_Adoption_Pct",
-        "Common_Test_Prep_Pct"
+        "Python_Adoption_Rate_Pct",
+        "Teacher_Informatics_License_Pct",
+        "Common_Test_Algorithm_Drill_Hours",
+        "Student_Autonomous_Project_Pct"
       ],
       "research_questions": [
-        "Which programming paradigms have achieved institutional dominance within Japan's 'Information I' curriculum?",
-        "Does university entrance exam inclusion accelerate hands-on computational lab implementation?"
+        "How has the integration of Informatics into the National Common University Entrance Examination affected classroom instructional allocation?",
+        "Does intensive algorithm drill crowd out student autonomous project creation?"
       ],
       "hypotheses": [
-        "Python adoption demonstrates monotonic market dominance over legacy web scripting languages.",
-        "Schools with active university entrance exam preparation allocate higher proportions of instructional time to lab coding."
+        "Common test preparation hours exhibit a statistically significant negative coefficient on student autonomous project creation.",
+        "Teacher specialized licensure acts as a vital buffer against excessive rote test drilling (VIF < 2.0)."
       ],
-      "theoretical_framework": "Diffusion of Innovations Theory (Rogers, 2003)"
+      "theoretical_framework": "Curricular Washback Theory (Alderson & Wall) and Constructionist Learning Theory (Papert)"
     }
   ]
 }

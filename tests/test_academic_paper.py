@@ -23,18 +23,32 @@ def test_paper_generation_and_formatting():
     assert len(paper.references) >= 3
     assert "Society for Educational Data Analysis (SEDA)" in paper.authors
 
-    # Check Markdown formatting
-    md = paper.to_markdown()
+    # Check Markdown formatting with in-paper figures
+    md = paper.to_markdown(figure_paths=["fig1.png", "fig2.png"])
     assert f"# {paper.title}" in md
     assert "Society for Educational Data Analysis (SEDA)" in md
     assert "## 1. Introduction & Background" in md
+    assert "## 4. Quantitative Results & Empirical Findings" in md
+    assert "![Figure 1](fig1.png)" in md
+    assert "![Figure 2](fig2.png)" in md
     assert "## 7. References" in md
 
-    # Check HTML formatting
-    html = paper.to_html()
+    # Check HTML formatting with in-paper figures
+    html = paper.to_html(figure_urls=["cid:fig_0", "cid:fig_1"])
     assert '<div class="academic-paper-container"' in html
     assert f">{paper.title}</h1>" in html
     assert "Society for Educational Data Analysis (SEDA)" in html
+    assert '4. Quantitative Results & Empirical Findings' in html
+    assert '<figure style="margin: 24px 0; text-align: center;">' in html
+    assert '<img src="cid:fig_0"' in html
+
+    # Test EduReportBuilder for Table 1 and Table 2 (VIF)
+    from src.reporter import EduReportBuilder
+    builder = EduReportBuilder()
+    full_html = builder.build_article_html(paper, res, ds, figure_urls=["cid:fig_0"])
+    assert "Table 1. Parametric Descriptive" in full_html
+    assert "Table 2. Multivariate OLS Regression & Multicollinearity (VIF) Diagnostics" in full_html
+    assert "VIF Diagnostics" in full_html
 
 
 def test_paper_has_no_japanese_characters():
@@ -53,4 +67,29 @@ def test_paper_has_no_japanese_characters():
         full_text = f"{paper.title} {paper.abstract} {paper.section_1_intro} {paper.section_2_hypotheses} {paper.section_3_method} {paper.section_4_results} {paper.section_5_discussion} {paper.section_6_limitations}"
         match = cjk_pattern.search(full_text)
         assert match is None, f"Found Japanese text in paper for {ds.id}: {match.group() if match else ''}"
+
+
+def test_pdf_generation_with_figures(tmp_path):
+    from src.pdf.pdf_generator_en import AcademicPaperPdfGeneratorEn
+    from src.visualizer import EduDataVisualizer
+
+    catalog = DatasetCatalog()
+    ds = catalog.get("japan_mext_ict_informatization")
+    analyzer = EduDataAnalyzer()
+    res = analyzer.analyze(ds)
+    gen = AcademicPaperGeneratorEn()
+    paper = gen.generate(ds, res)
+
+    # Generate figures
+    viz = EduDataVisualizer(output_dir=tmp_path)
+    figs = viz.generate_figures(ds, res)
+    assert len(figs) > 0
+
+    # Generate PDF with figures
+    pdf_gen = AcademicPaperPdfGeneratorEn(output_dir=tmp_path)
+    pdf_path = pdf_gen.generate(paper, figure_paths=figs)
+    assert pdf_path is not None
+    assert pdf_path.exists()
+    assert pdf_path.stat().st_size > 1000  # Non-empty PDF
+
 

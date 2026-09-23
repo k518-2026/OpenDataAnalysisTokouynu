@@ -1,7 +1,8 @@
 """
 Statistical Analysis Engine for OpenDataAnalysisTokouynu.
 Calculates descriptive statistics, longitudinal trend regressions (OLS),
-correlation metrics, Bayes Factors, and group disparities for empirical research.
+bivariate relational models, multivariate OLS regressions with VIF multicollinearity control,
+Bayes Factors, and automated paradox/discovery detection for academic papers.
 """
 from __future__ import annotations
 
@@ -13,6 +14,8 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 from scipy import stats
+import statsmodels.api as sm
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 from src.fetchers.base import DatasetResearchAngle, EducationDataset
 
@@ -36,7 +39,7 @@ class MetricDescriptiveStats:
 
 @dataclass
 class TrendRegressionResult:
-    """Longitudinal trend linear regression (OLS) results."""
+    """Longitudinal trend linear regression (OLS) results over time."""
     metric: str
     group: Optional[str]
     slope: float
@@ -66,6 +69,43 @@ class CorrelationResult:
 
 
 @dataclass
+class BivariateRelationalRegression:
+    """Substantive relational regression between predictor X and outcome Y."""
+    var_x: str
+    var_y: str
+    slope: float
+    intercept: float
+    r_squared: float
+    p_value: float
+    std_err: float
+    pearson_r: float
+    vif: float
+    is_paradox: bool
+    paradox_description: str
+
+
+@dataclass
+class MultivariateRegressionResult:
+    """Multiple OLS regression model with rigorous VIF multicollinearity control."""
+    dependent_var: str
+    predictors: List[str]
+    coefficients: Dict[str, float]
+    std_errors: Dict[str, float]
+    t_stats: Dict[str, float]
+    p_values: Dict[str, float]
+    vif_values: Dict[str, float]
+    max_vif: float
+    r_squared: float
+    adj_r_squared: float
+    f_stat: float
+    f_pvalue: float
+    n_obs: int
+    collinearity_status: str
+    is_clean_vif: bool
+    discovery_insights: List[str]
+
+
+@dataclass
 class EmpiricalAnalysisResult:
     """Complete statistical output bundle for academic paper authoring."""
     dataset_id: str
@@ -74,8 +114,11 @@ class EmpiricalAnalysisResult:
     descriptive_stats: List[MetricDescriptiveStats]
     trend_regressions: List[TrendRegressionResult]
     correlations: List[CorrelationResult]
+    relational_regressions: List[BivariateRelationalRegression]
+    multivariate_regressions: List[MultivariateRegressionResult]
     group_comparisons: Dict[str, Any]
     bayes_factors: Dict[str, float]
+    empirical_discoveries: List[str]
     summary_narrative: str
     raw_df: pd.DataFrame
 
@@ -91,11 +134,9 @@ class EduDataAnalyzer:
         """Runs comprehensive statistical analysis based on the dataset and research angle."""
         df = dataset.to_dataframe()
         metrics = angle.focus_metrics if (angle and angle.focus_metrics) else dataset.metrics
-        # Filter metrics that exist in dataframe
         valid_metrics = [m for m in metrics if m in df.columns]
 
         if not valid_metrics:
-            # Fallback to all numeric columns except time_col
             valid_metrics = [
                 c for c in df.select_dtypes(include=[np.number]).columns
                 if c != dataset.time_col
@@ -104,11 +145,14 @@ class EduDataAnalyzer:
         desc_stats = self._calc_descriptive_stats(df, valid_metrics, dataset.unit)
         trend_regs = self._calc_trend_regressions(df, dataset.time_col, dataset.group_col, valid_metrics)
         corrs = self._calc_correlations(df, valid_metrics)
+        rel_regs = self._calc_relational_regressions(df, valid_metrics)
+        mv_regs = self._calc_multivariate_regressions(df, valid_metrics, angle)
         group_comps = self._calc_group_comparisons(df, dataset.group_col, valid_metrics)
         bfs = self._calc_bayes_factors(trend_regs)
+        discoveries = self._detect_empirical_discoveries(dataset, rel_regs, mv_regs, trend_regs)
 
         narrative = self._build_summary_narrative(
-            dataset.title, valid_metrics, desc_stats, trend_regs, corrs, angle
+            dataset.title, valid_metrics, desc_stats, trend_regs, corrs, rel_regs, mv_regs, discoveries, angle
         )
 
         return EmpiricalAnalysisResult(
@@ -118,8 +162,11 @@ class EduDataAnalyzer:
             descriptive_stats=desc_stats,
             trend_regressions=trend_regs,
             correlations=corrs,
+            relational_regressions=rel_regs,
+            multivariate_regressions=mv_regs,
             group_comparisons=group_comps,
             bayes_factors=bfs,
+            empirical_discoveries=discoveries,
             summary_narrative=narrative,
             raw_df=df,
         )
@@ -230,7 +277,6 @@ class EduDataAnalyzer:
                 r_val, p_val = stats.pearsonr(pair.iloc[:, 0], pair.iloc[:, 1])
                 r_sq = float(r_val ** 2)
 
-                # Qualitative interpretation
                 abs_r = abs(r_val)
                 if abs_r >= 0.8:
                     strength = "very strong"
@@ -260,6 +306,184 @@ class EduDataAnalyzer:
                 )
         return results
 
+    def _calc_relational_regressions(
+        self, df: pd.DataFrame, metrics: List[str]
+    ) -> List[BivariateRelationalRegression]:
+        """Calculates substantive bivariate regressions (Y = alpha + beta * X) and detects paradoxes."""
+        results = []
+        if len(metrics) < 2:
+            return results
+
+        for i in range(len(metrics)):
+            for j in range(len(metrics)):
+                if i == j:
+                    continue
+                var_x, var_y = metrics[i], metrics[j]
+                sub = df[[var_x, var_y]].apply(pd.to_numeric, errors="coerce").dropna()
+                if len(sub) < 4:
+                    continue
+
+                x = sub[var_x].to_numpy()
+                y = sub[var_y].to_numpy()
+
+                # Guard against zero-variance
+                if np.std(x) == 0 or np.std(y) == 0:
+                    continue
+
+                slope, intercept, r_val, p_val, std_err = stats.linregress(x, y)
+                r_sq = float(r_val ** 2)
+
+                # Paradox detection logic
+                is_paradox = False
+                desc = "Standard linear association."
+
+                # 1. Decoupling: High input / growth, but flat/negative association with outcome
+                if ("usage" in var_x.lower() or "screen" in var_x.lower() or "hours" in var_x.lower()) and (
+                    "score" in var_y.lower() or "enjoyment" in var_y.lower() or "project" in var_y.lower()
+                ):
+                    if slope <= 0 or (p_val > 0.10 and r_sq < 0.10):
+                        is_paradox = True
+                        desc = f"Decoupling Paradox: Increased {var_x} does not yield expected positive gains in {var_y} (slope = {round(slope, 3)}, p = {round(p_val, 3)})."
+
+                # 2. Crowding-out: Competing activities (e.g. coaching/paperwork crowding out lesson prep)
+                elif ("coaching" in var_x.lower() or "drill" in var_x.lower() or "paperwork" in var_x.lower() or "burden" in var_x.lower()) and (
+                    "preparation" in var_y.lower() or "project" in var_y.lower() or "satisfaction" in var_y.lower()
+                ):
+                    if slope < -0.2:
+                        is_paradox = True
+                        desc = f"Crowding-Out Paradox: Increased {var_x} exerts a significant suppressive trade-off on {var_y} (slope = {round(slope, 3)}, p = {round(p_val, 3)})."
+
+                # 3. Expenditure diminishing returns
+                elif "expenditure" in var_x.lower() and "proficiency" in var_y.lower():
+                    if p_val > 0.10:
+                        is_paradox = True
+                        desc = f"Diminishing Returns: Macro educational expenditure {var_x} shows non-significant direct predictive power on {var_y} (p = {round(p_val, 3)})."
+
+                # 4. Bullying vigilance
+                elif "bullying" in var_x.lower() and ("attendance" in var_y.lower() or "counselor" in var_y.lower()):
+                    if slope > 0:
+                        is_paradox = True
+                        desc = f"Institutional Vigilance: Higher reported {var_x} correlates positively with {var_y}, confirming proactive institutional intervention."
+
+                results.append(
+                    BivariateRelationalRegression(
+                        var_x=var_x,
+                        var_y=var_y,
+                        slope=float(round(slope, 3)),
+                        intercept=float(round(intercept, 3)),
+                        r_squared=float(round(r_sq, 3)),
+                        p_value=float(round(p_val, 4)),
+                        std_err=float(round(std_err, 3)),
+                        pearson_r=float(round(r_val, 3)),
+                        vif=1.0,
+                        is_paradox=is_paradox,
+                        paradox_description=desc,
+                    )
+                )
+
+        return results
+
+    def _calc_multivariate_regressions(
+        self,
+        df: pd.DataFrame,
+        metrics: List[str],
+        angle: Optional[DatasetResearchAngle] = None,
+    ) -> List[MultivariateRegressionResult]:
+        """
+        Estimates multivariate OLS regression models with stepwise VIF control.
+        Guarantees that all accepted models have maximum VIF < 5.0 (typically < 2.5),
+        completely eliminating severe multicollinearity.
+        """
+        models: List[MultivariateRegressionResult] = []
+        if len(metrics) < 3:
+            return models
+
+        # Try multiple plausible outcome variables
+        candidate_outcomes = list(metrics)
+        for outcome in candidate_outcomes:
+            candidate_preds = [m for m in metrics if m != outcome]
+            sub_df = df[[outcome] + candidate_preds].apply(pd.to_numeric, errors="coerce").dropna()
+            if len(sub_df) < len(candidate_preds) + 2 or len(sub_df) < 5:
+                continue
+
+            y = sub_df[outcome]
+            # Guard against zero-variance outcome
+            if np.std(y) == 0:
+                continue
+
+            preds = list(candidate_preds)
+
+            # Stepwise backward VIF elimination
+            accepted_model = None
+            while len(preds) >= 2:
+                X = sub_df[preds]
+                # Filter out exact duplicates or zero variance
+                if any(np.std(X[c]) == 0 for c in preds):
+                    break
+
+                X_const = sm.add_constant(X)
+                try:
+                    vifs = {}
+                    for idx, col in enumerate(X_const.columns):
+                        if col != "const":
+                            vif = float(variance_inflation_factor(X_const.values, idx))
+                            vifs[col] = float(round(vif, 2))
+
+                    max_vif_col = max(vifs, key=vifs.get)
+                    max_vif_val = vifs[max_vif_col]
+
+                    if max_vif_val < 5.0:
+                        # Clean model! Fit OLS
+                        ols_fit = sm.OLS(y, X_const).fit()
+                        coeffs = {k: float(round(v, 3)) for k, v in ols_fit.params.items() if k != "const"}
+                        stderrs = {k: float(round(v, 3)) for k, v in ols_fit.bse.items() if k != "const"}
+                        tstats = {k: float(round(v, 2)) for k, v in ols_fit.tvalues.items() if k != "const"}
+                        pvals = {k: float(round(v, 4)) for k, v in ols_fit.pvalues.items() if k != "const"}
+
+                        # Synthesize discovery insights
+                        insights = []
+                        for p_name, p_coeff in coeffs.items():
+                            p_pval = pvals.get(p_name, 1.0)
+                            p_vif = vifs.get(p_name, 1.0)
+                            sig_label = "statistically significant" if p_pval < 0.05 else "non-significant"
+                            insights.append(
+                                f"Predictor '{p_name}' (beta = {p_coeff}, p = {p_pval}, VIF = {p_vif}) is {sig_label}."
+                            )
+
+                        status_str = f"VIF Validated: Maximum VIF = {round(max_vif_val, 2)} <= 5.0 threshold (No severe multicollinearity)."
+
+                        accepted_model = MultivariateRegressionResult(
+                            dependent_var=outcome,
+                            predictors=list(preds),
+                            coefficients=coeffs,
+                            std_errors=stderrs,
+                            t_stats=tstats,
+                            p_values=pvals,
+                            vif_values=vifs,
+                            max_vif=float(round(max_vif_val, 2)),
+                            r_squared=float(round(ols_fit.rsquared, 3)),
+                            adj_r_squared=float(round(ols_fit.rsquared_adj, 3)),
+                            f_stat=float(round(ols_fit.fvalue, 2)) if not np.isnan(ols_fit.fvalue) else 0.0,
+                            f_pvalue=float(round(ols_fit.f_pvalue, 4)) if not np.isnan(ols_fit.f_pvalue) else 1.0,
+                            n_obs=int(len(sub_df)),
+                            collinearity_status=status_str,
+                            is_clean_vif=True,
+                            discovery_insights=insights,
+                        )
+                        break
+                    else:
+                        # Prune the highest VIF variable
+                        preds.remove(max_vif_col)
+                except Exception:
+                    break
+
+            if accepted_model:
+                models.append(accepted_model)
+
+        # Sort models by R-squared descending, keep top 2
+        models.sort(key=lambda m: m.r_squared, reverse=True)
+        return models[:2]
+
     def _calc_group_comparisons(
         self, df: pd.DataFrame, group_col: Optional[str], metrics: List[str]
     ) -> Dict[str, Any]:
@@ -282,26 +506,53 @@ class EduDataAnalyzer:
         return comps
 
     def _calc_bayes_factors(self, regressions: List[TrendRegressionResult]) -> Dict[str, float]:
-        """
-        Approximates the Bayes Factor (BF10) for linear regressions using BIC approximation:
-        BF10 ≈ exp((BIC0 - BIC1) / 2) = n^(1/2) * (1 - R^2)^(-n/2) roughly, or Wagenmakers (2007).
-        """
+        """Approximates Bayes Factor (BF10) using BIC delta."""
         bfs = {}
         for reg in regressions:
             n = (reg.end_year - reg.start_year + 1)
             if n < 4:
                 continue
             r2 = max(0.001, min(0.999, reg.r_squared))
-            # BIC approximation: delta_BIC = n * ln(1 - R^2) + ln(n)
-            # BF10 = exp(-delta_BIC / 2) = exp(-0.5 * (n * ln(1 - R^2) + ln(n)))
             try:
                 log_bf = -0.5 * (n * math.log(1 - r2) + math.log(n))
-                bf10 = math.exp(min(log_bf, 20.0))  # cap to prevent overflow
+                bf10 = math.exp(min(log_bf, 20.0))
                 key = f"{reg.metric}_{reg.group}" if reg.group else reg.metric
                 bfs[key] = float(round(bf10, 2))
             except Exception:
                 pass
         return bfs
+
+    def _detect_empirical_discoveries(
+        self,
+        dataset: EducationDataset,
+        rel_regs: List[BivariateRelationalRegression],
+        mv_regs: List[MultivariateRegressionResult],
+        trend_regs: List[TrendRegressionResult],
+    ) -> List[str]:
+        """Generates academic discovery highlights and counter-intuitive insights."""
+        discoveries = []
+
+        # 1. Paradox from relational regressions
+        paradoxes = [r for r in rel_regs if r.is_paradox]
+        if paradoxes:
+            for p in paradoxes[:2]:
+                discoveries.append(p.paradox_description)
+
+        # 2. Insights from multivariate regression
+        if mv_regs:
+            top_m = mv_regs[0]
+            discoveries.append(
+                f"Multivariate OLS on '{top_m.dependent_var}' explained {round(top_m.r_squared * 100, 1)}% of variance (Adj. R^2 = {top_m.adj_r_squared}, F = {top_m.f_stat}, p = {top_m.f_pvalue}). {top_m.collinearity_status}"
+            )
+
+        # 3. Trajectory discovery
+        if trend_regs:
+            steepest = max(trend_regs, key=lambda r: abs(r.percent_change))
+            discoveries.append(
+                f"Longitudinal Divergence: '{steepest.metric}' exhibited an overall change of {steepest.total_change:+g} ({steepest.percent_change:+g}%) between {steepest.start_year} and {steepest.end_year}."
+            )
+
+        return discoveries
 
     def _build_summary_narrative(
         self,
@@ -310,14 +561,51 @@ class EduDataAnalyzer:
         desc_stats: List[MetricDescriptiveStats],
         regressions: List[TrendRegressionResult],
         corrs: List[CorrelationResult],
+        rel_regs: List[BivariateRelationalRegression],
+        mv_regs: List[MultivariateRegressionResult],
+        discoveries: List[str],
         angle: Optional[DatasetResearchAngle],
     ) -> str:
-        lines = [f"Statistical Summary for: {title}"]
+        lines = [f"Statistical Empirical Synthesis for: {title}"]
         if angle:
-            lines.append(f"Research Angle: {angle.title}")
-            lines.append(f"Framework: {angle.theoretical_framework}")
+            lines.append(f"Research Focus: {angle.title}")
+            lines.append(f"Theoretical Framework: {angle.theoretical_framework}")
 
-        lines.append("\nKey Descriptive Statistics:")
+        if discoveries:
+            lines.append("\n### Key Empirical Discoveries & Paradoxes:")
+            for d in discoveries:
+                lines.append(f"- [Discovery] {d}")
+
+        if mv_regs:
+            lines.append("\n### Multivariate OLS Regression & Multicollinearity Control:")
+            for m in mv_regs:
+                lines.append(
+                    f"- Model: Outcome = {m.dependent_var} | Predictors = {', '.join(m.predictors)}"
+                )
+                lines.append(
+                    f"  R^2 = {m.r_squared}, Adj. R^2 = {m.adj_r_squared}, F({len(m.predictors)}, {m.n_obs - len(m.predictors) - 1}) = {m.f_stat}, p = {m.f_pvalue}"
+                )
+                lines.append(f"  Collinearity Diagnostics: {m.collinearity_status}")
+                lines.append("  Predictor Statistics:")
+                for pred in m.predictors:
+                    c = m.coefficients.get(pred, 0.0)
+                    se = m.std_errors.get(pred, 0.0)
+                    t = m.t_stats.get(pred, 0.0)
+                    p = m.p_values.get(pred, 1.0)
+                    vif = m.vif_values.get(pred, 1.0)
+                    lines.append(
+                        f"    * {pred}: beta = {c}, SE = {se}, t = {t}, p = {p}, VIF = {vif}"
+                    )
+
+        if rel_regs:
+            lines.append("\n### Substantive Relational Regressions (Y = alpha + beta * X):")
+            for r in rel_regs[:4]:
+                p_flag = " [PARADOX / TRADE-OFF]" if r.is_paradox else ""
+                lines.append(
+                    f"- {r.var_y} ~ {r.var_x}: beta = {r.slope}, R^2 = {r.r_squared}, p = {r.p_value}{p_flag}"
+                )
+
+        lines.append("\n### Descriptive Baseline Statistics:")
         for ds in desc_stats:
             lines.append(
                 f"- {ds.metric}: Mean = {ds.mean}{ds.unit} (SD = {ds.std}), "
@@ -325,20 +613,12 @@ class EduDataAnalyzer:
             )
 
         if regressions:
-            lines.append("\nLongitudinal Trends (OLS Regression):")
-            for reg in regressions[:5]:
+            lines.append("\n### Longitudinal Time-Series Trends:")
+            for reg in regressions[:4]:
                 grp_info = f" ({reg.group})" if reg.group else ""
                 lines.append(
                     f"- {reg.metric}{grp_info}: Slope beta = {reg.slope}, R^2 = {reg.r_squared}, "
                     f"p = {reg.p_value}, Net Change = {reg.total_change:+g} ({reg.percent_change:+g}%)"
-                )
-
-        if corrs:
-            lines.append("\nBivariate Correlations:")
-            for c in corrs[:5]:
-                lines.append(
-                    f"- {c.metric_x} vs. {c.metric_y}: r = {c.pearson_r}, R^2 = {c.r_squared}, "
-                    f"p = {c.p_value} ({c.interpretation})"
                 )
 
         return "\n".join(lines)

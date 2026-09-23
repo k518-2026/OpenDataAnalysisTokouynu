@@ -12,12 +12,14 @@ import logging
 from pathlib import Path
 import sys
 
+# Ensure project root is on sys.path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from src.academic_paper_en import AcademicPaperGeneratorEn
 from src.analyzer import EduDataAnalyzer
 from src.config import Config, REPORTS_DIR, TEMP_DIR
 from src.fetchers.catalog import DatasetCatalog
 from src.pdf.pdf_generator_en import AcademicPaperPdfGeneratorEn
-from src.peer_review_en import PeerReviewGeneratorEn
 from src.publishers.markdown_file import MarkdownFilePublisher
 from src.publishers.wordpress_mail import WordPressMailPublisher
 from src.publishers.wordpress_rest import WordPressRestPublisher
@@ -88,7 +90,6 @@ def main():
     analyzer = EduDataAnalyzer()
     visualizer = EduDataVisualizer(output_dir=TEMP_DIR)
     paper_gen = AcademicPaperGeneratorEn()
-    review_gen = PeerReviewGeneratorEn()
     pdf_gen = AcademicPaperPdfGeneratorEn()
     storage = PaperStorage()
     md_publisher = MarkdownFilePublisher()
@@ -117,12 +118,13 @@ def main():
         logger.info(f"Target Research Angle: {angle.id} - '{angle.title}'")
 
     # 3. Statistical Analysis
-    logger.info("Executing empirical statistical analysis (Descriptive, OLS, Bivariate Correlations)...")
+    logger.info("Executing empirical statistical analysis (Descriptive, OLS, Relational, Multivariate VIF)...")
     analysis = analyzer.analyze(dataset, angle)
     logger.info(
         f"Calculated {len(analysis.descriptive_stats)} metric descriptive models, "
         f"{len(analysis.trend_regressions)} trend regressions, "
-        f"{len(analysis.correlations)} bivariate correlation models."
+        f"{len(analysis.relational_regressions)} relational models, "
+        f"{len(analysis.multivariate_regressions)} multivariate VIF models."
     )
 
     # 4. Generate Publication Figures (in English)
@@ -135,24 +137,19 @@ def main():
     paper = paper_gen.generate(dataset, analysis, angle)
     logger.info(f"Paper Title: '{paper.title}' ({len(paper.abstract.split())} words in abstract)")
 
-    # 6. Generate Peer Review Report
-    logger.info("Simulating peer review evaluation...")
-    peer_review = review_gen.generate(paper, analysis)
-    logger.info(f"Peer Review Decision: {peer_review.decision}")
-
-    # 7. Generate PDF Working Paper
-    logger.info("Compiling PDF working paper document...")
-    pdf_path = pdf_gen.generate(paper)
+    # 6. Generate PDF Working Paper (with in-paper figures)
+    logger.info("Compiling PDF working paper document with in-paper figures...")
+    pdf_path = pdf_gen.generate(paper, figure_paths=figure_paths)
     if pdf_path:
         logger.info(f"Compiled PDF: {pdf_path.name}")
 
-    # 8. Always persist locally to reports/
+    # 7. Always persist locally to reports/
     local_md = md_publisher.publish(
         paper=paper,
         analysis=analysis,
         dataset=dataset,
         figure_paths=figure_paths,
-        peer_review=peer_review,
+        peer_review=None,
         pdf_path=pdf_path,
         dry_run=args.dry_run,
     )
@@ -172,7 +169,7 @@ def main():
             analysis=analysis,
             dataset=dataset,
             figure_paths=figure_paths,
-            peer_review=peer_review,
+            peer_review=None,
             pdf_path=pdf_path,
             dry_run=args.dry_run,
         )
@@ -188,7 +185,7 @@ def main():
             analysis=analysis,
             dataset=dataset,
             figure_paths=figure_paths,
-            peer_review=peer_review,
+            peer_review=None,
             pdf_path=pdf_path,
             dry_run=args.dry_run,
         )

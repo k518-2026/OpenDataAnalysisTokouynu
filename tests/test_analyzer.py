@@ -27,3 +27,15 @@ def test_analyzer_computations():
     # Check narrative
     assert len(res.summary_narrative) > 50
     assert "Mean =" in res.summary_narrative
+
+    # Check multivariate regression with VIF control
+    assert len(res.multivariate_regressions) > 0
+    for mv in res.multivariate_regressions:
+        assert mv.max_vif < 5.0
+        assert mv.is_clean_vif is True
+        for pred, vif in mv.vif_values.items():
+            assert vif < 5.0
+
+    # Check empirical discoveries
+    assert len(res.empirical_discoveries) > 0
+    assert "VIF" in res.summary_narrative

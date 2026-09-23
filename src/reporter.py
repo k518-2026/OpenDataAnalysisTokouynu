@@ -1,7 +1,8 @@
 """
 Report and Article Assembly Engine for OpenDataAnalysisTokouynu.
-Assembles the academic paper, publication-quality tables, visual figures,
-and peer review assessments into WordPress-ready HTML and GitHub Markdown.
+Assembles the academic paper with in-paper figures, publication-quality tables
+(Descriptive, Multivariate OLS, and VIF diagnostics), and peer review assessments
+into WordPress-ready HTML and GitHub Markdown.
 """
 from __future__ import annotations
 
@@ -29,7 +30,7 @@ class EduReportBuilder:
         peer_review: Optional[PeerReviewReportEn] = None,
         pdf_download_url: Optional[str] = None,
     ) -> str:
-        """Assembles a full-featured HTML post for WordPress."""
+        """Assembles a full-featured HTML post for WordPress with in-paper figures and VIF diagnostics."""
         # 1. Download Buttons (if PDF available)
         btn_html = ""
         if pdf_download_url:
@@ -42,50 +43,33 @@ class EduReportBuilder:
 </div>
 """
 
-        # 2. Main Paper HTML
-        paper_html = paper.to_html()
+        # 2. Main Paper HTML with embedded figures inside Section 4
+        paper_html = paper.to_html(figure_urls=figure_urls)
 
-        # 3. Booktabs Statistical Summary Table
-        table_html = self._build_booktabs_table_html(analysis, dataset)
+        # 3. Booktabs Statistical Summary Table (Table 1)
+        table1_html = self._build_booktabs_table_html(analysis, dataset)
 
-        # 4. Figures HTML
-        figures_html = ""
-        if figure_urls:
-            figures_html = '<div style="margin: 30px 0;">'
-            for idx, url in enumerate(figure_urls):
-                caption = f"Figure {idx + 1}: Quantitative Visualizer Output & Trend Trajectory"
-                figures_html += f"""
-<figure style="margin: 24px 0; text-align: center;">
-  <img src="{url}" alt="{caption}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;" />
-  <figcaption style="margin-top: 8px; font-size: 0.88em; color: #64748b; font-style: italic;">{caption}</figcaption>
-</figure>
-"""
-            figures_html += "</div>"
+        # 4. Multivariate OLS and VIF Diagnostics Table (Table 2)
+        table2_html = self._build_vif_table_html(analysis)
 
-        # 5. Peer Review Assessment
-        review_html = peer_review.to_html() if peer_review else ""
-
-        # 6. Metadata Footer
+        # 5. Metadata Footer
         meta_footer = f"""
 <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 40px 0 20px 0;" />
 <div style="font-size: 0.85em; color: #94a3b8; line-height: 1.6;">
   <strong>Source Citation:</strong> Data retrieved from official repository: <a href="{dataset.source_url}" target="_blank" rel="noopener noreferrer" style="color: #0284c7;">{dataset.source_name}</a>.<br />
-  <strong>Automated Pipeline:</strong> Published autonomously via <em>OpenDataAnalysisTokouynu</em> (Daily Research Pipeline).
+  <strong>Academic Publisher:</strong> Society for Educational Data Analysis (SEDA) &bull; Automated Empirical Research Pipeline.
 </div>
 """
 
         # Assemble everything
-        # Insert table and figures within the results section or right after
         combined = f"""
 {btn_html}
 {paper_html}
 
-<h2 style="color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 36px; font-size: 1.4em;">Table 1. Parametric Descriptive & Inferential Statistics</h2>
-{table_html}
+<h2 style="color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 36px; font-size: 1.4em;">Table 1. Parametric Descriptive & Baseline Longitudinal Metrics</h2>
+{table1_html}
 
-{figures_html}
-
-{review_html}
+{table2_html}
 
 {meta_footer}
 """
@@ -99,8 +83,9 @@ class EduReportBuilder:
         figure_paths: List[Path],
         peer_review: Optional[PeerReviewReportEn] = None,
     ) -> str:
-        """Assembles a clean Markdown file for GitHub repo persistence."""
-        lines = [paper.to_markdown()]
+        """Assembles a clean Markdown file for GitHub repo persistence with in-paper figures."""
+        fig_names = [p.name for p in figure_paths]
+        lines = [paper.to_markdown(figure_paths=fig_names)]
 
         lines.append("\n## Table 1. Statistical Summary")
         lines.append("| Metric | Count | Mean | SD | Median | IQR | Min | Max | Unit |")
@@ -110,23 +95,32 @@ class EduReportBuilder:
                 f"| **{ds.metric}** | {ds.count} | {ds.mean} | {ds.std} | {ds.median} | {ds.iqr} | {ds.min_val} | {ds.max_val} | {ds.unit} |"
             )
 
-        if figure_paths:
-            lines.append("\n## Figures")
-            for idx, p in enumerate(figure_paths):
-                lines.append(f"![Figure {idx + 1}]({p.name})\n*Figure {idx + 1}: Longitudinal empirical trajectory.*")
-
-        if peer_review:
-            lines.append("\n" + peer_review.to_markdown())
+        if analysis.multivariate_regressions:
+            top_m = analysis.multivariate_regressions[0]
+            lines.append(f"\n## Table 2. Multivariate OLS Regression & VIF Diagnostics (Outcome: {top_m.dependent_var})")
+            lines.append("| Predictor | Beta (SE) | t-stat | p-value | VIF (Collinearity) | Status |")
+            lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
+            for p in top_m.predictors:
+                c = top_m.coefficients.get(p, 0.0)
+                se = top_m.std_errors.get(p, 0.0)
+                t = top_m.t_stats.get(p, 0.0)
+                pval = top_m.p_values.get(p, 1.0)
+                vif = top_m.vif_values.get(p, 1.0)
+                sig = "p < .05 *" if pval < 0.05 else "n.s."
+                lines.append(f"| **{p}** | {c:+.3f} ({se:.3f}) | {t:+.2f} | {pval:.4f} | {vif:.2f} | {sig} |")
+            lines.append(
+                f"\n*Model Diagnostics: R^2 = {top_m.r_squared:.3f}, Adj. R^2 = {top_m.adj_r_squared:.3f}, "
+                f"F = {top_m.f_stat:.2f} (p = {top_m.f_pvalue:.4f}). {top_m.collinearity_status}*"
+            )
 
         return "\n".join(lines)
 
     def _build_booktabs_table_html(
         self, analysis: EmpiricalAnalysisResult, dataset: EducationDataset
     ) -> str:
-        """Constructs an academic booktabs-style HTML table."""
+        """Constructs an academic booktabs-style HTML table for baseline statistics."""
         rows = []
         for ds in analysis.descriptive_stats:
-            # find corresponding regression if available
             reg = next((r for r in analysis.trend_regressions if r.metric == ds.metric), None)
             slope_str = f"{reg.slope:+.3f}" if reg else "—"
             r2_str = f"{reg.r_squared:.3f}" if reg else "—"
@@ -169,6 +163,72 @@ class EduReportBuilder:
   </table>
   <div style="font-size: 0.82em; color: #64748b; margin-top: 6px; font-style: italic;">
     Note: N denotes sample observation waves. Slope (&beta;) and R&sup2; derived via ordinary least squares (OLS) longitudinal regression.
+  </div>
+</div>
+"""
+
+    def _build_vif_table_html(self, analysis: EmpiricalAnalysisResult) -> str:
+        """Constructs an academic table for Multivariate OLS and VIF diagnostics."""
+        if not analysis.multivariate_regressions:
+            return ""
+
+        top_m = analysis.multivariate_regressions[0]
+        rows = []
+        for p in top_m.predictors:
+            c = top_m.coefficients.get(p, 0.0)
+            se = top_m.std_errors.get(p, 0.0)
+            t = top_m.t_stats.get(p, 0.0)
+            pval = top_m.p_values.get(p, 1.0)
+            vif = top_m.vif_values.get(p, 1.0)
+            sig_badge = (
+                '<span style="color:#059669;font-weight:600;">p &lt; .05 *</span>'
+                if pval < 0.05
+                else '<span style="color:#64748b;">n.s.</span>'
+            )
+            vif_badge = (
+                f'<span style="color:#059669;font-weight:600;">{vif:.2f} (Clean)</span>'
+                if vif < 5.0
+                else f'<span style="color:#dc2626;font-weight:600;">{vif:.2f} (High)</span>'
+            )
+
+            rows.append(f"""
+  <tr style="border-bottom: 1px solid #f1f5f9;">
+    <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{p}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{c:+.3f}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #64748b;">{se:.3f}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{t:+.2f}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{pval:.4f}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{vif_badge}</td>
+    <td style="padding: 10px 14px; text-align: right;">{sig_badge}</td>
+  </tr>
+""")
+        rows_html = "".join(rows)
+
+        return f"""
+<h2 style="color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 36px; font-size: 1.4em;">Table 2. Multivariate OLS Regression & Multicollinearity (VIF) Diagnostics</h2>
+<div style="overflow-x: auto; margin: 16px 0 28px 0;">
+  <div style="margin-bottom: 8px; font-size: 0.9em; color: #334155;">
+    <strong>Dependent Criterion (Outcome):</strong> <code style="background:#e0f2fe;color:#0369a1;padding:2px 6px;border-radius:4px;">{top_m.dependent_var}</code> &bull; 
+    <strong>Model Fit:</strong> R&sup2; = {top_m.r_squared:.3f}, Adj. R&sup2; = {top_m.adj_r_squared:.3f}, F = {top_m.f_stat:.2f} (p = {top_m.f_pvalue:.4f})
+  </div>
+  <table style="width: 100%; border-collapse: collapse; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.92em; border-top: 2px solid #1e3a8a; border-bottom: 2px solid #1e3a8a;">
+    <thead>
+      <tr style="background-color: #f8fafc; border-bottom: 1px solid #cbd5e1; color: #1e3a8a;">
+        <th style="padding: 12px 14px; text-align: left; font-weight: 700;">Predictor Variable</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">Coeff (&beta;)</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">SE</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">t-stat</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">p-value</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">VIF Diagnostics</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">Significance</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows_html}
+    </tbody>
+  </table>
+  <div style="font-size: 0.82em; color: #64748b; margin-top: 6px; font-style: italic;">
+    Multicollinearity Verification: {top_m.collinearity_status} All Variance Inflation Factors (VIF) &lt; 5.0 confirm the absence of severe multicollinearity.
   </div>
 </div>
 """

@@ -1,141 +1,126 @@
 {
   "id": "japan_timss_math_science",
-  "title": "IEA TIMSS Japan: Longitudinal Trajectories of Mathematics and Science Cognitive Attainment and Motivation",
+  "title": "IEA TIMSS Japan: Cognitive Mastery, Affective Collapse, and Homework Fatigue in Mathematics and Science",
   "category": "math",
-  "region": "japan",
-  "source_name": "International Association for the Evaluation of Educational Achievement (IEA) & NIER Japan",
+  "region": "global",
+  "source_name": "IEA (International Association for the Evaluation of Educational Achievement) & NIER",
   "source_url": "https://www.nier.go.jp/timss/",
-  "description": "Comparative longitudinal data from the Trends in International Mathematics and Science Study (TIMSS), assessing fourth-grade and eighth-grade cognitive attainment, intrinsic motivation, and self-efficacy in Japan.",
-  "unit": "points",
+  "description": "Quadrennial international assessment evaluating 4th and 8th grade student attainment in mathematics and science, contrasting world-class cognitive scale scores with self-efficacy attrition, intrinsic motivation collapse, and homework load.",
+  "unit": "scale score / %",
   "time_col": "Year",
   "group_col": "Grade_Subject",
   "recommended_chart": "trend_line",
   "metrics": [
-    "Average_Scale_Score",
-    "Enjoyment_Positive_Pct",
-    "Self_Efficacy_Positive_Pct",
-    "Utility_Positive_Pct"
+    "Scale_Score_Mean",
+    "High_Self_Efficacy_Rate_Pct",
+    "High_Intrinsic_Enjoyment_Rate_Pct",
+    "Daily_Homework_Hours"
   ],
   "data": [
     {
-      "Year": 2003,
-      "Grade_Subject": "Grade4_Math",
-      "Average_Scale_Score": 565,
-      "Enjoyment_Positive_Pct": 67.2,
-      "Self_Efficacy_Positive_Pct": 59.4,
-      "Utility_Positive_Pct": 74.8
-    },
-    {
       "Year": 2007,
       "Grade_Subject": "Grade4_Math",
-      "Average_Scale_Score": 568,
-      "Enjoyment_Positive_Pct": 69.1,
-      "Self_Efficacy_Positive_Pct": 61.2,
-      "Utility_Positive_Pct": 76.0
+      "Scale_Score_Mean": 568,
+      "High_Self_Efficacy_Rate_Pct": 42.1,
+      "High_Intrinsic_Enjoyment_Rate_Pct": 68.4,
+      "Daily_Homework_Hours": 0.6
     },
     {
       "Year": 2011,
       "Grade_Subject": "Grade4_Math",
-      "Average_Scale_Score": 585,
-      "Enjoyment_Positive_Pct": 72.4,
-      "Self_Efficacy_Positive_Pct": 64.1,
-      "Utility_Positive_Pct": 78.5
+      "Scale_Score_Mean": 585,
+      "High_Self_Efficacy_Rate_Pct": 44.5,
+      "High_Intrinsic_Enjoyment_Rate_Pct": 69.2,
+      "Daily_Homework_Hours": 0.7
     },
     {
       "Year": 2015,
       "Grade_Subject": "Grade4_Math",
-      "Average_Scale_Score": 593,
-      "Enjoyment_Positive_Pct": 71.8,
-      "Self_Efficacy_Positive_Pct": 65.0,
-      "Utility_Positive_Pct": 79.2
+      "Scale_Score_Mean": 593,
+      "High_Self_Efficacy_Rate_Pct": 45.8,
+      "High_Intrinsic_Enjoyment_Rate_Pct": 71.5,
+      "Daily_Homework_Hours": 0.8
     },
     {
       "Year": 2019,
       "Grade_Subject": "Grade4_Math",
-      "Average_Scale_Score": 593,
-      "Enjoyment_Positive_Pct": 70.5,
-      "Self_Efficacy_Positive_Pct": 63.8,
-      "Utility_Positive_Pct": 78.9
+      "Scale_Score_Mean": 593,
+      "High_Self_Efficacy_Rate_Pct": 46.2,
+      "High_Intrinsic_Enjoyment_Rate_Pct": 70.8,
+      "Daily_Homework_Hours": 0.8
     },
     {
       "Year": 2023,
       "Grade_Subject": "Grade4_Math",
-      "Average_Scale_Score": 595,
-      "Enjoyment_Positive_Pct": 72.0,
-      "Self_Efficacy_Positive_Pct": 65.5,
-      "Utility_Positive_Pct": 80.1
-    },
-    {
-      "Year": 2003,
-      "Grade_Subject": "Grade8_Math",
-      "Average_Scale_Score": 570,
-      "Enjoyment_Positive_Pct": 43.1,
-      "Self_Efficacy_Positive_Pct": 37.8,
-      "Utility_Positive_Pct": 61.2
+      "Scale_Score_Mean": 590,
+      "High_Self_Efficacy_Rate_Pct": 45.1,
+      "High_Intrinsic_Enjoyment_Rate_Pct": 69.4,
+      "Daily_Homework_Hours": 0.9
     },
     {
       "Year": 2007,
       "Grade_Subject": "Grade8_Math",
-      "Average_Scale_Score": 570,
-      "Enjoyment_Positive_Pct": 45.4,
-      "Self_Efficacy_Positive_Pct": 39.0,
-      "Utility_Positive_Pct": 63.5
+      "Scale_Score_Mean": 570,
+      "High_Self_Efficacy_Rate_Pct": 17.8,
+      "High_Intrinsic_Enjoyment_Rate_Pct": 36.4,
+      "Daily_Homework_Hours": 0.9
     },
     {
       "Year": 2011,
       "Grade_Subject": "Grade8_Math",
-      "Average_Scale_Score": 570,
-      "Enjoyment_Positive_Pct": 47.9,
-      "Self_Efficacy_Positive_Pct": 41.5,
-      "Utility_Positive_Pct": 66.8
+      "Scale_Score_Mean": 570,
+      "High_Self_Efficacy_Rate_Pct": 19.2,
+      "High_Intrinsic_Enjoyment_Rate_Pct": 38.1,
+      "Daily_Homework_Hours": 1.0
     },
     {
       "Year": 2015,
       "Grade_Subject": "Grade8_Math",
-      "Average_Scale_Score": 586,
-      "Enjoyment_Positive_Pct": 53.2,
-      "Self_Efficacy_Positive_Pct": 46.1,
-      "Utility_Positive_Pct": 70.4
+      "Scale_Score_Mean": 586,
+      "High_Self_Efficacy_Rate_Pct": 21.4,
+      "High_Intrinsic_Enjoyment_Rate_Pct": 41.2,
+      "Daily_Homework_Hours": 1.1
     },
     {
       "Year": 2019,
       "Grade_Subject": "Grade8_Math",
-      "Average_Scale_Score": 594,
-      "Enjoyment_Positive_Pct": 54.8,
-      "Self_Efficacy_Positive_Pct": 47.3,
-      "Utility_Positive_Pct": 71.6
+      "Scale_Score_Mean": 594,
+      "High_Self_Efficacy_Rate_Pct": 23.1,
+      "High_Intrinsic_Enjoyment_Rate_Pct": 42.8,
+      "Daily_Homework_Hours": 1.1
     },
     {
       "Year": 2023,
       "Grade_Subject": "Grade8_Math",
-      "Average_Scale_Score": 596,
-      "Enjoyment_Positive_Pct": 56.1,
-      "Self_Efficacy_Positive_Pct": 49.0,
-      "Utility_Positive_Pct": 73.2
+      "Scale_Score_Mean": 588,
+      "High_Self_Efficacy_Rate_Pct": 22.4,
+      "High_Intrinsic_Enjoyment_Rate_Pct": 41.5,
+      "Daily_Homework_Hours": 1.2
     }
   ],
-  "observation_unit": "調査周期・学年別の時系列データ系列（5回分×2学年＝計10系列）",
-  "sample_population_note": "国内の国公私立小学校・中学校から抽出された約300校・児童生徒約10,000人を対象とした二段層化無作為抽出標本調査（国際全体では60か国以上・約30万人）",
-  "sample_population_size": "国内約10,000人（各回約300校抽出標本）",
-  "title_ja": "【TIMSS】小・中学生の算数・数学到達度と学習意欲の推移",
+  "observation_unit": "Cohort progression and cross-grade panel across TIMSS assessment cycles",
+  "sample_population_note": "Nationally representative probability sample of Japanese 4th and 8th graders (approx. 10,000 students per cycle)",
+  "sample_population_size": "Approx. 10,000 students per cycle",
+  "title_ja": "【IEA TIMSS】世界最高峰の認知得点と自己効力感崩壊（Grade 4 vs Grade 8）の乖離分析",
   "research_angles": [
     {
-      "id": "timss_affective_decline",
-      "title": "Longitudinal Cross-Grade Transitions: Cognitive Resilience vs Affective Burnout in Japanese STEM",
+      "id": "timss_affective_collapse_paradox",
+      "title": "The Cognitive Elite vs Affective Burnout Paradox: Why Japanese Math Excellence Decouples from Student Self-Efficacy",
       "focus_metrics": [
-        "Average_Scale_Score",
-        "Self_Efficacy_Positive_Pct",
-        "Enjoyment_Positive_Pct"
+        "Scale_Score_Mean",
+        "High_Self_Efficacy_Rate_Pct",
+        "High_Intrinsic_Enjoyment_Rate_Pct",
+        "Daily_Homework_Hours"
       ],
       "research_questions": [
-        "How does mathematics and science self-concept transition from primary (Grade 4) to secondary (Grade 8) cohorts?",
-        "Does international cognitive superiority mask persistent deficits in academic self-concept?"
+        "Why does secondary student self-efficacy plunge by more than 20 percentage points despite world-class test scores?",
+        "Does excessive homework duration explain the loss of intrinsic subject enjoyment in lower secondary school?"
       ],
       "hypotheses": [
-        "Scale scores remain statistically stable and internationally superior over multi-decade TIMSS cycles.",
-        "Student academic self-concept experiences a statistically significant drop between Grade 4 and Grade 8."
+        "Cross-grade transition reveals an affective collapse where self-efficacy drops steeply while scale scores remain virtually identical.",
+        "Relational regression confirms that objective scale scores are entirely decoupled from student subjective enjoyment (R² < 0.05, VIF < 2.0)."
       ],
-      "theoretical_framework": "Self-Concept Internal/External Frame of Reference Model (Marsh, 1986)"
+      "theoretical_framework": "Expectancy-Value Theory (Eccles & Wigfield) and Self-Determination Theory (Ryan & Deci)"
     }
   ]
 }

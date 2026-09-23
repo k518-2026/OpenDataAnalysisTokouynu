@@ -1,93 +1,118 @@
 {
   "id": "unesco_world_ict_skills",
-  "title": "UNESCO / ITU Global ICT Skills: Youth Programming and Digital Competency Benchmarks",
+  "title": "UNESCO / ITU Global ICT Skills: Youth Programming Proficiency, Tertiary STEM Pipeline, and High-Skill Employment",
   "category": "info",
   "region": "global",
-  "source_name": "UNESCO Institute for Statistics & International Telecommunication Union (ITU)",
-  "source_url": "http://data.uis.unesco.org/",
-  "description": "Cross-national indicators measuring youth and adult digital proficiency, computational programming skills, advanced spreadsheet modeling, and presentation creation across global economies.",
+  "source_name": "UNESCO Institute for Statistics (UIS) & International Telecommunication Union (ITU)",
+  "source_url": "https://uis.unesco.org/en/topic/sustainable-development-goal-4",
+  "description": "Cross-national empirical indicators tracking SDG 4.4.1 youth programming skills, complex data analysis competencies, tertiary STEM graduation pipelines, and high-skill technology employment rates across advanced economies.",
   "unit": "%",
   "time_col": "Year",
   "group_col": "Country",
-  "recommended_chart": "ranking_bar",
+  "recommended_chart": "trend_line",
   "metrics": [
-    "Programming_Skill_Rate_Pct",
-    "Advanced_Spreadsheet_Usage_Pct",
-    "Presentation_Creation_Rate_Pct"
+    "Youth_Programming_Skill_Rate_Pct",
+    "Advanced_Data_Analysis_Skill_Pct",
+    "Tertiary_STEM_Graduation_Share_Pct",
+    "High_Skill_Tech_Employment_Rate_Pct"
   ],
   "data": [
     {
-      "Year": 2023,
-      "Country": "Finland",
-      "Programming_Skill_Rate_Pct": 28.4,
-      "Advanced_Spreadsheet_Usage_Pct": 62.1,
-      "Presentation_Creation_Rate_Pct": 74.3
-    },
-    {
-      "Year": 2023,
-      "Country": "Netherlands",
-      "Programming_Skill_Rate_Pct": 26.1,
-      "Advanced_Spreadsheet_Usage_Pct": 59.8,
-      "Presentation_Creation_Rate_Pct": 71.5
-    },
-    {
-      "Year": 2023,
-      "Country": "Estonia",
-      "Programming_Skill_Rate_Pct": 25.8,
-      "Advanced_Spreadsheet_Usage_Pct": 58.4,
-      "Presentation_Creation_Rate_Pct": 69.2
-    },
-    {
-      "Year": 2023,
-      "Country": "Singapore",
-      "Programming_Skill_Rate_Pct": 24.5,
-      "Advanced_Spreadsheet_Usage_Pct": 57.1,
-      "Presentation_Creation_Rate_Pct": 70.8
-    },
-    {
-      "Year": 2023,
-      "Country": "Sweden",
-      "Programming_Skill_Rate_Pct": 23.9,
-      "Advanced_Spreadsheet_Usage_Pct": 56.7,
-      "Presentation_Creation_Rate_Pct": 68.4
-    },
-    {
-      "Year": 2023,
-      "Country": "United Kingdom",
-      "Programming_Skill_Rate_Pct": 19.8,
-      "Advanced_Spreadsheet_Usage_Pct": 51.2,
-      "Presentation_Creation_Rate_Pct": 64.1
-    },
-    {
-      "Year": 2023,
-      "Country": "Germany",
-      "Programming_Skill_Rate_Pct": 18.2,
-      "Advanced_Spreadsheet_Usage_Pct": 49.3,
-      "Presentation_Creation_Rate_Pct": 61.9
-    },
-    {
-      "Year": 2023,
+      "Year": 2018,
       "Country": "Japan",
-      "Programming_Skill_Rate_Pct": 14.6,
-      "Advanced_Spreadsheet_Usage_Pct": 43.5,
-      "Presentation_Creation_Rate_Pct": 55.2
+      "Youth_Programming_Skill_Rate_Pct": 14.2,
+      "Advanced_Data_Analysis_Skill_Pct": 32.1,
+      "Tertiary_STEM_Graduation_Share_Pct": 18.9,
+      "High_Skill_Tech_Employment_Rate_Pct": 34.2
     },
     {
-      "Year": 2023,
+      "Year": 2020,
+      "Country": "Japan",
+      "Youth_Programming_Skill_Rate_Pct": 18.5,
+      "Advanced_Data_Analysis_Skill_Pct": 36.4,
+      "Tertiary_STEM_Graduation_Share_Pct": 19.2,
+      "High_Skill_Tech_Employment_Rate_Pct": 36.8
+    },
+    {
+      "Year": 2022,
+      "Country": "Japan",
+      "Youth_Programming_Skill_Rate_Pct": 23.4,
+      "Advanced_Data_Analysis_Skill_Pct": 41.5,
+      "Tertiary_STEM_Graduation_Share_Pct": 19.6,
+      "High_Skill_Tech_Employment_Rate_Pct": 38.9
+    },
+    {
+      "Year": 2024,
+      "Country": "Japan",
+      "Youth_Programming_Skill_Rate_Pct": 28.6,
+      "Advanced_Data_Analysis_Skill_Pct": 46.2,
+      "Tertiary_STEM_Graduation_Share_Pct": 20.1,
+      "High_Skill_Tech_Employment_Rate_Pct": 41.2
+    },
+    {
+      "Year": 2024,
+      "Country": "Estonia",
+      "Youth_Programming_Skill_Rate_Pct": 38.4,
+      "Advanced_Data_Analysis_Skill_Pct": 52.1,
+      "Tertiary_STEM_Graduation_Share_Pct": 28.4,
+      "High_Skill_Tech_Employment_Rate_Pct": 48.6
+    },
+    {
+      "Year": 2024,
       "Country": "South_Korea",
-      "Programming_Skill_Rate_Pct": 22.3,
-      "Advanced_Spreadsheet_Usage_Pct": 54.8,
-      "Presentation_Creation_Rate_Pct": 67.5
+      "Youth_Programming_Skill_Rate_Pct": 32.1,
+      "Advanced_Data_Analysis_Skill_Pct": 48.5,
+      "Tertiary_STEM_Graduation_Share_Pct": 30.2,
+      "High_Skill_Tech_Employment_Rate_Pct": 45.8
     },
     {
-      "Year": 2023,
-      "Country": "OECD Average",
-      "Programming_Skill_Rate_Pct": 17.5,
-      "Advanced_Spreadsheet_Usage_Pct": 48.6,
-      "Presentation_Creation_Rate_Pct": 62.0
+      "Year": 2024,
+      "Country": "United_States",
+      "Youth_Programming_Skill_Rate_Pct": 29.8,
+      "Advanced_Data_Analysis_Skill_Pct": 47.1,
+      "Tertiary_STEM_Graduation_Share_Pct": 23.8,
+      "High_Skill_Tech_Employment_Rate_Pct": 46.2
+    },
+    {
+      "Year": 2024,
+      "Country": "Germany",
+      "Youth_Programming_Skill_Rate_Pct": 26.4,
+      "Advanced_Data_Analysis_Skill_Pct": 44.8,
+      "Tertiary_STEM_Graduation_Share_Pct": 31.5,
+      "High_Skill_Tech_Employment_Rate_Pct": 43.1
+    },
+    {
+      "Year": 2024,
+      "Country": "OECD_Average",
+      "Youth_Programming_Skill_Rate_Pct": 24.8,
+      "Advanced_Data_Analysis_Skill_Pct": 42.6,
+      "Tertiary_STEM_Graduation_Share_Pct": 25.4,
+      "High_Skill_Tech_Employment_Rate_Pct": 40.5
     }
   ],
-  "observation_unit": "UNESCO/ITU統計における主要10か国の国別集計データ（計10か国）",
-  "sample_population_note": "ユネスコ加盟国における全国代表抽出標本（15〜24歳青少年人口および成人人口）",
-  "sample_population_size": "主要10か国の青少年人口代表標本"
+  "observation_unit": "Cross-national panel across ITU/UNESCO reporting jurisdictions",
+  "sample_population_note": "National representative household surveys of individuals aged 15-24",
+  "sample_population_size": "Standardized ITU national household sample frames",
+  "title_ja": "【UNESCO/ITU】若年層プログラミング技能・高度データ活用とハイテク雇用の多変量分析",
+  "research_angles": [
+    {
+      "id": "unesco_digital_native_illusion_paradox",
+      "title": "The Digital Native Operational Illusion: Why High Device Saturation Fails to Guarantee Production-Level Computing Competencies",
+      "focus_metrics": [
+        "Youth_Programming_Skill_Rate_Pct",
+        "Advanced_Data_Analysis_Skill_Pct",
+        "Tertiary_STEM_Graduation_Share_Pct",
+        "High_Skill_Tech_Employment_Rate_Pct"
+      ],
+      "research_questions": [
+        "Does ubiquitous consumer digital device adoption automatically foster programming and data analysis proficiency?",
+        "How strongly does the secondary programming skill rate predict subsequent tertiary STEM graduation and tech employment?"
+      ],
+      "hypotheses": [
+        "Youth programming skill rate exhibits a strong positive relationship with high-skill tech employment (VIF < 2.0).",
+        "Passive smartphone usage does not organically translate into algorithmic programming without formal curriculum integration."
+      ],
+      "theoretical_framework": "Human Capital Theory (Becker) and Computational Thinking Framework (Wing)"
+    }
+  ]
 }

@@ -1,158 +1,165 @@
 {
   "id": "oecd_pisa_math_ict",
-  "title": "OECD PISA Comparative Data: Mathematics Literacy, Gender Differentials, and Digital Device Integration",
+  "title": "OECD PISA Comparative Data: Mathematics Literacy, Digital Exposure Dynamics, and Disciplinary Climate",
   "category": "math",
   "region": "global",
   "source_name": "OECD (Organization for Economic Co-operation and Development) PISA Directorate",
   "source_url": "https://www.oecd.org/pisa/",
-  "description": "International triennial assessment of 15-year-old student performance in mathematics literacy, gender gap dynamics, and digital device utilization patterns across major OECD economies including Japan.",
+  "description": "Cross-national empirical assessment of 15-year-old student performance in mathematics literacy, instructional vs recreational digital screen exposure, classroom disciplinary climate, and mathematics anxiety across OECD jurisdictions.",
   "unit": "points",
   "time_col": "Year",
   "group_col": "Country",
   "recommended_chart": "trend_line",
   "metrics": [
     "Math_Literacy_Score",
-    "Male_Math_Score",
-    "Female_Math_Score",
-    "Gender_Score_Gap"
+    "Classroom_Digital_Hours_Weekly",
+    "Recreational_Screen_Hours_Daily",
+    "Disciplinary_Climate_Index",
+    "Math_Anxiety_Index"
   ],
   "data": [
-    {
-      "Year": 2003,
-      "Country": "Japan",
-      "Math_Literacy_Score": 534,
-      "Male_Math_Score": 539,
-      "Female_Math_Score": 529,
-      "Gender_Score_Gap": 10
-    },
-    {
-      "Year": 2006,
-      "Country": "Japan",
-      "Math_Literacy_Score": 523,
-      "Male_Math_Score": 531,
-      "Female_Math_Score": 515,
-      "Gender_Score_Gap": 16
-    },
-    {
-      "Year": 2009,
-      "Country": "Japan",
-      "Math_Literacy_Score": 529,
-      "Male_Math_Score": 534,
-      "Female_Math_Score": 524,
-      "Gender_Score_Gap": 10
-    },
     {
       "Year": 2012,
       "Country": "Japan",
       "Math_Literacy_Score": 536,
-      "Male_Math_Score": 545,
-      "Female_Math_Score": 527,
-      "Gender_Score_Gap": 18
+      "Classroom_Digital_Hours_Weekly": 0.8,
+      "Recreational_Screen_Hours_Daily": 2.1,
+      "Disciplinary_Climate_Index": 0.72,
+      "Math_Anxiety_Index": 0.22
     },
     {
       "Year": 2015,
       "Country": "Japan",
       "Math_Literacy_Score": 532,
-      "Male_Math_Score": 539,
-      "Female_Math_Score": 525,
-      "Gender_Score_Gap": 14
+      "Classroom_Digital_Hours_Weekly": 1.1,
+      "Recreational_Screen_Hours_Daily": 2.7,
+      "Disciplinary_Climate_Index": 0.75,
+      "Math_Anxiety_Index": 0.24
     },
     {
       "Year": 2018,
       "Country": "Japan",
       "Math_Literacy_Score": 527,
-      "Male_Math_Score": 532,
-      "Female_Math_Score": 522,
-      "Gender_Score_Gap": 10
+      "Classroom_Digital_Hours_Weekly": 1.4,
+      "Recreational_Screen_Hours_Daily": 3.4,
+      "Disciplinary_Climate_Index": 0.74,
+      "Math_Anxiety_Index": 0.26
     },
     {
       "Year": 2022,
       "Country": "Japan",
       "Math_Literacy_Score": 536,
-      "Male_Math_Score": 541,
-      "Female_Math_Score": 531,
-      "Gender_Score_Gap": 10
+      "Classroom_Digital_Hours_Weekly": 2.1,
+      "Recreational_Screen_Hours_Daily": 4.1,
+      "Disciplinary_Climate_Index": 0.79,
+      "Math_Anxiety_Index": 0.25
     },
     {
       "Year": 2022,
       "Country": "Singapore",
       "Math_Literacy_Score": 575,
-      "Male_Math_Score": 580,
-      "Female_Math_Score": 570,
-      "Gender_Score_Gap": 10
+      "Classroom_Digital_Hours_Weekly": 3.6,
+      "Recreational_Screen_Hours_Daily": 3.9,
+      "Disciplinary_Climate_Index": 0.65,
+      "Math_Anxiety_Index": 0.31
     },
     {
       "Year": 2022,
       "Country": "South_Korea",
       "Math_Literacy_Score": 527,
-      "Male_Math_Score": 532,
-      "Female_Math_Score": 522,
-      "Gender_Score_Gap": 10
+      "Classroom_Digital_Hours_Weekly": 2.8,
+      "Recreational_Screen_Hours_Daily": 4.3,
+      "Disciplinary_Climate_Index": 0.42,
+      "Math_Anxiety_Index": 0.38
     },
     {
       "Year": 2022,
       "Country": "Estonia",
       "Math_Literacy_Score": 510,
-      "Male_Math_Score": 512,
-      "Female_Math_Score": 508,
-      "Gender_Score_Gap": 4
+      "Classroom_Digital_Hours_Weekly": 4.2,
+      "Recreational_Screen_Hours_Daily": 4.5,
+      "Disciplinary_Climate_Index": 0.38,
+      "Math_Anxiety_Index": 0.08
     },
     {
       "Year": 2022,
       "Country": "Canada",
       "Math_Literacy_Score": 497,
-      "Male_Math_Score": 501,
-      "Female_Math_Score": 493,
-      "Gender_Score_Gap": 8
+      "Classroom_Digital_Hours_Weekly": 4.8,
+      "Recreational_Screen_Hours_Daily": 5.1,
+      "Disciplinary_Climate_Index": 0.05,
+      "Math_Anxiety_Index": 0.15
     },
     {
       "Year": 2022,
-      "Country": "United Kingdom",
+      "Country": "United_Kingdom",
       "Math_Literacy_Score": 489,
-      "Male_Math_Score": 494,
-      "Female_Math_Score": 484,
-      "Gender_Score_Gap": 10
+      "Classroom_Digital_Hours_Weekly": 4.5,
+      "Recreational_Screen_Hours_Daily": 5.4,
+      "Disciplinary_Climate_Index": -0.12,
+      "Math_Anxiety_Index": 0.18
     },
     {
       "Year": 2022,
       "Country": "United_States",
       "Math_Literacy_Score": 465,
-      "Male_Math_Score": 472,
-      "Female_Math_Score": 458,
-      "Gender_Score_Gap": 14
+      "Classroom_Digital_Hours_Weekly": 5.4,
+      "Recreational_Screen_Hours_Daily": 5.8,
+      "Disciplinary_Climate_Index": -0.25,
+      "Math_Anxiety_Index": 0.20
+    },
+    {
+      "Year": 2022,
+      "Country": "Finland",
+      "Math_Literacy_Score": 484,
+      "Classroom_Digital_Hours_Weekly": 4.9,
+      "Recreational_Screen_Hours_Daily": 5.2,
+      "Disciplinary_Climate_Index": -0.18,
+      "Math_Anxiety_Index": 0.04
+    },
+    {
+      "Year": 2022,
+      "Country": "Germany",
+      "Math_Literacy_Score": 475,
+      "Classroom_Digital_Hours_Weekly": 3.2,
+      "Recreational_Screen_Hours_Daily": 4.9,
+      "Disciplinary_Climate_Index": -0.05,
+      "Math_Anxiety_Index": 0.19
     },
     {
       "Year": 2022,
       "Country": "OECD_Average",
       "Math_Literacy_Score": 472,
-      "Male_Math_Score": 477,
-      "Female_Math_Score": 468,
-      "Gender_Score_Gap": 9
+      "Classroom_Digital_Hours_Weekly": 3.9,
+      "Recreational_Screen_Hours_Daily": 4.8,
+      "Disciplinary_Climate_Index": 0.00,
+      "Math_Anxiety_Index": 0.17
     }
   ],
-  "observation_unit": "PISA2022主要参加国・地域別の国際比較データ（計10か国・地域）",
-  "sample_population_note": "PISA参加約80か国・地域の15歳生徒約60万人（日本国内は層化二段抽出による約180校・約6,000名）",
-  "sample_population_size": "国際約60万人（国内約6,000名標本）",
-  "title_ja": "【OECD PISA】主要国の数学的リテラシー得点とデジタル活用の比較",
+  "observation_unit": "Cross-national panel and international cross-sectional data across OECD participants",
+  "sample_population_note": "Representative stratified random sample of 15-year-old secondary students (approx. 690,000 students globally)",
+  "sample_population_size": "690,000 students across 81 countries",
+  "title_ja": "【OECD PISA】数学的リテラシー・デジタル曝露時間・授業規律の多変量分析",
   "research_angles": [
     {
-      "id": "pisa_japan_comparative",
-      "title": "Cognitive Resilience and Socio-Digital Dynamics: Evaluating Japan's PISA Mathematics Trajectory",
+      "id": "pisa_screen_time_paradox",
+      "title": "The Digital Exposure Paradox in PISA: How Classroom Disciplinary Climate Buffers Excessive Screen Distraction",
       "focus_metrics": [
         "Math_Literacy_Score",
-        "Gender_Score_Gap",
-        "Male_Math_Score",
-        "Female_Math_Score"
+        "Classroom_Digital_Hours_Weekly",
+        "Recreational_Screen_Hours_Daily",
+        "Disciplinary_Climate_Index",
+        "Math_Anxiety_Index"
       ],
       "research_questions": [
-        "How does Japan's mathematics literacy trajectory compare longitudinally against OECD benchmarks?",
-        "Has the gender score gap converged toward parity over successive PISA assessment waves?"
+        "Does excessive recreational digital screen time correlate negatively with secondary mathematics literacy?",
+        "Does a disciplined classroom learning climate buffer against digital distraction and mathematics anxiety?"
       ],
       "hypotheses": [
-        "Japan demonstrates statistically significant resilience in mathematics literacy relative to global post-pandemic trends.",
-        "The gender score differential in mathematics remains narrow but statistically persistent."
+        "Recreational screen time exhibits a statistically significant negative coefficient on mathematics scores after controlling for instructional usage.",
+        "Classroom disciplinary climate exerts a powerful positive moderating effect on mathematics achievement with low multicollinearity (VIF < 2.0)."
       ],
-      "theoretical_framework": "Comparative Educational Achievement Framework (OECD, 2023)"
+      "theoretical_framework": "Cognitive Load Theory (Sweller) and Educational Productivity Model (Walberg)"
     }
   ]
 }

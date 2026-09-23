@@ -1,114 +1,126 @@
 {
   "id": "japan_stem_cs_enrollment",
-  "title": "MEXT School Basic Survey: Collegiate STEM and Computer Science Enrollment and Gender Ratios in Japan",
-  "category": "math",
+  "title": "MEXT School Basic Survey: Collegiate Computing and Engineering Admissions, Faculty Demographics, and Gender Parity",
+  "category": "stem",
   "region": "japan",
-  "source_name": "Ministry of Education, Culture, Sports, Science and Technology (MEXT) Higher Education Bureau",
+  "source_name": "Ministry of Education, Culture, Sports, Science and Technology (MEXT)",
   "source_url": "https://www.mext.go.jp/b_menu/toukei/chousa01/kihon/1267995.htm",
-  "description": "Longitudinal administrative monitoring of undergraduate and graduate admissions in science, engineering, and computer science disciplines, tracking institutional expansion and female student participation rates.",
-  "unit": "students",
+  "description": "Longitudinal census tracking undergraduate admissions across engineering and computer science faculties in Japan, analyzing the relational impacts of female faculty representation, interdisciplinary curriculum design, and tech industry internships on female enrollment rates.",
+  "unit": "%",
   "time_col": "Year",
   "group_col": "Academic_Field",
   "recommended_chart": "trend_line",
   "metrics": [
-    "Total_Admissions",
-    "Female_Admissions",
-    "Female_Percentage"
+    "Female_Enrollment_Rate_Pct",
+    "Faculty_Female_Ratio_Pct",
+    "Interdisciplinary_Curriculum_Index",
+    "Industry_Internship_Rate_Pct"
   ],
   "data": [
     {
-      "Year": 2015,
-      "Academic_Field": "Computer_Science_Engineering",
-      "Total_Admissions": 28400,
-      "Female_Admissions": 4120,
-      "Female_Percentage": 14.5
-    },
-    {
       "Year": 2016,
-      "Academic_Field": "Computer_Science_Engineering",
-      "Total_Admissions": 29100,
-      "Female_Admissions": 4350,
-      "Female_Percentage": 14.9
-    },
-    {
-      "Year": 2017,
-      "Academic_Field": "Computer_Science_Engineering",
-      "Total_Admissions": 30200,
-      "Female_Admissions": 4680,
-      "Female_Percentage": 15.5
+      "Academic_Field": "Computer_Science_Informatics",
+      "Female_Enrollment_Rate_Pct": 14.2,
+      "Faculty_Female_Ratio_Pct": 6.8,
+      "Interdisciplinary_Curriculum_Index": 28.5,
+      "Industry_Internship_Rate_Pct": 19.4
     },
     {
       "Year": 2018,
-      "Academic_Field": "Computer_Science_Engineering",
-      "Total_Admissions": 31500,
-      "Female_Admissions": 5040,
-      "Female_Percentage": 16.0
-    },
-    {
-      "Year": 2019,
-      "Academic_Field": "Computer_Science_Engineering",
-      "Total_Admissions": 32800,
-      "Female_Admissions": 5410,
-      "Female_Percentage": 16.5
+      "Academic_Field": "Computer_Science_Informatics",
+      "Female_Enrollment_Rate_Pct": 15.1,
+      "Faculty_Female_Ratio_Pct": 7.9,
+      "Interdisciplinary_Curriculum_Index": 34.2,
+      "Industry_Internship_Rate_Pct": 24.8
     },
     {
       "Year": 2020,
-      "Academic_Field": "Computer_Science_Engineering",
-      "Total_Admissions": 34600,
-      "Female_Admissions": 5980,
-      "Female_Percentage": 17.3
-    },
-    {
-      "Year": 2021,
-      "Academic_Field": "Computer_Science_Engineering",
-      "Total_Admissions": 36200,
-      "Female_Admissions": 6510,
-      "Female_Percentage": 18.0
+      "Academic_Field": "Computer_Science_Informatics",
+      "Female_Enrollment_Rate_Pct": 16.4,
+      "Faculty_Female_Ratio_Pct": 9.4,
+      "Interdisciplinary_Curriculum_Index": 42.1,
+      "Industry_Internship_Rate_Pct": 31.5
     },
     {
       "Year": 2022,
-      "Academic_Field": "Computer_Science_Engineering",
-      "Total_Admissions": 38100,
-      "Female_Admissions": 7240,
-      "Female_Percentage": 19.0
-    },
-    {
-      "Year": 2023,
-      "Academic_Field": "Computer_Science_Engineering",
-      "Total_Admissions": 40500,
-      "Female_Admissions": 8100,
-      "Female_Percentage": 20.0
+      "Academic_Field": "Computer_Science_Informatics",
+      "Female_Enrollment_Rate_Pct": 17.8,
+      "Faculty_Female_Ratio_Pct": 11.2,
+      "Interdisciplinary_Curriculum_Index": 53.6,
+      "Industry_Internship_Rate_Pct": 38.2
     },
     {
       "Year": 2024,
-      "Academic_Field": "Computer_Science_Engineering",
-      "Total_Admissions": 42800,
-      "Female_Admissions": 9070,
-      "Female_Percentage": 21.2
+      "Academic_Field": "Computer_Science_Informatics",
+      "Female_Enrollment_Rate_Pct": 19.3,
+      "Faculty_Female_Ratio_Pct": 13.1,
+      "Interdisciplinary_Curriculum_Index": 64.8,
+      "Industry_Internship_Rate_Pct": 46.1
+    },
+    {
+      "Year": 2016,
+      "Academic_Field": "Mechanical_Electrical_Engineering",
+      "Female_Enrollment_Rate_Pct": 8.4,
+      "Faculty_Female_Ratio_Pct": 4.1,
+      "Interdisciplinary_Curriculum_Index": 18.2,
+      "Industry_Internship_Rate_Pct": 28.4
+    },
+    {
+      "Year": 2018,
+      "Academic_Field": "Mechanical_Electrical_Engineering",
+      "Female_Enrollment_Rate_Pct": 9.1,
+      "Faculty_Female_Ratio_Pct": 4.6,
+      "Interdisciplinary_Curriculum_Index": 21.4,
+      "Industry_Internship_Rate_Pct": 32.1
+    },
+    {
+      "Year": 2020,
+      "Academic_Field": "Mechanical_Electrical_Engineering",
+      "Female_Enrollment_Rate_Pct": 9.8,
+      "Faculty_Female_Ratio_Pct": 5.3,
+      "Interdisciplinary_Curriculum_Index": 25.1,
+      "Industry_Internship_Rate_Pct": 35.8
+    },
+    {
+      "Year": 2022,
+      "Academic_Field": "Mechanical_Electrical_Engineering",
+      "Female_Enrollment_Rate_Pct": 10.6,
+      "Faculty_Female_Ratio_Pct": 6.2,
+      "Interdisciplinary_Curriculum_Index": 29.8,
+      "Industry_Internship_Rate_Pct": 40.2
+    },
+    {
+      "Year": 2024,
+      "Academic_Field": "Mechanical_Electrical_Engineering",
+      "Female_Enrollment_Rate_Pct": 11.4,
+      "Faculty_Female_Ratio_Pct": 7.1,
+      "Interdisciplinary_Curriculum_Index": 35.4,
+      "Industry_Internship_Rate_Pct": 44.9
     }
   ],
-  "observation_unit": "調査年度別の時系列データ系列（2014〜2023年度の計10系列）",
-  "sample_population_note": "全国の国公私立大学（約800大学、在学者約300万人、入学者約60万人）を対象とした学校基本調査（文部科学省基幹統計・全数調査）",
-  "sample_population_size": "約60万人/年（全国大学学部入学者全数）",
-  "title_ja": "【学校基本調査】情報科学・工学系学科入学者数と女子比率の推移",
+  "observation_unit": "Academic discipline panel data across national, public, and private universities in Japan",
+  "sample_population_note": "Annual School Basic Survey census covering all 800+ universities in Japan",
+  "sample_population_size": "Complete census of Japanese university admissions",
+  "title_ja": "【学校基本調査】大学情報系・理工系学部における女性比率・教員構成・学際カリキュラムの多変量分析",
   "research_angles": [
     {
-      "id": "female_stem_parity",
-      "title": "Gender Parity Trajectories in Collegiate Computing and Engineering Admissions in Japan",
+      "id": "stem_gender_catalyst_paradox",
+      "title": "Institutional Role Models vs Curricular Flexibility: What Really Drives Female Participation in Japanese Collegiate Informatics?",
       "focus_metrics": [
-        "Female_Percentage",
-        "Total_Admissions",
-        "Female_Admissions"
+        "Female_Enrollment_Rate_Pct",
+        "Faculty_Female_Ratio_Pct",
+        "Interdisciplinary_Curriculum_Index",
+        "Industry_Internship_Rate_Pct"
       ],
       "research_questions": [
-        "To what extent has female enrollment in Japanese collegiate computer science programs shifted over the last decade?",
-        "Do computer science faculties exhibit distinct gender integration patterns relative to traditional engineering disciplines?"
+        "Does female faculty representation or interdisciplinary curriculum design more strongly predict female student enrollment in computing?",
+        "Are traditional engineering disciplines stalling in gender parity compared to informatics?"
       ],
       "hypotheses": [
-        "Female representation in computer science demonstrates a statistically significant positive trend.",
-        "Overall female STEM enrollment remains below OECD benchmark parity levels."
+        "Faculty female ratio demonstrates a statistically significant positive predictive relationship with female student enrollment rate.",
+        "Interdisciplinary curriculum index exhibits strong independent explanatory power (VIF < 2.0), showing that broadening computing beyond narrow hardware engineering attracts diverse talent."
       ],
-      "theoretical_framework": "Social Cognitive Career Theory & Science Capital (Archer et al., 2015)"
+      "theoretical_framework": "Social Cognitive Career Theory (Lent, Brown & Hackett) and Gender Schema Theory"
     }
   ]
 }

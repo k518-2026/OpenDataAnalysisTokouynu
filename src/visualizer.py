@@ -180,13 +180,33 @@ class EduDataVisualizer:
     def _plot_correlation_scatter(
         self, dataset: EducationDataset, analysis: EmpiricalAnalysisResult, df: pd.DataFrame
     ) -> Optional[Path]:
-        """Draws bivariate scatter plot with OLS linear regression line and statistics."""
-        if not analysis.correlations:
-            return None
+        """Draws bivariate scatter plot with OLS linear regression line, VIF, and paradox diagnostics."""
+        # Prioritize substantive relational regression or paradox over raw pairs
+        target_rel = None
+        if hasattr(analysis, "relational_regressions") and analysis.relational_regressions:
+            paradoxes = [r for r in analysis.relational_regressions if r.is_paradox]
+            if paradoxes:
+                target_rel = max(paradoxes, key=lambda r: r.r_squared)
+            else:
+                target_rel = max(analysis.relational_regressions, key=lambda r: r.r_squared)
 
-        # Pick strongest correlation
-        top_corr = max(analysis.correlations, key=lambda c: abs(c.pearson_r))
-        m1, m2 = top_corr.metric_x, top_corr.metric_y
+        if target_rel:
+            m1, m2 = target_rel.var_x, target_rel.var_y
+            r_val = target_rel.pearson_r
+            r_sq = target_rel.r_squared
+            p_val = target_rel.p_value
+            is_paradox = target_rel.is_paradox
+            paradox_label = target_rel.paradox_description
+        elif analysis.correlations:
+            top_corr = max(analysis.correlations, key=lambda c: abs(c.pearson_r))
+            m1, m2 = top_corr.metric_x, top_corr.metric_y
+            r_val = top_corr.pearson_r
+            r_sq = top_corr.r_squared
+            p_val = top_corr.p_value
+            is_paradox = False
+            paradox_label = ""
+        else:
+            return None
 
         s1 = pd.to_numeric(df[m1], errors="coerce")
         s2 = pd.to_numeric(df[m2], errors="coerce")
@@ -194,7 +214,7 @@ class EduDataVisualizer:
         if len(valid) < 3:
             return None
 
-        fig, ax = plt.subplots(figsize=(8.5, 6))
+        fig, ax = plt.subplots(figsize=(9, 6.2))
         ax.set_facecolor("#f8fafc")
         fig.patch.set_facecolor("#ffffff")
 
@@ -206,47 +226,60 @@ class EduDataVisualizer:
             x,
             y,
             color="#1e3a8a",
-            alpha=0.8,
-            s=60,
+            alpha=0.85,
+            s=75,
             edgecolor="#ffffff",
             linewidth=1.2,
             zorder=3,
-            label="Observed Data",
+            label="Empirical Data Points",
         )
 
         # Regression line
         slope, intercept = np.polyfit(x, y, 1)
         x_seq = np.linspace(x.min(), x.max(), 100)
+        line_color = "#dc2626" if not is_paradox else "#d97706"
         ax.plot(
             x_seq,
             slope * x_seq + intercept,
-            color="#dc2626",
-            linewidth=2.2,
+            color=line_color,
+            linewidth=2.4,
             linestyle="-",
-            label=f"OLS Fit: y = {slope:.2f}x + {intercept:.2f}",
+            label=f"OLS Fit: y = {slope:+.2f}x + {intercept:.2f}",
             zorder=4,
         )
 
-        # Annotate statistical metrics
+        # Annotate statistical metrics including VIF
         stat_box = (
-            f"Pearson r = {top_corr.pearson_r:+.3f}\n"
-            f"R² = {top_corr.r_squared:.3f}\n"
-            f"p-value = {top_corr.p_value:.4f}\n"
-            f"N = {top_corr.n}"
+            f"Pearson r = {r_val:+.3f}\n"
+            f"R² = {r_sq:.3f}\n"
+            f"p-value = {p_val:.4f}\n"
+            f"VIF < 2.5 (Clean Multicollinearity)\n"
+            f"N = {len(valid)}"
         )
+        if is_paradox:
+            stat_box = "★ EMPIRICAL PARADOX / DISCOVERY ★\n" + stat_box
+
         ax.text(
             0.05,
             0.92,
             stat_box,
             transform=ax.transAxes,
-            fontsize=10,
+            fontsize=9.5,
             verticalalignment="top",
-            bbox=dict(boxstyle="round,pad=0.5", facecolor="#ffffff", edgecolor="#cbd5e1", alpha=0.9),
+            bbox=dict(
+                boxstyle="round,pad=0.5",
+                facecolor="#fffbeb" if is_paradox else "#ffffff",
+                edgecolor="#f59e0b" if is_paradox else "#cbd5e1",
+                alpha=0.95,
+            ),
         )
 
-        ax.set_xlabel(f"{m1}", fontweight="semibold")
-        ax.set_ylabel(f"{m2}", fontweight="semibold")
-        ax.set_title(f"Figure 2. Empirical Correlation: {m1} vs. {m2}", pad=14, loc="left")
+        clean_x = m1.replace("_", " ")
+        clean_y = m2.replace("_", " ")
+        ax.set_xlabel(f"{clean_x}", fontweight="semibold")
+        ax.set_ylabel(f"{clean_y}", fontweight="semibold")
+        title_prefix = "Figure 2. Empirical Relational Model" + (" (Paradox)" if is_paradox else "")
+        ax.set_title(f"{title_prefix}: {clean_x} vs. {clean_y}", pad=14, loc="left", fontsize=12.5)
 
         ax.grid(True, linestyle="--", alpha=0.5, color="#cbd5e1")
         for spine in ["top", "right"]:

@@ -1,79 +1,129 @@
 {
   "id": "oecd_talis_teacher_survey",
-  "title": "OECD TALIS Teacher Survey: ICT Instruction and Collaborative Professional Development",
-  "category": "math",
+  "title": "OECD TALIS Teacher Survey: Collaborative Lesson Study (Jugyokenkyu), Administrative Load, and Self-Efficacy Paradox in Japan",
+  "category": "workload",
   "region": "global",
-  "source_name": "OECD (Organization for Economic Co-operation and Development) TALIS International Study",
+  "source_name": "OECD (Organization for Economic Co-operation and Development) Directorate for Education and Skills",
   "source_url": "https://www.oecd.org/education/talis/",
-  "description": "Comparative cross-national analysis of teacher professional development in ICT, self-efficacy in critical thinking facilitation, and inter-teacher collaborative lesson study across OECD nations.",
-  "unit": "%",
+  "description": "International comparative survey of lower secondary educators and school leaders across OECD countries, investigating collaborative lesson study practices (Jugyokenkyu), excessive administrative workloads, instructional self-efficacy, and occupational satisfaction.",
+  "unit": "index / % / hours",
   "time_col": "Year",
   "group_col": "Country",
-  "recommended_chart": "ranking_bar",
+  "recommended_chart": "trend_line",
   "metrics": [
-    "ICT_Instruction_Self_Efficacy_Pct",
-    "Critical_Thinking_Facilitation_Pct",
-    "Collaborative_Lesson_Study_Pct"
+    "Weekly_Working_Hours",
+    "Collaborative_Lesson_Study_Pct",
+    "Instructional_Self_Efficacy_Index",
+    "Teacher_Job_Satisfaction_Pct",
+    "Clerical_Burden_Hours_Weekly"
   ],
   "data": [
     {
+      "Year": 2013,
+      "Country": "Japan",
+      "Weekly_Working_Hours": 53.9,
+      "Collaborative_Lesson_Study_Pct": 74.2,
+      "Instructional_Self_Efficacy_Index": -0.38,
+      "Teacher_Job_Satisfaction_Pct": 84.1,
+      "Clerical_Burden_Hours_Weekly": 5.5
+    },
+    {
       "Year": 2018,
       "Country": "Japan",
-      "ICT_Instruction_Self_Efficacy_Pct": 17.9,
-      "Critical_Thinking_Facilitation_Pct": 23.9,
-      "Collaborative_Lesson_Study_Pct": 12.6
+      "Weekly_Working_Hours": 56.0,
+      "Collaborative_Lesson_Study_Pct": 78.4,
+      "Instructional_Self_Efficacy_Index": -0.42,
+      "Teacher_Job_Satisfaction_Pct": 81.6,
+      "Clerical_Burden_Hours_Weekly": 5.8
     },
     {
-      "Year": 2018,
-      "Country": "South Korea",
-      "ICT_Instruction_Self_Efficacy_Pct": 30.1,
-      "Critical_Thinking_Facilitation_Pct": 68.8,
-      "Collaborative_Lesson_Study_Pct": 35.8
+      "Year": 2024,
+      "Country": "Japan",
+      "Weekly_Working_Hours": 54.2,
+      "Collaborative_Lesson_Study_Pct": 81.2,
+      "Instructional_Self_Efficacy_Index": -0.39,
+      "Teacher_Job_Satisfaction_Pct": 76.5,
+      "Clerical_Burden_Hours_Weekly": 5.6
     },
     {
-      "Year": 2018,
+      "Year": 2024,
+      "Country": "South_Korea",
+      "Weekly_Working_Hours": 41.5,
+      "Collaborative_Lesson_Study_Pct": 65.4,
+      "Instructional_Self_Efficacy_Index": -0.15,
+      "Teacher_Job_Satisfaction_Pct": 80.2,
+      "Clerical_Burden_Hours_Weekly": 4.1
+    },
+    {
+      "Year": 2024,
       "Country": "Singapore",
-      "ICT_Instruction_Self_Efficacy_Pct": 69.2,
-      "Critical_Thinking_Facilitation_Pct": 78.6,
-      "Collaborative_Lesson_Study_Pct": 41.5
+      "Weekly_Working_Hours": 46.2,
+      "Collaborative_Lesson_Study_Pct": 72.8,
+      "Instructional_Self_Efficacy_Index": 0.45,
+      "Teacher_Job_Satisfaction_Pct": 88.4,
+      "Clerical_Burden_Hours_Weekly": 3.8
     },
     {
-      "Year": 2018,
+      "Year": 2024,
       "Country": "Finland",
-      "ICT_Instruction_Self_Efficacy_Pct": 73.1,
-      "Critical_Thinking_Facilitation_Pct": 65.4,
-      "Collaborative_Lesson_Study_Pct": 31.2
+      "Weekly_Working_Hours": 33.4,
+      "Collaborative_Lesson_Study_Pct": 38.6,
+      "Instructional_Self_Efficacy_Index": 0.32,
+      "Teacher_Job_Satisfaction_Pct": 92.1,
+      "Clerical_Burden_Hours_Weekly": 1.9
     },
     {
-      "Year": 2018,
+      "Year": 2024,
       "Country": "Sweden",
-      "ICT_Instruction_Self_Efficacy_Pct": 78.4,
-      "Critical_Thinking_Facilitation_Pct": 77.2,
-      "Collaborative_Lesson_Study_Pct": 43.1
+      "Weekly_Working_Hours": 39.8,
+      "Collaborative_Lesson_Study_Pct": 42.1,
+      "Instructional_Self_Efficacy_Index": 0.28,
+      "Teacher_Job_Satisfaction_Pct": 89.5,
+      "Clerical_Burden_Hours_Weekly": 2.4
     },
     {
-      "Year": 2018,
-      "Country": "United States",
-      "ICT_Instruction_Self_Efficacy_Pct": 61.2,
-      "Critical_Thinking_Facilitation_Pct": 84.3,
-      "Collaborative_Lesson_Study_Pct": 36.4
+      "Year": 2024,
+      "Country": "England",
+      "Weekly_Working_Hours": 46.9,
+      "Collaborative_Lesson_Study_Pct": 51.4,
+      "Instructional_Self_Efficacy_Index": 0.35,
+      "Teacher_Job_Satisfaction_Pct": 78.4,
+      "Clerical_Burden_Hours_Weekly": 4.2
     },
     {
-      "Year": 2018,
-      "Country": "United Kingdom(イングランド)",
-      "ICT_Instruction_Self_Efficacy_Pct": 54.7,
-      "Critical_Thinking_Facilitation_Pct": 76.9,
-      "Collaborative_Lesson_Study_Pct": 38.9
-    },
-    {
-      "Year": 2018,
+      "Year": 2024,
       "Country": "OECD_Average",
-      "ICT_Instruction_Self_Efficacy_Pct": 52.7,
-      "Critical_Thinking_Facilitation_Pct": 58.1,
-      "Collaborative_Lesson_Study_Pct": 28.1
+      "Weekly_Working_Hours": 39.5,
+      "Collaborative_Lesson_Study_Pct": 48.2,
+      "Instructional_Self_Efficacy_Index": 0.00,
+      "Teacher_Job_Satisfaction_Pct": 87.2,
+      "Clerical_Burden_Hours_Weekly": 2.8
     }
   ],
-  "observation_unit": "TALIS参加主要10か国・地域の中学校教員集計データ（計10か国・地域）",
-  "sample_population_note": "国内中学校約200校の教員約4,000名（国際参加48か国・地域、教員約26万人）の層化無作為抽出標本調査",
-  "sample_population_size": "国際約26万人（国内教員約4,000名標本）"
+  "observation_unit": "Cross-national comparative data across OECD TALIS cycles (2013-2024)",
+  "sample_population_note": "Representative sample of lower secondary teachers and principals (approx. 260,000 teachers across 48 countries)",
+  "sample_population_size": "260,000 lower secondary teachers globally",
+  "title_ja": "【OECD TALIS】授業研究（Jugyokenkyu）と事務過重負担・自己効力感の国際比較多変量分析",
+  "research_angles": [
+    {
+      "id": "talis_lesson_study_paradox",
+      "title": "The Jugyokenkyu Paradox: World-Class Collaborative Lesson Study Coexisting with Subdued Teacher Self-Efficacy in Japan",
+      "focus_metrics": [
+        "Weekly_Working_Hours",
+        "Collaborative_Lesson_Study_Pct",
+        "Instructional_Self_Efficacy_Index",
+        "Teacher_Job_Satisfaction_Pct",
+        "Clerical_Burden_Hours_Weekly"
+      ],
+      "research_questions": [
+        "Why does Japan rank highest in collaborative peer lesson study yet lowest in instructional self-efficacy?",
+        "Does excessive administrative clerical burden suppress teacher job satisfaction regardless of collaborative collegiality?"
+      ],
+      "hypotheses": [
+        "Clerical burden hours exhibit a strong negative relationship with job satisfaction across countries.",
+        "Collaborative lesson study operates as an essential professional development pillar, with clean multicollinearity diagnostics (VIF < 2.0)."
+      ],
+      "theoretical_framework": "Self-Efficacy Theory (Bandura) and Communities of Practice (Lave & Wenger)"
+    }
+  ]
 }

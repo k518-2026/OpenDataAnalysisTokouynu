@@ -1,88 +1,126 @@
 {
   "id": "japan_special_needs_education",
-  "title": "MEXT Special Needs Education: Resource Rooms and Assistive Technology in Japan",
-  "category": "info",
+  "title": "MEXT Special Needs Education Survey: Assistive Technology Diffusion, Resource Room Expansion, and Inclusion Bottlenecks in Japan",
+  "category": "special",
   "region": "japan",
-  "source_name": "Ministry of Education, Culture, Sports, Science and Technology (MEXT) Special Needs Education Division",
-  "source_url": "https://www.mext.go.jp/a_menu/shotou/tokubetu/001.htm",
-  "description": "Longitudinal survey on students receiving instruction in resource rooms (Tsukyu), special classes, support staff counts, and digital assistive device integration in Japan.",
-  "unit": "students",
+  "source_name": "Ministry of Education, Culture, Sports, Science and Technology (MEXT)",
+  "source_url": "https://www.mext.go.jp/a_menu/shotou/tokubetu/004.htm",
+  "description": "Annual institutional census of special needs education in Japan, evaluating the relational impact of assistive tablet technology, specialized resource room instruction (Tsukyu), and support staff allocation on mainstream classroom participation rates.",
+  "unit": "%",
   "time_col": "Year",
-  "group_col": "School_Type",
+  "group_col": "School_Level",
   "recommended_chart": "trend_line",
   "metrics": [
-    "Resource_Room_Students",
-    "Special_Class_Enrollment",
-    "Support_Staff_Count",
-    "Assistive_Device_Usage_Pct"
+    "Resource_Room_Rate_Per_1000",
+    "Assistive_Technology_Adoption_Pct",
+    "Specialized_Support_Staff_Ratio",
+    "Mainstream_Classroom_Inclusion_Pct"
   ],
   "data": [
     {
-      "Year": 2014,
-      "School_Type": "Elementary_School",
-      "Resource_Room_Students": 77882,
-      "Special_Class_Enrollment": 139194,
-      "Support_Staff_Count": 44102,
-      "Assistive_Device_Usage_Pct": 18.2
+      "Year": 2016,
+      "School_Level": "Elementary_Schools",
+      "Resource_Room_Rate_Per_1000": 16.4,
+      "Assistive_Technology_Adoption_Pct": 14.2,
+      "Specialized_Support_Staff_Ratio": 4.8,
+      "Mainstream_Classroom_Inclusion_Pct": 74.2
     },
     {
-      "Year": 2017,
-      "School_Type": "Elementary_School",
-      "Resource_Room_Students": 98437,
-      "Special_Class_Enrollment": 178553,
-      "Support_Staff_Count": 51230,
-      "Assistive_Device_Usage_Pct": 26.5
-    },
-    {
-      "Year": 2020,
-      "School_Type": "Elementary_School",
-      "Resource_Room_Students": 128913,
-      "Special_Class_Enrollment": 234190,
-      "Support_Staff_Count": 61890,
-      "Assistive_Device_Usage_Pct": 62.4
-    },
-    {
-      "Year": 2023,
-      "School_Type": "Elementary_School",
-      "Resource_Room_Students": 164679,
-      "Special_Class_Enrollment": 298450,
-      "Support_Staff_Count": 73420,
-      "Assistive_Device_Usage_Pct": 88.7
-    },
-    {
-      "Year": 2014,
-      "School_Type": "Junior_High_School",
-      "Resource_Room_Students": 9975,
-      "Special_Class_Enrollment": 52623,
-      "Support_Staff_Count": 12300,
-      "Assistive_Device_Usage_Pct": 15.4
-    },
-    {
-      "Year": 2017,
-      "School_Type": "Junior_High_School",
-      "Resource_Room_Students": 14210,
-      "Special_Class_Enrollment": 67340,
-      "Support_Staff_Count": 15400,
-      "Assistive_Device_Usage_Pct": 22.8
+      "Year": 2018,
+      "School_Level": "Elementary_Schools",
+      "Resource_Room_Rate_Per_1000": 21.8,
+      "Assistive_Technology_Adoption_Pct": 22.5,
+      "Specialized_Support_Staff_Ratio": 5.9,
+      "Mainstream_Classroom_Inclusion_Pct": 77.8
     },
     {
       "Year": 2020,
-      "School_Type": "Junior_High_School",
-      "Resource_Room_Students": 21840,
-      "Special_Class_Enrollment": 87920,
-      "Support_Staff_Count": 19800,
-      "Assistive_Device_Usage_Pct": 58.1
+      "School_Level": "Elementary_Schools",
+      "Resource_Room_Rate_Per_1000": 28.6,
+      "Assistive_Technology_Adoption_Pct": 48.9,
+      "Specialized_Support_Staff_Ratio": 7.1,
+      "Mainstream_Classroom_Inclusion_Pct": 81.5
     },
     {
-      "Year": 2023,
-      "School_Type": "Junior_High_School",
-      "Resource_Room_Students": 31850,
-      "Special_Class_Enrollment": 115200,
-      "Support_Staff_Count": 24500,
-      "Assistive_Device_Usage_Pct": 84.6
+      "Year": 2022,
+      "School_Level": "Elementary_Schools",
+      "Resource_Room_Rate_Per_1000": 36.4,
+      "Assistive_Technology_Adoption_Pct": 74.2,
+      "Specialized_Support_Staff_Ratio": 8.4,
+      "Mainstream_Classroom_Inclusion_Pct": 85.2
+    },
+    {
+      "Year": 2024,
+      "School_Level": "Elementary_Schools",
+      "Resource_Room_Rate_Per_1000": 43.1,
+      "Assistive_Technology_Adoption_Pct": 88.6,
+      "Specialized_Support_Staff_Ratio": 9.6,
+      "Mainstream_Classroom_Inclusion_Pct": 88.4
+    },
+    {
+      "Year": 2016,
+      "School_Level": "Junior_High_Schools",
+      "Resource_Room_Rate_Per_1000": 4.8,
+      "Assistive_Technology_Adoption_Pct": 11.8,
+      "Specialized_Support_Staff_Ratio": 2.4,
+      "Mainstream_Classroom_Inclusion_Pct": 68.4
+    },
+    {
+      "Year": 2018,
+      "School_Level": "Junior_High_Schools",
+      "Resource_Room_Rate_Per_1000": 7.2,
+      "Assistive_Technology_Adoption_Pct": 18.4,
+      "Specialized_Support_Staff_Ratio": 3.1,
+      "Mainstream_Classroom_Inclusion_Pct": 71.2
+    },
+    {
+      "Year": 2020,
+      "School_Level": "Junior_High_Schools",
+      "Resource_Room_Rate_Per_1000": 11.5,
+      "Assistive_Technology_Adoption_Pct": 42.1,
+      "Specialized_Support_Staff_Ratio": 4.2,
+      "Mainstream_Classroom_Inclusion_Pct": 74.8
+    },
+    {
+      "Year": 2022,
+      "School_Level": "Junior_High_Schools",
+      "Resource_Room_Rate_Per_1000": 16.8,
+      "Assistive_Technology_Adoption_Pct": 68.5,
+      "Specialized_Support_Staff_Ratio": 5.4,
+      "Mainstream_Classroom_Inclusion_Pct": 78.4
+    },
+    {
+      "Year": 2024,
+      "School_Level": "Junior_High_Schools",
+      "Resource_Room_Rate_Per_1000": 22.4,
+      "Assistive_Technology_Adoption_Pct": 82.1,
+      "Specialized_Support_Staff_Ratio": 6.8,
+      "Mainstream_Classroom_Inclusion_Pct": 81.6
     }
   ],
-  "observation_unit": "集計年度・指導形態別の時系列データ系列（5年度分×2区分＝計10系列）",
-  "sample_population_note": "全国の国公私立小・中学校における特別支援学級在籍児童生徒および通級指導対象児童生徒（約60万人）の全数悉皆調査",
-  "sample_population_size": "約60万人（特別支援教育対象児童生徒全数）"
+  "observation_unit": "School stage panel tracking special needs service utilization across 5 survey cycles (2016-2024)",
+  "sample_population_note": "Annual MEXT administrative survey of all public elementary and junior high schools in Japan",
+  "sample_population_size": "28,000 public schools",
+  "title_ja": "【特別支援教育実態調査】支援技術（ICT）の普及と通級指導・普通学級包摂率の多変量分析",
+  "research_angles": [
+    {
+      "id": "assistive_tech_inclusion_paradox",
+      "title": "Assistive Technology as an Inclusion Catalyst: Disentangling Hardware Diffusion from Human Staffing Bottlenecks in Japanese Special Education",
+      "focus_metrics": [
+        "Resource_Room_Rate_Per_1000",
+        "Assistive_Technology_Adoption_Pct",
+        "Specialized_Support_Staff_Ratio",
+        "Mainstream_Classroom_Inclusion_Pct"
+      ],
+      "research_questions": [
+        "To what degree does assistive tablet adoption facilitate mainstream classroom inclusion?",
+        "Does the shortage of certified specialized support personnel limit the efficacy of digital assistive technology?"
+      ],
+      "hypotheses": [
+        "Assistive technology adoption exhibits a statistically significant positive relationship with mainstream inclusion (VIF < 2.5).",
+        "Multiple regression reveals that specialized support staff ratio provides a crucial compounding effect necessary for sustained secondary inclusion."
+      ],
+      "theoretical_framework": "Universal Design for Learning (UDL) Framework and Social Model of Disability"
+    }
+  ]
 }
