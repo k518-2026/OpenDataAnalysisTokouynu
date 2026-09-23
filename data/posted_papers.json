@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-09-23",
+    "title": "The Jugyokenkyu Paradox: World-Class Collaborative Lesson Study Coexisting with Subdued Teacher Self-Efficacy in Japan: A Longitudinal Empirical Investigation of Japanese Public Open Data",
+    "dataset_id": "oecd_talis_teacher_survey",
+    "angle_id": "talis_lesson_study_paradox",
+    "wp_url": "https://seda68.wordpress.com/?p=latest",
+    "pdf_filename": "oecd_talis_teacher_survey_talis_lesson_study_paradox_paper.pdf",
+    "timestamp": "2026-09-23T13:43:46.447437"
+  },
+  {
+    "date": "2026-09-23",
     "title": "Gender Parity Trajectories in Collegiate Computing and Engineering Admissions in Japan: A Longitudinal Empirical Investigation of Japanese Public Open Data",
     "dataset_id": "japan_stem_cs_enrollment",
     "angle_id": "female_stem_parity",
