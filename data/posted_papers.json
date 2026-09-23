@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-09-23",
+    "title": "The GIGA Pedagogical Gap Paradox: Hardware Saturation vs Inquiry-Based Lesson Integration: A Longitudinal Empirical Investigation of Japanese Public Open Data",
+    "dataset_id": "japan_mext_ict_informatization",
+    "angle_id": "giga_pedagogical_gap_paradox",
+    "wp_url": "https://seda68.wordpress.com/?p=latest",
+    "pdf_filename": "japan_mext_ict_informatization_giga_pedagogical_gap_paradox_paper.pdf",
+    "timestamp": "2026-09-23T23:03:12.379896"
+  },
+  {
+    "date": "2026-09-23",
     "title": "The Cognitive Elite vs Affective Burnout Paradox: Why Japanese Math Excellence Decouples from Student Self-Efficacy: A Longitudinal Empirical Investigation of Japanese Public Open Data",
     "dataset_id": "japan_timss_math_science",
     "angle_id": "timss_affective_collapse_paradox",
