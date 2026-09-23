@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-09-23",
+    "title": "Empirical Statistical Analysis of MEXT Special Needs Education: Resource Rooms and Assistive Technology in Japan: A Longitudinal Empirical Investigation of Japanese Public Open Data",
+    "dataset_id": "japan_special_needs_education",
+    "angle_id": "general_empirical_analysis",
+    "wp_url": "https://seda68.wordpress.com/?p=latest",
+    "pdf_filename": "japan_special_needs_education_general_empirical_analysis_paper.pdf",
+    "timestamp": "2026-09-23T12:58:45.368392"
+  },
+  {
+    "date": "2026-09-23",
     "title": "Empirical Statistical Analysis of OECD TALIS Teacher Survey: ICT Instruction and Collaborative Professional Development: A Longitudinal Empirical Investigation of Japanese Public Open Data",
     "dataset_id": "oecd_talis_teacher_survey",
     "angle_id": "general_empirical_analysis",
