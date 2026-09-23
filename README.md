@@ -124,6 +124,13 @@ In your GitHub repository, navigate to **Settings** -> **Secrets and variables**
 
 *(Note: If `GEMINI_API_KEY` is omitted, the system seamlessly uses the built-in deterministic academic template engine with zero quota cost).*
 
+### Step 4: Verify WordPress Email Posting (Immediate Test)
+To verify your SMTP credentials and WordPress Post by Email configuration in seconds without running full data analysis:
+1. Go to repository **Actions** tab.
+2. Select **"Test WordPress Email Posting (Connectivity Verification)"** on the left.
+3. Click **"Run workflow"** -> **"Run workflow"**.
+4. Check the workflow logs: it will output live SMTP connection, authentication, and transmission logs, and publish a test article to your WordPress blog.
+
 ---
 
 ## 💻 Local CLI Execution
@@ -131,6 +138,11 @@ In your GitHub repository, navigate to **Settings** -> **Secrets and variables**
 Run simulation (dry-run):
 ```bash
 python -m src.main --dry-run
+```
+
+Run standalone email test locally:
+```bash
+python tools/test_wp_post.py
 ```
 
 Run specific dataset and angle:

@@ -119,16 +119,41 @@ class WordPressMailPublisher(BasePublisher):
                 pdf_att.add_header("Content-Disposition", "attachment", filename=pdf_path.name)
                 msg.attach(pdf_att)
 
+        def _mask(s: str) -> str:
+            if not s or len(s) <= 4:
+                return "****"
+            return s[:2] + "*" * (len(s) - 4) + s[-2:]
+
         try:
             logger.info(f"Connecting to SMTP server {Config.SMTP_HOST}:{Config.SMTP_PORT}...")
             server = smtplib.SMTP(Config.SMTP_HOST, Config.SMTP_PORT, timeout=30)
+            server.set_debuglevel(1)
             server.ehlo()
             server.starttls()
+            server.ehlo()
+
+            logger.info(f"Authenticating as '{_mask(Config.SMTP_USER)}'...")
             server.login(Config.SMTP_USER, Config.SMTP_PASS)
-            server.sendmail(Config.SMTP_USER, [Config.WP_POST_EMAIL], msg.as_string())
+            logger.info("✅ SMTP Authentication successful.")
+
+            logger.info(f"Transmitting paper email to WordPress ({_mask(Config.WP_POST_EMAIL)})...")
+            send_errors = server.sendmail(Config.SMTP_USER, [Config.WP_POST_EMAIL], msg.as_string())
             server.quit()
-            logger.info(f"Successfully posted paper to {target_site} via email ({Config.WP_POST_EMAIL}).")
+
+            if send_errors:
+                logger.warning(f"⚠️ SMTP server reported warnings on recipient: {send_errors}")
+
+            logger.info("================================================================")
+            logger.info(f"🎉 Successfully dispatched paper email to WordPress!")
+            logger.info(f"👉 Target Site: {target_site}")
+            logger.info(f"👉 Target Email: {_mask(Config.WP_POST_EMAIL)}")
+            logger.info("================================================================")
             return f"{target_site}/?p=latest"
+
+        except smtplib.SMTPAuthenticationError as e:
+            logger.error(f"❌ SMTP Authentication Error (535): {e}")
+            logger.error("👉 Please ensure you are using a 16-character Google 'App Password', NOT your regular Gmail password.")
+            return None
         except Exception as e:
-            logger.error(f"Failed to publish via SMTP email: {e}")
+            logger.error(f"❌ Failed to publish via SMTP email: {e}")
             return None
