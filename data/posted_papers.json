@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-09-23",
+    "title": "Institutional Role Models vs Curricular Flexibility: What Really Drives Female Participation in Japanese Collegiate Informatics?: A Longitudinal Empirical Investigation of Japanese Public Open Data",
+    "dataset_id": "japan_stem_cs_enrollment",
+    "angle_id": "stem_gender_catalyst_paradox",
+    "wp_url": "https://seda68.wordpress.com/?p=latest",
+    "pdf_filename": "japan_stem_cs_enrollment_stem_gender_catalyst_paradox_paper.pdf",
+    "timestamp": "2026-09-23T21:07:09.026730"
+  },
+  {
+    "date": "2026-09-23",
     "title": "The Entrance Exam Washback Paradox: How High-Stakes Testing Standardized Python Adoption While Suppressing Creative Software Engineering: A Longitudinal Empirical Investigation of Japanese Public Open Data",
     "dataset_id": "japan_high_school_informatics",
     "angle_id": "entrance_exam_washback_paradox",
