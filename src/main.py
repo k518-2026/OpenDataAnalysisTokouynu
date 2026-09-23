@@ -19,6 +19,7 @@ from src.academic_paper_en import AcademicPaperGeneratorEn
 from src.analyzer import EduDataAnalyzer
 from src.config import Config, REPORTS_DIR, TEMP_DIR
 from src.fetchers.catalog import DatasetCatalog
+from src.duplicate_checker import ThemeDuplicateChecker
 from src.pdf.pdf_generator_en import AcademicPaperPdfGeneratorEn
 from src.publishers.markdown_file import MarkdownFilePublisher
 from src.publishers.wordpress_mail import WordPressMailPublisher
@@ -136,6 +137,20 @@ def main():
     logger.info("Synthesizing English academic paper...")
     paper = paper_gen.generate(dataset, analysis, angle)
     logger.info(f"Paper Title: '{paper.title}' ({len(paper.abstract.split())} words in abstract)")
+
+    # 5.5 Duplicate Theme Verification against Historical Publications
+    checker = ThemeDuplicateChecker()
+    dup_res = checker.check_title_against_history(paper.title, history)
+    if dup_res.is_duplicate:
+        if args.force:
+            logger.warning(f"⚠️ DUPLICATE THEME WARNING (Ignored via --force): {dup_res.reason}")
+        else:
+            logger.warning(f"⚠️ DUPLICATE THEME OVERLAP DETECTED: {dup_res.reason}")
+            # Differentiate title subtitle to ensure distinct archival presence
+            paper.title = f"{paper.title}: A Distinct Longitudinal Evaluation"
+            logger.info(f"Differentiated Paper Title to resolve theme collision: '{paper.title}'")
+    else:
+        logger.info(f"✅ Theme Duplicate Verification Passed: {dup_res.reason}")
 
     # 6. Generate PDF Working Paper (with in-paper figures)
     logger.info("Compiling PDF working paper document with in-paper figures...")

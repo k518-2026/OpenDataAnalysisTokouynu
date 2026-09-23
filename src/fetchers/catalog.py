@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from src.config import CATALOG_DIR
+from src.duplicate_checker import ThemeDuplicateChecker
 from src.fetchers.base import DatasetResearchAngle, EducationDataset
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ class DatasetCatalog:
     def __init__(self, catalog_dir: Optional[Path] = None):
         self.catalog_dir = catalog_dir or CATALOG_DIR
         self._datasets: Dict[str, EducationDataset] = {}
+        self.duplicate_checker = ThemeDuplicateChecker()
         self.load_all()
 
     def load_all(self) -> None:
@@ -84,8 +86,9 @@ class DatasetCatalog:
         target_topic: str = "all",
     ) -> Tuple[Optional[EducationDataset], Optional[DatasetResearchAngle]]:
         """
-        Selects the next dataset and research angle based on posting history rotation.
-        Ensures a fresh, non-duplicate academic paper topic every single day.
+        Selects the next dataset and research angle with strict duplicate prevention.
+        Prioritizes never-posted datasets, enforces dataset cooldown, maintains category diversity,
+        and avoids thematic overlap with all historical publications.
         """
         # If explicitly specified by user:
         if target_dataset_id:
@@ -93,31 +96,32 @@ class DatasetCatalog:
             if not ds:
                 logger.warning(f"Target dataset '{target_dataset_id}' not found.")
                 return None, None
+
             if target_angle_id:
                 for angle in ds.research_angles:
                     if angle.id == target_angle_id:
                         return ds, angle
+
+            # If no angle specified, find an unposted angle for this dataset
+            posted_angle_ids = {
+                item.get("angle_id") for item in posted_history if item.get("dataset_id") == ds.id
+            }
+            unposted_angles = [a for a in ds.research_angles if a.id not in posted_angle_ids]
+            if unposted_angles:
+                return ds, unposted_angles[0]
+
             # Return first angle or None
             angle = ds.research_angles[0] if ds.research_angles else None
             return ds, angle
 
-        # Filter by topic if requested
+        # Build list of all candidate (dataset, angle) pairs
         candidates = list(self._datasets.values())
-        if target_topic and target_topic != "all":
-            candidates = [d for d in candidates if d.category == target_topic]
-
-        if not candidates:
-            logger.warning(f"No datasets match topic filter: {target_topic}")
-            candidates = list(self._datasets.values())
-
-        # Build list of all available (dataset, angle) pairs
         all_pairs: List[Tuple[EducationDataset, DatasetResearchAngle]] = []
         for ds in candidates:
             if ds.research_angles:
                 for angle in ds.research_angles:
                     all_pairs.append((ds, angle))
             else:
-                # Fallback pseudo-angle
                 pseudo_angle = DatasetResearchAngle(
                     id="general_empirical_analysis",
                     title=f"Empirical Statistical Analysis of {ds.title}",
@@ -128,33 +132,22 @@ class DatasetCatalog:
                 )
                 all_pairs.append((ds, pseudo_angle))
 
-        # Check against history
-        # History entry has {"dataset_id": ..., "angle_id": ..., "date": ...}
-        posted_angle_keys = set()
-        for item in posted_history:
-            d_id = item.get("dataset_id", "")
-            a_id = item.get("angle_id", "")
-            posted_angle_keys.add(f"{d_id}::{a_id}")
+        if not all_pairs:
+            return None, None
 
-        # Find unposted pairs first
-        unposted = [
-            (ds, ang) for ds, ang in all_pairs if f"{ds.id}::{ang.id}" not in posted_angle_keys
-        ]
-        if unposted:
-            logger.info(f"Found {len(unposted)} unposted research angle(s). Selecting first in rotation.")
-            return unposted[0]
-
-        # If all have been posted, cycle back to the least recently posted pair
-        logger.info("All research angles have been posted once. Selecting least recently posted topic.")
-        # Find which pair appeared earliest in posted_history
-        pair_to_last_index = {}
-        for idx, item in enumerate(posted_history):
-            key = f"{item.get('dataset_id')}::{item.get('angle_id')}"
-            pair_to_last_index[key] = idx
-
-        # Sort all pairs by last posted index (oldest index first)
-        sorted_pairs = sorted(
-            all_pairs,
-            key=lambda pair: pair_to_last_index.get(f"{pair[0].id}::{pair[1].id}", -1)
+        # Filter and rank using ThemeDuplicateChecker
+        ranked_candidates = self.duplicate_checker.filter_and_rank_candidates(
+            all_pairs=all_pairs,
+            history=posted_history,
+            target_topic=target_topic,
         )
-        return sorted_pairs[0]
+
+        if ranked_candidates:
+            selected_ds, selected_angle = ranked_candidates[0]
+            logger.info(
+                f"Selected Next Research Topic: '{selected_ds.id}' (Category: {selected_ds.category}) "
+                f"-> Angle: '{selected_angle.id}' ('{selected_angle.title[:50]}...')"
+            )
+            return selected_ds, selected_angle
+
+        return all_pairs[0]
