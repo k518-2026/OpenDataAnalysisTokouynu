@@ -286,8 +286,9 @@ Write a comprehensive, rigorous English academic paper adhering strictly to inte
 1. UNCOVER EMPIRICAL SURPRISES & PARADOXES: Do NOT merely report obvious linear trends or state that time progressed. Focus on the counter-intuitive findings, theoretical paradoxes, and policy trade-offs revealed in the analysis (e.g., decoupling between technology inputs and cognitive scores, crowding out of lesson preparation by administrative burden, institutional vigilance in reporting, affective exhaustion despite high achievement).
 2. RIGOROUS MULTICOLLINEARITY (VIF) CONTROL: Cite the Multivariate OLS Regression model, reporting the coefficients (beta), standard errors (SE), t-statistics, p-values, R^2, and Variance Inflation Factors (VIF). Explicitly state that all predictor VIF values are well below the conservative threshold (< 2.5), ruling out severe multicollinearity and confirming the distinct predictive validity of the variables.
 3. IN-PAPER FIGURE CITATIONS: In Section 4 (Quantitative Results & Empirical Findings), you MUST explicitly cite and discuss:
-   - "Figure 1": Discussing the longitudinal time-series trajectory.
-   - "Figure 2": Discussing the empirical relational model and scatter fit.
+   - "Figure 1": Discussing the longitudinal time-series trajectory and its shaded 95% CI ribbon.
+   - "Figure 2": Discussing the empirical relational model, OLS slope, and 95% CI confidence band.
+4. 95% CONFIDENCE INTERVALS (95% CI): When presenting quantitative findings and regression parameters in Section 4, report all major effect sizes with their 95% Confidence Intervals (95% CI) (e.g., beta = 0.420, 95% CI [0.180, 0.660], p = 0.003). Discuss the width and precision of the 95% CI bands plotted in Figure 1 and Figure 2.
 
 ### Dataset & Empirical Context:
 - Dataset ID: {dataset.id}
@@ -379,7 +380,7 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             grp = f" for {reg.group}" if reg.group else ""
             stat_points.append(
                 f"Longitudinal trend regression for {reg.metric}{grp} indicates an estimated slope of beta = {reg.slope:.3f} "
-                f"(R^2 = {reg.r_squared:.3f}, p = {reg.p_value:.4f}), reflecting a net change of {reg.total_change:+g} {dataset.unit} "
+                f"(95% CI [{reg.ci_lower:+.3f}, {reg.ci_upper:+.3f}], R^2 = {reg.r_squared:.3f}, p = {reg.p_value:.4f}), reflecting a net change of {reg.total_change:+g} {dataset.unit} "
                 f"from {reg.start_year} ({reg.start_value}{dataset.unit}) to {reg.end_year} ({reg.end_value}{dataset.unit})."
             )
         stat_snippet = " ".join(stat_points)
@@ -396,7 +397,10 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
         mv_snippet = ""
         if analysis.multivariate_regressions:
             top_m = analysis.multivariate_regressions[0]
-            pred_details = ", ".join([f"{p} (beta = {top_m.coefficients.get(p, 0.0)}, VIF = {top_m.vif_values.get(p, 1.0)})" for p in top_m.predictors])
+            pred_details = ", ".join([
+                f"{p} (beta = {top_m.coefficients.get(p, 0.0):+.3f}, 95% CI [{top_m.ci_lower.get(p, 0.0):+.3f}, {top_m.ci_upper.get(p, 0.0):+.3f}], VIF = {top_m.vif_values.get(p, 1.0):.2f})"
+                for p in top_m.predictors
+            ])
             mv_snippet = (
                 f"To test multivariate predictive relationships while rigorously controlling for multicollinearity, an ordinary least squares (OLS) "
                 f"model was estimated on '{top_m.dependent_var}'. The model explained a substantial proportion of variance (R^2 = {top_m.r_squared:.3f}, "
@@ -422,8 +426,8 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
         abstract = (
             f"This study conducts a rigorous empirical investigation into {dataset.title}, utilizing official "
             f"longitudinal open datasets released by {dataset.source_name}. Employing ordinary least squares (OLS) trend "
-            f"modeling, multivariate regressions with variance inflation factor (VIF) multicollinearity control, and "
-            f"relational paradox analysis, we examine structural patterns anchored in {context.get('theoretical_framework')}. "
+            f"modeling with 95% confidence intervals (95% CI), multivariate regressions with variance inflation factor (VIF) "
+            f"multicollinearity control, and relational paradox analysis, we examine structural patterns anchored in {context.get('theoretical_framework')}. "
             f"{stat_snippet} {mv_snippet} {disc_snippet} These empirical findings uncover critical policy trade-offs "
             f"for evidence-based decision-making in Japan, demonstrating that structural inputs alone do not guarantee linear gains."
         )
@@ -467,15 +471,15 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             f"Our quantitative methodology integrates descriptive statistical profiling with longitudinal Ordinary Least Squares (OLS) "
             f"estimation, bivariate relational modeling, and multivariate regression with Variance Inflation Factor (VIF) diagnostics. "
             f"To prevent collinear contamination, candidate predictor sets were evaluated to ensure VIF < 5.0 across all models. "
-            f"Statistical significance was evaluated at alpha = .05 (two-tailed), and model robustness was confirmed using adjusted R^2."
+            f"Statistical significance was evaluated at alpha = .05 (two-tailed), and estimation precision was substantiated by reporting 95% Confidence Intervals (95% CI)."
         )
 
         results = (
             f"Table 1 and the accompanying empirical visualizer charts delineate the parametric parameters of the observed data. "
-            f"As illustrated in Figure 1, the longitudinal trajectories demonstrate meaningful temporal shifts across cohorts. "
-            f"{stat_snippet}\n\n"
-            f"As depicted in Figure 2, relational regression analysis exposes crucial structural associations and trade-offs among indicators. "
-            f"{corr_snippet} {disc_snippet}\n\n"
+            f"As illustrated in Figure 1, the longitudinal trajectories demonstrate meaningful temporal shifts across cohorts, "
+            f"with shaded ribbons capturing the 95% Confidence Interval (95% CI) of the secular trends. {stat_snippet}\n\n"
+            f"As depicted in Figure 2, relational regression analysis exposes crucial structural associations and trade-offs among indicators, "
+            f"anchored by an empirical OLS fit line and its 95% CI confidence band. {corr_snippet} {disc_snippet}\n\n"
             f"{mv_snippet}Overall, the quantitative findings confirm that multicollinearity is cleanly controlled (all VIF < 5.0) "
             f"and provide robust empirical backing for evidence-based educational policy, revealing that policy interventions must account for systemic trade-offs."
         )

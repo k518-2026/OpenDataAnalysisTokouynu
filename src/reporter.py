@@ -98,16 +98,18 @@ class EduReportBuilder:
         if analysis.multivariate_regressions:
             top_m = analysis.multivariate_regressions[0]
             lines.append(f"\n## Table 2. Multivariate OLS Regression & VIF Diagnostics (Outcome: {top_m.dependent_var})")
-            lines.append("| Predictor | Beta (SE) | t-stat | p-value | VIF (Collinearity) | Status |")
-            lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
+            lines.append("| Predictor | Beta (SE) | 95% CI | t-stat | p-value | VIF (Collinearity) | Status |")
+            lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
             for p in top_m.predictors:
                 c = top_m.coefficients.get(p, 0.0)
                 se = top_m.std_errors.get(p, 0.0)
+                cil = top_m.ci_lower.get(p, c - 1.96 * se)
+                ciu = top_m.ci_upper.get(p, c + 1.96 * se)
                 t = top_m.t_stats.get(p, 0.0)
                 pval = top_m.p_values.get(p, 1.0)
                 vif = top_m.vif_values.get(p, 1.0)
                 sig = "p < .05 *" if pval < 0.05 else "n.s."
-                lines.append(f"| **{p}** | {c:+.3f} ({se:.3f}) | {t:+.2f} | {pval:.4f} | {vif:.2f} | {sig} |")
+                lines.append(f"| **{p}** | {c:+.3f} ({se:.3f}) | [{cil:+.3f}, {ciu:+.3f}] | {t:+.2f} | {pval:.4f} | {vif:.2f} | {sig} |")
             lines.append(
                 f"\n*Model Diagnostics: R^2 = {top_m.r_squared:.3f}, Adj. R^2 = {top_m.adj_r_squared:.3f}, "
                 f"F = {top_m.f_stat:.2f} (p = {top_m.f_pvalue:.4f}). {top_m.collinearity_status}*"
@@ -123,6 +125,7 @@ class EduReportBuilder:
         for ds in analysis.descriptive_stats:
             reg = next((r for r in analysis.trend_regressions if r.metric == ds.metric), None)
             slope_str = f"{reg.slope:+.3f}" if reg else "—"
+            ci_str = f"[{reg.ci_lower:+.2f}, {reg.ci_upper:+.2f}]" if reg else "—"
             r2_str = f"{reg.r_squared:.3f}" if reg else "—"
             p_str = f"{reg.p_value:.4f}" if reg else "—"
 
@@ -135,6 +138,7 @@ class EduReportBuilder:
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{ds.median:.2f}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{ds.iqr:.2f}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #0284c7;">{slope_str}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #64748b; font-size: 0.9em;">{ci_str}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{r2_str}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{p_str}</td>
   </tr>
@@ -153,6 +157,7 @@ class EduReportBuilder:
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">Median</th>
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">IQR</th>
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">Slope (&beta;)</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">95% CI</th>
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">R&sup2;</th>
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">p-value</th>
       </tr>
@@ -162,7 +167,7 @@ class EduReportBuilder:
     </tbody>
   </table>
   <div style="font-size: 0.82em; color: #64748b; margin-top: 6px; font-style: italic;">
-    Note: N denotes sample observation waves. Slope (&beta;) and R&sup2; derived via ordinary least squares (OLS) longitudinal regression.
+    Note: N denotes sample observation waves. Slope (&beta;) and 95% Confidence Interval (CI) derived via OLS longitudinal trend regression.
   </div>
 </div>
 """
@@ -177,6 +182,8 @@ class EduReportBuilder:
         for p in top_m.predictors:
             c = top_m.coefficients.get(p, 0.0)
             se = top_m.std_errors.get(p, 0.0)
+            cil = top_m.ci_lower.get(p, c - 1.96 * se)
+            ciu = top_m.ci_upper.get(p, c + 1.96 * se)
             t = top_m.t_stats.get(p, 0.0)
             pval = top_m.p_values.get(p, 1.0)
             vif = top_m.vif_values.get(p, 1.0)
@@ -196,6 +203,7 @@ class EduReportBuilder:
     <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{p}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{c:+.3f}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #64748b;">{se:.3f}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #475569; font-size: 0.9em;">[{cil:+.3f}, {ciu:+.3f}]</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{t:+.2f}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{pval:.4f}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{vif_badge}</td>
@@ -217,6 +225,7 @@ class EduReportBuilder:
         <th style="padding: 12px 14px; text-align: left; font-weight: 700;">Predictor Variable</th>
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">Coeff (&beta;)</th>
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">SE</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">95% CI</th>
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">t-stat</th>
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">p-value</th>
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">VIF Diagnostics</th>

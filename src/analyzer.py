@@ -61,6 +61,8 @@ class TrendRegressionResult:
     end_year: int
     start_value: float
     end_value: float
+    ci_lower: float = 0.0
+    ci_upper: float = 0.0
 
 
 @dataclass
@@ -89,6 +91,8 @@ class BivariateRelationalRegression:
     vif: float
     is_paradox: bool
     paradox_description: str
+    ci_lower: float = 0.0
+    ci_upper: float = 0.0
 
 
 @dataclass
@@ -110,6 +114,8 @@ class MultivariateRegressionResult:
     collinearity_status: str
     is_clean_vif: bool
     discovery_insights: List[str]
+    ci_lower: Dict[str, float] = field(default_factory=dict)
+    ci_upper: Dict[str, float] = field(default_factory=dict)
 
 
 @dataclass
@@ -235,6 +241,10 @@ class EduDataAnalyzer:
                 slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
                 r_sq = float(r_value ** 2)
 
+                t_crit_trend = stats.t.ppf(0.975, df=max(1, len(x) - 2))
+                slope_ci_l = float(round(slope - t_crit_trend * std_err, 3))
+                slope_ci_u = float(round(slope + t_crit_trend * std_err, 3))
+
                 start_y, end_y = int(x[0]), int(x[-1])
                 start_v, end_v = float(y[0]), float(y[-1])
                 tot_change = float(round(end_v - start_v, 2))
@@ -261,6 +271,8 @@ class EduDataAnalyzer:
                         end_year=end_y,
                         start_value=float(round(start_v, 2)),
                         end_value=float(round(end_v, 2)),
+                        ci_lower=slope_ci_l,
+                        ci_upper=slope_ci_u,
                     )
                 )
         return results
@@ -372,6 +384,10 @@ class EduDataAnalyzer:
                         is_paradox = True
                         desc = f"Institutional Vigilance: Higher reported {var_x} correlates positively with {var_y}, confirming proactive institutional intervention."
 
+                t_crit_biv = stats.t.ppf(0.975, df=max(1, len(sub) - 2))
+                biv_ci_l = float(round(slope - t_crit_biv * std_err, 3))
+                biv_ci_u = float(round(slope + t_crit_biv * std_err, 3))
+
                 results.append(
                     BivariateRelationalRegression(
                         var_x=var_x,
@@ -385,6 +401,8 @@ class EduDataAnalyzer:
                         vif=1.0,
                         is_paradox=is_paradox,
                         paradox_description=desc,
+                        ci_lower=biv_ci_l,
+                        ci_upper=biv_ci_u,
                     )
                 )
 
@@ -465,6 +483,9 @@ class EduDataAnalyzer:
                             adj_r_sq_val = float(round(ols_fit.rsquared_adj, 3))
                             f_stat_val = float(round(ols_fit.fvalue, 2)) if not np.isnan(ols_fit.fvalue) else 0.0
                             f_pval_val = float(round(ols_fit.f_pvalue, 4)) if not np.isnan(ols_fit.f_pvalue) else 1.0
+                            conf_int = ols_fit.conf_int(alpha=0.05)
+                            ci_lower_dict = {k: float(round(conf_int.loc[k, 0], 3)) for k in coeffs if k in conf_int.index}
+                            ci_upper_dict = {k: float(round(conf_int.loc[k, 1], 3)) for k in coeffs if k in conf_int.index}
                         else:
                             n = len(sub_df)
                             p = len(preds)
@@ -489,15 +510,20 @@ class EduDataAnalyzer:
                             ms_reg = (ss_tot - ss_res) / p if p > 0 else 0.0
                             f_stat_val = float(round(ms_reg / s2, 2)) if s2 > 0 else 0.0
                             f_pval_val = float(round(stats.f.sf(f_stat_val, p, df_e), 4))
+                            t_crit_m = stats.t.ppf(0.975, df=df_e)
+                            ci_lower_dict = {col: float(round(coeffs[col] - t_crit_m * stderrs[col], 3)) for col in preds}
+                            ci_upper_dict = {col: float(round(coeffs[col] + t_crit_m * stderrs[col], 3)) for col in preds}
 
                         # Synthesize discovery insights
                         insights = []
                         for p_name, p_coeff in coeffs.items():
                             p_pval = pvals.get(p_name, 1.0)
                             p_vif = vifs.get(p_name, 1.0)
+                            p_cil = ci_lower_dict.get(p_name, 0.0)
+                            p_ciu = ci_upper_dict.get(p_name, 0.0)
                             sig_label = "statistically significant" if p_pval < 0.05 else "non-significant"
                             insights.append(
-                                f"Predictor '{p_name}' (beta = {p_coeff}, p = {p_pval}, VIF = {p_vif}) is {sig_label}."
+                                f"Predictor '{p_name}' (beta = {p_coeff}, 95% CI [{p_cil:+.3f}, {p_ciu:+.3f}], p = {p_pval}, VIF = {p_vif}) is {sig_label}."
                             )
 
                         status_str = f"VIF Validated: Maximum VIF = {round(max_vif_val, 2)} <= 5.0 threshold (No severe multicollinearity)."
@@ -519,6 +545,8 @@ class EduDataAnalyzer:
                             collinearity_status=status_str,
                             is_clean_vif=True,
                             discovery_insights=insights,
+                            ci_lower=ci_lower_dict,
+                            ci_upper=ci_upper_dict,
                         )
                         break
                     else:

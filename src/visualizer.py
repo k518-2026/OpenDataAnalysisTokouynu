@@ -13,6 +13,7 @@ matplotlib.use("Agg")  # Non-interactive backend
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy import stats
 import seaborn as sns
 
 from src.analyzer import EmpiricalAnalysisResult
@@ -120,7 +121,30 @@ class EduDataVisualizer:
                         markersize=6,
                         label=f"{grp}",
                         color=color,
+                        zorder=4,
                     )
+                    # 95% CI ribbon for group trajectory
+                    if mask.sum() >= 3:
+                        x_m = x[mask].to_numpy(dtype=float)
+                        y_m = y[mask].to_numpy(dtype=float)
+                        n_pts = len(x_m)
+                        p_slope, p_intercept = np.polyfit(x_m, y_m, 1)
+                        residuals = y_m - (p_slope * x_m + p_intercept)
+                        df_res = max(1, n_pts - 2)
+                        s_err = np.sqrt(np.sum(residuals ** 2) / df_res)
+                        t_val = stats.t.ppf(0.975, df=df_res)
+                        x_grid = np.linspace(x_m.min(), x_m.max(), 50)
+                        y_pred = p_slope * x_grid + p_intercept
+                        ss_xx = np.sum((x_m - np.mean(x_m)) ** 2)
+                        ci_band = t_val * s_err * np.sqrt(1.0 / n_pts + (x_grid - np.mean(x_m)) ** 2 / max(ss_xx, 1e-9))
+                        ax.fill_between(
+                            x_grid,
+                            y_pred - ci_band,
+                            y_pred + ci_band,
+                            color=color,
+                            alpha=0.15,
+                            zorder=2,
+                        )
                     color_idx += 1
             ax.set_ylabel(f"{primary_metric} ({dataset.unit})", fontweight="semibold")
         else:
@@ -140,13 +164,49 @@ class EduDataVisualizer:
                         markersize=6,
                         label=m,
                         color=color,
+                        zorder=4,
                     )
+                    # 95% CI ribbon for metric trajectory
+                    if mask.sum() >= 3:
+                        x_m = x[mask].to_numpy(dtype=float)
+                        y_m = y[mask].to_numpy(dtype=float)
+                        n_pts = len(x_m)
+                        p_slope, p_intercept = np.polyfit(x_m, y_m, 1)
+                        residuals = y_m - (p_slope * x_m + p_intercept)
+                        df_res = max(1, n_pts - 2)
+                        s_err = np.sqrt(np.sum(residuals ** 2) / df_res)
+                        t_val = stats.t.ppf(0.975, df=df_res)
+                        x_grid = np.linspace(x_m.min(), x_m.max(), 50)
+                        y_pred = p_slope * x_grid + p_intercept
+                        ss_xx = np.sum((x_m - np.mean(x_m)) ** 2)
+                        ci_band = t_val * s_err * np.sqrt(1.0 / n_pts + (x_grid - np.mean(x_m)) ** 2 / max(ss_xx, 1e-9))
+                        ax.fill_between(
+                            x_grid,
+                            y_pred - ci_band,
+                            y_pred + ci_band,
+                            color=color,
+                            alpha=0.15,
+                            zorder=2,
+                        )
                     color_idx += 1
             ax.set_ylabel(f"Value ({dataset.unit})", fontweight="semibold")
 
         ax.set_xlabel(f"Time ({dataset.time_col})", fontweight="semibold")
         angle_title = analysis.research_angle.title if analysis.research_angle else dataset.title
         ax.set_title(f"Figure 1. Longitudinal Trajectory: {angle_title}", pad=14, loc="left")
+
+        # 95% CI annotation badge
+        ax.text(
+            0.02,
+            0.96,
+            "Shaded bands represent 95% Confidence Intervals (95% CI)",
+            transform=ax.transAxes,
+            fontsize=8.5,
+            fontstyle="italic",
+            color="#475569",
+            verticalalignment="top",
+            bbox=dict(boxstyle="round,pad=0.35", facecolor="#ffffff", edgecolor="#cbd5e1", alpha=0.92),
+        )
 
         # Grid and spines
         ax.grid(True, linestyle="--", alpha=0.5, color="#cbd5e1")
@@ -234,13 +294,44 @@ class EduDataVisualizer:
             label="Empirical Data Points",
         )
 
-        # Regression line
+        # Regression line & 95% Confidence Interval band
         slope, intercept = np.polyfit(x, y, 1)
         x_seq = np.linspace(x.min(), x.max(), 100)
+        y_seq = slope * x_seq + intercept
+
+        # Calculate exact 95% Confidence Interval for OLS fit
+        n = len(x)
+        residuals = y - (slope * x + intercept)
+        df_resid = max(1, n - 2)
+        s_err = np.sqrt(np.sum(residuals ** 2) / df_resid)
+        t_crit = stats.t.ppf(0.975, df=df_resid)
+        x_mean = np.mean(x)
+        ss_xx = np.sum((x - x_mean) ** 2)
+        se_line = s_err * np.sqrt(1.0 / n + (x_seq - x_mean) ** 2 / max(ss_xx, 1e-9))
+        ci_lower = y_seq - t_crit * se_line
+        ci_upper = y_seq + t_crit * se_line
+
+        # Slope 95% CI
+        se_slope = s_err / np.sqrt(max(ss_xx, 1e-9))
+        slope_ci_lower = slope - t_crit * se_slope
+        slope_ci_upper = slope + t_crit * se_slope
+
         line_color = "#dc2626" if not is_paradox else "#d97706"
+
+        # Shaded 95% CI band
+        ax.fill_between(
+            x_seq,
+            ci_lower,
+            ci_upper,
+            color=line_color,
+            alpha=0.18,
+            label="95% Confidence Interval (CI)",
+            zorder=2,
+        )
+
         ax.plot(
             x_seq,
-            slope * x_seq + intercept,
+            y_seq,
             color=line_color,
             linewidth=2.4,
             linestyle="-",
@@ -248,11 +339,12 @@ class EduDataVisualizer:
             zorder=4,
         )
 
-        # Annotate statistical metrics including VIF
+        # Annotate statistical metrics including VIF and 95% CI
         stat_box = (
             f"Pearson r = {r_val:+.3f}\n"
             f"R² = {r_sq:.3f}\n"
             f"p-value = {p_val:.4f}\n"
+            f"Slope = {slope:+.3f} [95% CI: {slope_ci_lower:+.3f}, {slope_ci_upper:+.3f}]\n"
             f"VIF < 2.5 (Clean Multicollinearity)\n"
             f"N = {len(valid)}"
         )
@@ -336,31 +428,42 @@ class EduDataVisualizer:
         if metric not in df.columns:
             return None
 
-        # Compute latest values per group
-        latest_df = df.sort_values(by=dataset.time_col).groupby(group_col).last().reset_index()
-        latest_df[metric] = pd.to_numeric(latest_df[metric], errors="coerce")
-        latest_df = latest_df.dropna(subset=[metric]).sort_values(by=metric, ascending=True)
-
-        if len(latest_df) < 2:
+        # Compute summary values per group with 95% CI error bars
+        grp_stats = df.groupby(group_col)[metric].agg(["mean", "std", "count"]).dropna()
+        if len(grp_stats) < 2:
             return None
+        grp_stats = grp_stats.sort_values(by="mean", ascending=True)
 
-        fig, ax = plt.subplots(figsize=(9, max(4.5, len(latest_df) * 0.45)))
+        ci_errs = []
+        for _, r in grp_stats.iterrows():
+            cnt = int(r["count"])
+            stdev = float(r["std"]) if not np.isnan(r["std"]) else 0.0
+            if cnt >= 2 and stdev > 0:
+                t_val = stats.t.ppf(0.975, df=max(1, cnt - 1))
+                ci_errs.append(float(t_val * stdev / np.sqrt(cnt)))
+            else:
+                ci_errs.append(0.0)
+
+        fig, ax = plt.subplots(figsize=(9, max(4.5, len(grp_stats) * 0.45)))
         ax.set_facecolor("#f8fafc")
         fig.patch.set_facecolor("#ffffff")
 
         bars = ax.barh(
-            latest_df[group_col],
-            latest_df[metric],
+            grp_stats.index,
+            grp_stats["mean"],
+            xerr=ci_errs if any(e > 0 for e in ci_errs) else None,
+            capsize=4,
             color="#0284c7",
             edgecolor="#0369a1",
             height=0.6,
+            error_kw=dict(ecolor="#1e293b", lw=1.5, capthick=1.5),
         )
 
         # Add data values on bar ends
-        for bar in bars:
+        for bar, ci_e in zip(bars, ci_errs):
             width = bar.get_width()
             ax.text(
-                width + (latest_df[metric].max() * 0.01),
+                width + ci_e + (grp_stats["mean"].max() * 0.015),
                 bar.get_y() + bar.get_height() / 2,
                 f"{width:.1f}{dataset.unit}",
                 ha="left",
@@ -368,6 +471,19 @@ class EduDataVisualizer:
                 fontsize=9.5,
                 fontweight="semibold",
                 color="#1e293b",
+            )
+
+        if any(e > 0 for e in ci_errs):
+            ax.text(
+                0.02,
+                0.96,
+                "Error bars represent 95% Confidence Intervals (95% CI)",
+                transform=ax.transAxes,
+                fontsize=8.5,
+                fontstyle="italic",
+                color="#475569",
+                verticalalignment="top",
+                bbox=dict(boxstyle="round,pad=0.35", facecolor="#ffffff", edgecolor="#cbd5e1", alpha=0.92),
             )
 
         ax.set_xlabel(f"{metric} ({dataset.unit})", fontweight="semibold")
