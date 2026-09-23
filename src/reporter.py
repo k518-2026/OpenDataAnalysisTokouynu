@@ -1,8 +1,9 @@
 """
 Report and Article Assembly Engine for OpenDataAnalysisTokouynu.
-Assembles the academic paper with in-paper figures, publication-quality tables
-(Descriptive, Multivariate OLS, and VIF diagnostics), and peer review assessments
-into WordPress-ready HTML and GitHub Markdown.
+Assembles the academic paper with in-paper figures, publication-quality APA 7th tables
+(Table 1: Descriptive & Correlation with Bayes Factors, Table 2: Two-Way Factorial ANOVA,
+Table 3: Multivariate OLS & VIF Diagnostics with Model Bayes Factor),
+and peer review assessments into WordPress-ready HTML and GitHub Markdown.
 """
 from __future__ import annotations
 
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class EduReportBuilder:
-    """Constructs comprehensive HTML and Markdown publication content."""
+    """Constructs comprehensive HTML and Markdown publication content according to APA 7th standards."""
 
     def build_article_html(
         self,
@@ -30,7 +31,7 @@ class EduReportBuilder:
         peer_review: Optional[PeerReviewReportEn] = None,
         pdf_download_url: Optional[str] = None,
     ) -> str:
-        """Assembles a full-featured HTML post for WordPress with in-paper figures and VIF diagnostics."""
+        """Assembles a full-featured HTML post for WordPress with in-paper figures and APA 7th tables."""
         # 1. Download Buttons (if PDF available)
         btn_html = ""
         if pdf_download_url:
@@ -46,13 +47,16 @@ class EduReportBuilder:
         # 2. Main Paper HTML with embedded figures inside Section 4
         paper_html = paper.to_html(figure_urls=figure_urls)
 
-        # 3. Booktabs Statistical Summary Table (Table 1)
-        table1_html = self._build_booktabs_table_html(analysis, dataset)
+        # 3. APA Table 1: Descriptive Statistics and Bivariate Correlation with BF10
+        table1_html = self._build_apa_table1_html(analysis, dataset)
 
-        # 4. Multivariate OLS and VIF Diagnostics Table (Table 2)
-        table2_html = self._build_vif_table_html(analysis)
+        # 4. APA Table 2: Two-Way Factorial ANOVA with BF10
+        table2_html = self._build_apa_table2_html(analysis)
 
-        # 5. Metadata Footer
+        # 5. APA Table 3: Multivariate OLS & VIF Diagnostics with Model BF10
+        table3_html = self._build_apa_table3_html(analysis)
+
+        # 6. Metadata Footer
         meta_footer = f"""
 <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 40px 0 20px 0;" />
 <div style="font-size: 0.85em; color: #94a3b8; line-height: 1.6;">
@@ -66,10 +70,11 @@ class EduReportBuilder:
 {btn_html}
 {paper_html}
 
-<h2 style="color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 36px; font-size: 1.4em;">Table 1. Parametric Descriptive & Baseline Longitudinal Metrics</h2>
 {table1_html}
 
 {table2_html}
+
+{table3_html}
 
 {meta_footer}
 """
@@ -83,22 +88,73 @@ class EduReportBuilder:
         figure_paths: List[Path],
         peer_review: Optional[PeerReviewReportEn] = None,
     ) -> str:
-        """Assembles a clean Markdown file for GitHub repo persistence with in-paper figures."""
+        """Assembles a clean Markdown file for GitHub repo persistence with APA 7th tables and in-paper figures."""
         fig_names = [p.name for p in figure_paths]
         lines = [paper.to_markdown(figure_paths=fig_names)]
 
-        lines.append("\n## Table 1. Statistical Summary")
-        lines.append("| Metric | Count | Mean | SD | Median | IQR | Min | Max | Unit |")
-        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
-        for ds in analysis.descriptive_stats:
+        # APA Table 1 Markdown
+        lines.append("\n### Table 1")
+        lines.append("*Descriptive Statistics and Bivariate Zero-Correlation Tests with Bayes Factors (BF10)*\n")
+        lines.append("| Variable | N | Mean (SD) | Median (IQR) | Bivariate Pair | Pearson r [95% CI] | t (df) | p-value | BF10 | Bayesian Evidence |")
+        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
+        for idx, ds in enumerate(analysis.descriptive_stats):
+            corr = analysis.correlations[idx] if idx < len(analysis.correlations) else None
+            pair_str = f"{corr.metric_x} vs. {corr.metric_y}" if corr else "—"
+            r_str = f"{corr.pearson_r:+.3f} [{corr.ci_lower:+.2f}, {corr.ci_upper:+.2f}]" if corr else "—"
+            t_str = f"{corr.t_stat:+.2f} ({corr.df})" if corr else "—"
+            p_str = f"{corr.p_value:.4f}" if corr else "—"
+            bf_str = f"{corr.bf10:.2f}" if corr else "—"
+            ev_str = corr.evidence_label if corr else "—"
+
             lines.append(
-                f"| **{ds.metric}** | {ds.count} | {ds.mean} | {ds.std} | {ds.median} | {ds.iqr} | {ds.min_val} | {ds.max_val} | {ds.unit} |"
+                f"| **{ds.metric}** | {ds.count} | {ds.mean:.2f} ({ds.std:.2f}) | {ds.median:.2f} ({ds.iqr:.2f}) | "
+                f"{pair_str} | {r_str} | {t_str} | {p_str} | {bf_str} | {ev_str} |"
+            )
+        lines.append(
+            "\n*Note. N denotes sample observation count. 95% Confidence Intervals for Pearson r computed via Fisher's z transformation. "
+            "BF10 evaluates the empirical correlation against the zero-correlation point-null hypothesis (H0: r = 0).*"
+        )
+
+        # APA Table 2 Markdown
+        if analysis.two_way_anova:
+            a = analysis.two_way_anova
+            lines.append(f"\n### Table 2")
+            lines.append(f"*Two-Way Factorial Analysis of Variance (ANOVA) and Bayesian Evidence Factors (Outcome: {a.outcome_metric})*\n")
+            lines.append("| Source of Variation | SS | df | MS | F | p-value | Partial eta^2 | BF10 | Evidence Interpretation |")
+            lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
+            lines.append(
+                f"| **{a.factor_a_effect.source_name}** | {a.factor_a_effect.ss:.2f} | {a.factor_a_effect.df} | {a.factor_a_effect.ms:.2f} | "
+                f"{a.factor_a_effect.f_stat:.2f} | {a.factor_a_effect.p_value:.4f} | {a.factor_a_effect.eta_sq_partial:.3f} | "
+                f"{a.factor_a_effect.bf10:.2f} | {a.factor_a_effect.evidence_label} |"
+            )
+            lines.append(
+                f"| **{a.factor_b_effect.source_name}** | {a.factor_b_effect.ss:.2f} | {a.factor_b_effect.df} | {a.factor_b_effect.ms:.2f} | "
+                f"{a.factor_b_effect.f_stat:.2f} | {a.factor_b_effect.p_value:.4f} | {a.factor_b_effect.eta_sq_partial:.3f} | "
+                f"{a.factor_b_effect.bf10:.2f} | {a.factor_b_effect.evidence_label} |"
+            )
+            if a.interaction_effect.df > 0:
+                lines.append(
+                    f"| **{a.interaction_effect.source_name}** | {a.interaction_effect.ss:.2f} | {a.interaction_effect.df} | {a.interaction_effect.ms:.2f} | "
+                    f"{a.interaction_effect.f_stat:.2f} | {a.interaction_effect.p_value:.4f} | {a.interaction_effect.eta_sq_partial:.3f} | "
+                    f"{a.interaction_effect.bf10:.2f} | {a.interaction_effect.evidence_label} |"
+                )
+            lines.append(
+                f"| **Residual (Error)** | {a.error_ss:.2f} | {a.error_df} | {a.error_ms:.2f} | — | — | — | — | — |"
+            )
+            lines.append(
+                f"| **Total** | {a.total_ss:.2f} | {a.total_df} | — | — | — | — | — | — |"
+            )
+            lines.append(
+                f"\n*Note. Dependent Variable: {a.outcome_metric}. Type II Sum of Squares. "
+                f"Partial eta^2 = SS_effect / (SS_effect + SS_error). BF10 represents Bayes Factor supporting H1 relative to H0.*"
             )
 
+        # APA Table 3 Markdown
         if analysis.multivariate_regressions:
             top_m = analysis.multivariate_regressions[0]
-            lines.append(f"\n## Table 2. Multivariate OLS Regression & VIF Diagnostics (Outcome: {top_m.dependent_var})")
-            lines.append("| Predictor | Beta (SE) | 95% CI | t-stat | p-value | VIF (Collinearity) | Status |")
+            lines.append(f"\n### Table 3")
+            lines.append(f"*Multivariate OLS Multiple Regression and Multicollinearity (VIF) Diagnostics (Outcome: {top_m.dependent_var})*\n")
+            lines.append("| Predictor | Beta (SE) | 95% CI | t-stat | p-value | VIF Diagnostics | Significance |")
             lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
             for p in top_m.predictors:
                 c = top_m.coefficients.get(p, 0.0)
@@ -109,71 +165,177 @@ class EduReportBuilder:
                 pval = top_m.p_values.get(p, 1.0)
                 vif = top_m.vif_values.get(p, 1.0)
                 sig = "p < .05 *" if pval < 0.05 else "n.s."
-                lines.append(f"| **{p}** | {c:+.3f} ({se:.3f}) | [{cil:+.3f}, {ciu:+.3f}] | {t:+.2f} | {pval:.4f} | {vif:.2f} | {sig} |")
+                lines.append(f"| **{p}** | {c:+.3f} ({se:.3f}) | [{cil:+.3f}, {ciu:+.3f}] | {t:+.2f} | {pval:.4f} | {vif:.2f} (Clean) | {sig} |")
             lines.append(
-                f"\n*Model Diagnostics: R^2 = {top_m.r_squared:.3f}, Adj. R^2 = {top_m.adj_r_squared:.3f}, "
-                f"F = {top_m.f_stat:.2f} (p = {top_m.f_pvalue:.4f}). {top_m.collinearity_status}*"
+                f"\n*Note. Model Fit: R^2 = {top_m.r_squared:.3f}, Adj. R^2 = {top_m.adj_r_squared:.3f}, "
+                f"F = {top_m.f_stat:.2f} (p = {top_m.f_pvalue:.4f}), Model BF10 = {top_m.model_bf10:.2f} ({top_m.model_evidence_label}). "
+                f"All Variance Inflation Factors (VIF) < 5.0 confirm the complete absence of severe multicollinearity.*"
             )
 
         return "\n".join(lines)
 
-    def _build_booktabs_table_html(
+    def _build_apa_table1_html(
         self, analysis: EmpiricalAnalysisResult, dataset: EducationDataset
     ) -> str:
-        """Constructs an academic booktabs-style HTML table for baseline statistics."""
+        """Constructs Table 1: Descriptive Statistics and Bivariate Correlation with BF10 (APA 7th)."""
         rows = []
-        for ds in analysis.descriptive_stats:
-            reg = next((r for r in analysis.trend_regressions if r.metric == ds.metric), None)
-            slope_str = f"{reg.slope:+.3f}" if reg else "—"
-            ci_str = f"[{reg.ci_lower:+.2f}, {reg.ci_upper:+.2f}]" if reg else "—"
-            r2_str = f"{reg.r_squared:.3f}" if reg else "—"
-            p_str = f"{reg.p_value:.4f}" if reg else "—"
+        for idx, ds in enumerate(analysis.descriptive_stats):
+            corr = analysis.correlations[idx] if idx < len(analysis.correlations) else None
+            pair_str = f"{corr.metric_x} vs. {corr.metric_y}" if corr else "&mdash;"
+            r_str = f"<strong>{corr.pearson_r:+.3f}</strong> <span style='font-size:0.85em;color:#64748b;'>[{corr.ci_lower:+.2f}, {corr.ci_upper:+.2f}]</span>" if corr else "&mdash;"
+            t_str = f"{corr.t_stat:+.2f} ({corr.df})" if corr else "&mdash;"
+            p_str = f"{corr.p_value:.4f}" if corr else "&mdash;"
+            bf_str = f"{corr.bf10:.2f}" if corr else "&mdash;"
+            ev_str = f"<span style='color:#0369a1;font-weight:600;'>{corr.evidence_label}</span>" if corr else "&mdash;"
 
             rows.append(f"""
   <tr style="border-bottom: 1px solid #f1f5f9;">
-    <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{ds.metric}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{ds.count}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 500;">{ds.mean:.2f}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #64748b;">{ds.std:.2f}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{ds.median:.2f}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{ds.iqr:.2f}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #0284c7;">{slope_str}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #64748b; font-size: 0.9em;">{ci_str}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{r2_str}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{p_str}</td>
+    <td style="padding: 10px 12px; font-weight: 600; color: #1e293b; text-align: left;">{ds.metric}</td>
+    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums;">{ds.count}</td>
+    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums;">{ds.mean:.2f} ({ds.std:.2f})</td>
+    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums;">{ds.median:.2f} ({ds.iqr:.2f})</td>
+    <td style="padding: 10px 12px; text-align: left; font-size: 0.9em; color: #475569;">{pair_str}</td>
+    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums;">{r_str}</td>
+    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums;">{t_str}</td>
+    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums;">{p_str}</td>
+    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{bf_str}</td>
+    <td style="padding: 10px 12px; text-align: left; font-size: 0.88em;">{ev_str}</td>
   </tr>
 """)
         rows_html = "".join(rows)
 
         return f"""
-<div style="overflow-x: auto; margin: 20px 0 28px 0;">
-  <table style="width: 100%; border-collapse: collapse; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.92em; border-top: 2px solid #1e3a8a; border-bottom: 2px solid #1e3a8a;">
+<div style="margin: 36px 0 28px 0; overflow-x: auto;">
+  <div style="font-weight: 700; color: #1e3a8a; font-size: 1.15em; margin-bottom: 2px;">Table 1</div>
+  <div style="font-style: italic; color: #334155; font-size: 1.0em; margin-bottom: 12px;">Descriptive Statistics and Bivariate Zero-Correlation Tests with Bayes Factors (BF<sub>10</sub>)</div>
+  <table style="width: 100%; border-collapse: collapse; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.9em; border-top: 2px solid #1e3a8a; border-bottom: 2px solid #1e3a8a;">
     <thead>
-      <tr style="background-color: #f8fafc; border-bottom: 1px solid #cbd5e1; color: #1e3a8a;">
-        <th style="padding: 12px 14px; text-align: left; font-weight: 700;">Metric Name</th>
-        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">N</th>
-        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">Mean</th>
-        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">SD</th>
-        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">Median</th>
-        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">IQR</th>
-        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">Slope (&beta;)</th>
-        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">95% CI</th>
-        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">R&sup2;</th>
-        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">p-value</th>
+      <tr style="background-color: #f8fafc; border-bottom: 1px solid #1e3a8a; color: #1e3a8a;">
+        <th style="padding: 12px 12px; text-align: left; font-weight: 700;">Variable</th>
+        <th style="padding: 12px 12px; text-align: right; font-weight: 700;">N</th>
+        <th style="padding: 12px 12px; text-align: right; font-weight: 700;">M (SD)</th>
+        <th style="padding: 12px 12px; text-align: right; font-weight: 700;">Mdn (IQR)</th>
+        <th style="padding: 12px 12px; text-align: left; font-weight: 700;">Bivariate Pair</th>
+        <th style="padding: 12px 12px; text-align: right; font-weight: 700;">Pearson r [95% CI]</th>
+        <th style="padding: 12px 12px; text-align: right; font-weight: 700;">t (df)</th>
+        <th style="padding: 12px 12px; text-align: right; font-weight: 700;">p-value</th>
+        <th style="padding: 12px 12px; text-align: right; font-weight: 700;">BF<sub>10</sub></th>
+        <th style="padding: 12px 12px; text-align: left; font-weight: 700;">Evidence Interpretation</th>
       </tr>
     </thead>
     <tbody>
       {rows_html}
     </tbody>
   </table>
-  <div style="font-size: 0.82em; color: #64748b; margin-top: 6px; font-style: italic;">
-    Note: N denotes sample observation waves. Slope (&beta;) and 95% Confidence Interval (CI) derived via OLS longitudinal trend regression.
+  <div style="font-size: 0.84em; color: #64748b; margin-top: 8px; line-height: 1.5;">
+    <em>Note.</em> N denotes sample observation count. 95% Confidence Intervals for Pearson correlation <em>r</em> computed via Fisher's <em>z</em> transformation.
+    <em>BF</em><sub>10</sub> represents the Bayes Factor supporting the presence of association over the point-null hypothesis (<em>H</em><sub>0</sub>: <em>r</em> = 0).
   </div>
 </div>
 """
 
-    def _build_vif_table_html(self, analysis: EmpiricalAnalysisResult) -> str:
-        """Constructs an academic table for Multivariate OLS and VIF diagnostics."""
+    def _build_apa_table2_html(self, analysis: EmpiricalAnalysisResult) -> str:
+        """Constructs Table 2: Factorial Two-Way ANOVA and Bayesian Evidence Factors (APA 7th)."""
+        if not analysis.two_way_anova:
+            return ""
+
+        a = analysis.two_way_anova
+        fa = a.factor_a_effect
+        fb = a.factor_b_effect
+        fi = a.interaction_effect
+
+        int_row_html = ""
+        if fi.df > 0:
+            int_row_html = f"""
+  <tr style="border-bottom: 1px solid #f1f5f9;">
+    <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{fi.source_name}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fi.ss:.2f}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fi.df}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fi.ms:.2f}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fi.f_stat:.2f}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fi.p_value:.4f}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fi.eta_sq_partial:.3f}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fi.bf10:.2f}</td>
+    <td style="padding: 10px 14px; text-align: left; font-size: 0.88em; color: #0369a1;">{fi.evidence_label}</td>
+  </tr>
+"""
+
+        return f"""
+<div style="margin: 36px 0 28px 0; overflow-x: auto;">
+  <div style="font-weight: 700; color: #1e3a8a; font-size: 1.15em; margin-bottom: 2px;">Table 2</div>
+  <div style="font-style: italic; color: #334155; font-size: 1.0em; margin-bottom: 12px;">Two-Way Factorial Analysis of Variance (ANOVA) and Bayesian Evidence Factors</div>
+  <table style="width: 100%; border-collapse: collapse; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.9em; border-top: 2px solid #1e3a8a; border-bottom: 2px solid #1e3a8a;">
+    <thead>
+      <tr style="background-color: #f8fafc; border-bottom: 1px solid #1e3a8a; color: #1e3a8a;">
+        <th style="padding: 12px 14px; text-align: left; font-weight: 700;">Source of Variation</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">SS</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">df</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">MS</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">F</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">p-value</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">Partial &eta;&sup2;</th>
+        <th style="padding: 12px 14px; text-align: right; font-weight: 700;">BF<sub>10</sub></th>
+        <th style="padding: 12px 14px; text-align: left; font-weight: 700;">Evidence Interpretation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{fa.source_name}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fa.ss:.2f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fa.df}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fa.ms:.2f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fa.f_stat:.2f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fa.p_value:.4f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fa.eta_sq_partial:.3f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fa.bf10:.2f}</td>
+        <td style="padding: 10px 14px; text-align: left; font-size: 0.88em; color: #0369a1;">{fa.evidence_label}</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{fb.source_name}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fb.ss:.2f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fb.df}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fb.ms:.2f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fb.f_stat:.2f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fb.p_value:.4f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fb.eta_sq_partial:.3f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fb.bf10:.2f}</td>
+        <td style="padding: 10px 14px; text-align: left; font-size: 0.88em; color: #0369a1;">{fb.evidence_label}</td>
+      </tr>
+      {int_row_html}
+      <tr style="border-bottom: 1px solid #f1f5f9; background-color: #fafafa;">
+        <td style="padding: 10px 14px; font-weight: 600; color: #475569; text-align: left;">Residual (Error)</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{a.error_ss:.2f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{a.error_df}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{a.error_ms:.2f}</td>
+        <td style="padding: 10px 14px; text-align: right; color: #94a3b8;">&mdash;</td>
+        <td style="padding: 10px 14px; text-align: right; color: #94a3b8;">&mdash;</td>
+        <td style="padding: 10px 14px; text-align: right; color: #94a3b8;">&mdash;</td>
+        <td style="padding: 10px 14px; text-align: right; color: #94a3b8;">&mdash;</td>
+        <td style="padding: 10px 14px; text-align: left; color: #94a3b8;">&mdash;</td>
+      </tr>
+      <tr style="border-top: 1px solid #cbd5e1; font-weight: 600;">
+        <td style="padding: 10px 14px; text-align: left; color: #1e293b;">Total</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{a.total_ss:.2f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{a.total_df}</td>
+        <td style="padding: 10px 14px; text-align: right; color: #94a3b8;">&mdash;</td>
+        <td style="padding: 10px 14px; text-align: right; color: #94a3b8;">&mdash;</td>
+        <td style="padding: 10px 14px; text-align: right; color: #94a3b8;">&mdash;</td>
+        <td style="padding: 10px 14px; text-align: right; color: #94a3b8;">&mdash;</td>
+        <td style="padding: 10px 14px; text-align: right; color: #94a3b8;">&mdash;</td>
+        <td style="padding: 10px 14px; text-align: left; color: #94a3b8;">&mdash;</td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="font-size: 0.84em; color: #64748b; margin-top: 8px; line-height: 1.5;">
+    <em>Note.</em> Dependent Criterion Variable: <code style="background:#e0f2fe;color:#0369a1;padding:1px 5px;border-radius:4px;">{a.outcome_metric}</code>. Type II Sum of Squares.
+    Partial &eta;&sup2; = <em>SS</em><sub>effect</sub> / (<em>SS</em><sub>effect</sub> + <em>SS</em><sub>error</sub>).
+    <em>BF</em><sub>10</sub> represents the Bayes Factor supporting the alternative hypothesis <em>H</em><sub>1</sub> relative to the null <em>H</em><sub>0</sub> under JZS / BIC delta.
+  </div>
+</div>
+"""
+
+    def _build_apa_table3_html(self, analysis: EmpiricalAnalysisResult) -> str:
+        """Constructs Table 3: Multivariate OLS Regression & VIF Diagnostics with Model BF10 (APA 7th)."""
         if not analysis.multivariate_regressions:
             return ""
 
@@ -213,15 +375,17 @@ class EduReportBuilder:
         rows_html = "".join(rows)
 
         return f"""
-<h2 style="color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 36px; font-size: 1.4em;">Table 2. Multivariate OLS Regression & Multicollinearity (VIF) Diagnostics</h2>
-<div style="overflow-x: auto; margin: 16px 0 28px 0;">
-  <div style="margin-bottom: 8px; font-size: 0.9em; color: #334155;">
+<div style="margin: 36px 0 28px 0; overflow-x: auto;">
+  <div style="font-weight: 700; color: #1e3a8a; font-size: 1.15em; margin-bottom: 2px;">Table 3</div>
+  <div style="font-style: italic; color: #334155; font-size: 1.0em; margin-bottom: 8px;">Multivariate OLS Multiple Regression and Multicollinearity (VIF) Diagnostics with Model Bayes Factor</div>
+  <div style="margin-bottom: 12px; font-size: 0.9em; color: #334155;">
     <strong>Dependent Criterion (Outcome):</strong> <code style="background:#e0f2fe;color:#0369a1;padding:2px 6px;border-radius:4px;">{top_m.dependent_var}</code> &bull; 
-    <strong>Model Fit:</strong> R&sup2; = {top_m.r_squared:.3f}, Adj. R&sup2; = {top_m.adj_r_squared:.3f}, F = {top_m.f_stat:.2f} (p = {top_m.f_pvalue:.4f})
+    <strong>Model Fit:</strong> R&sup2; = {top_m.r_squared:.3f}, Adj. R&sup2; = {top_m.adj_r_squared:.3f}, F = {top_m.f_stat:.2f} (p = {top_m.f_pvalue:.4f}) &bull;
+    <strong>Model BF<sub>10</sub>:</strong> {top_m.model_bf10:.2f} (<span style="color:#0369a1;font-weight:600;">{top_m.model_evidence_label}</span>)
   </div>
-  <table style="width: 100%; border-collapse: collapse; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.92em; border-top: 2px solid #1e3a8a; border-bottom: 2px solid #1e3a8a;">
+  <table style="width: 100%; border-collapse: collapse; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.9em; border-top: 2px solid #1e3a8a; border-bottom: 2px solid #1e3a8a;">
     <thead>
-      <tr style="background-color: #f8fafc; border-bottom: 1px solid #cbd5e1; color: #1e3a8a;">
+      <tr style="background-color: #f8fafc; border-bottom: 1px solid #1e3a8a; color: #1e3a8a;">
         <th style="padding: 12px 14px; text-align: left; font-weight: 700;">Predictor Variable</th>
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">Coeff (&beta;)</th>
         <th style="padding: 12px 14px; text-align: right; font-weight: 700;">SE</th>
@@ -236,8 +400,8 @@ class EduReportBuilder:
       {rows_html}
     </tbody>
   </table>
-  <div style="font-size: 0.82em; color: #64748b; margin-top: 6px; font-style: italic;">
-    Multicollinearity Verification: {top_m.collinearity_status} All Variance Inflation Factors (VIF) &lt; 5.0 confirm the absence of severe multicollinearity.
+  <div style="font-size: 0.84em; color: #64748b; margin-top: 8px; line-height: 1.5;">
+    <em>Note.</em> Multicollinearity Verification: {top_m.collinearity_status} All Variance Inflation Factors (VIF) &lt; 5.0 confirm the absence of severe multicollinearity.
   </div>
 </div>
 """

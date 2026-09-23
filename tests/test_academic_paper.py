@@ -42,13 +42,18 @@ def test_paper_generation_and_formatting():
     assert '<figure style="margin: 24px 0; text-align: center;">' in html
     assert '<img src="cid:fig_0"' in html
 
-    # Test EduReportBuilder for Table 1 and Table 2 (VIF)
+    # Test EduReportBuilder for APA 7th Table 1, Table 2 (ANOVA), and Table 3 (VIF)
     from src.reporter import EduReportBuilder
     builder = EduReportBuilder()
     full_html = builder.build_article_html(paper, res, ds, figure_urls=["cid:fig_0"])
-    assert "Table 1. Parametric Descriptive" in full_html
-    assert "Table 2. Multivariate OLS Regression & Multicollinearity (VIF) Diagnostics" in full_html
+    assert "Table 1" in full_html
+    assert "Descriptive Statistics and Bivariate Zero-Correlation" in full_html
+    assert "Table 2" in full_html
+    assert "Two-Way Factorial Analysis of Variance (ANOVA)" in full_html
+    assert "Table 3" in full_html
+    assert "Multivariate OLS Multiple Regression" in full_html
     assert "VIF Diagnostics" in full_html
+    assert "BF<sub>10</sub>" in full_html
 
 
 def test_paper_has_no_japanese_characters():

@@ -17,10 +17,14 @@ from scipy import stats
 
 try:
     import statsmodels.api as sm
+    import statsmodels.formula.api as smf
+    from statsmodels.stats.anova import anova_lm
     from statsmodels.stats.outliers_influence import variance_inflation_factor
     HAS_STATSMODELS = True
 except ImportError:
     sm = None
+    smf = None
+    anova_lm = None
     variance_inflation_factor = None
     HAS_STATSMODELS = False
 
@@ -65,9 +69,33 @@ class TrendRegressionResult:
     ci_upper: float = 0.0
 
 
+def interpret_bayes_factor(bf10: float) -> str:
+    """Interprets Bayes Factor according to Jeffreys (1961) / Lee & Wagenmakers (2013)."""
+    if bf10 >= 100.0:
+        return "Decisive evidence for H1"
+    elif bf10 >= 30.0:
+        return "Very strong evidence for H1"
+    elif bf10 >= 10.0:
+        return "Strong evidence for H1"
+    elif bf10 >= 3.0:
+        return "Moderate evidence for H1"
+    elif bf10 >= 1.0:
+        return "Anecdotal evidence for H1"
+    elif bf10 >= 0.333:
+        return "Anecdotal evidence for H0"
+    elif bf10 >= 0.10:
+        return "Moderate evidence for H0"
+    elif bf10 >= 0.033:
+        return "Strong evidence for H0"
+    elif bf10 >= 0.01:
+        return "Very strong evidence for H0"
+    else:
+        return "Decisive evidence for H0"
+
+
 @dataclass
 class CorrelationResult:
-    """Bivariate correlation results between two metrics."""
+    """Bivariate correlation results between two metrics with zero-correlation test & Bayes Factor."""
     metric_x: str
     metric_y: str
     pearson_r: float
@@ -75,6 +103,45 @@ class CorrelationResult:
     n: int
     r_squared: float
     interpretation: str
+    t_stat: float = 0.0
+    df: int = 0
+    ci_lower: float = 0.0
+    ci_upper: float = 0.0
+    bf10: float = 1.0
+    evidence_label: str = "Anecdotal evidence for H1"
+
+
+@dataclass
+class AnovaFactorEffect:
+    """Statistical properties of a single source of variation in Two-Way ANOVA."""
+    source_name: str
+    ss: float
+    df: int
+    ms: float
+    f_stat: float
+    p_value: float
+    eta_sq_partial: float
+    bf10: float
+    evidence_label: str
+
+
+@dataclass
+class TwoWayAnovaResult:
+    """Factorial Two-Way Analysis of Variance (ANOVA) result."""
+    outcome_metric: str
+    factor_a_name: str
+    factor_b_name: str
+    factor_a_levels: List[str]
+    factor_b_levels: List[str]
+    factor_a_effect: AnovaFactorEffect
+    factor_b_effect: AnovaFactorEffect
+    interaction_effect: AnovaFactorEffect
+    error_ss: float
+    error_df: int
+    error_ms: float
+    total_ss: float
+    total_df: int
+    apa_report: str
 
 
 @dataclass
@@ -97,7 +164,7 @@ class BivariateRelationalRegression:
 
 @dataclass
 class MultivariateRegressionResult:
-    """Multiple OLS regression model with rigorous VIF multicollinearity control."""
+    """Multiple OLS regression model with rigorous VIF multicollinearity control and Bayes Factor."""
     dependent_var: str
     predictors: List[str]
     coefficients: Dict[str, float]
@@ -116,6 +183,8 @@ class MultivariateRegressionResult:
     discovery_insights: List[str]
     ci_lower: Dict[str, float] = field(default_factory=dict)
     ci_upper: Dict[str, float] = field(default_factory=dict)
+    model_bf10: float = 1.0
+    model_evidence_label: str = "Anecdotal evidence for H1"
 
 
 @dataclass
@@ -134,6 +203,7 @@ class EmpiricalAnalysisResult:
     empirical_discoveries: List[str]
     summary_narrative: str
     raw_df: pd.DataFrame
+    two_way_anova: Optional[TwoWayAnovaResult] = None
 
 
 class EduDataAnalyzer:
@@ -161,11 +231,12 @@ class EduDataAnalyzer:
         rel_regs = self._calc_relational_regressions(df, valid_metrics)
         mv_regs = self._calc_multivariate_regressions(df, valid_metrics, angle)
         group_comps = self._calc_group_comparisons(df, dataset.group_col, valid_metrics)
+        two_way_anova = self._calc_two_way_anova(df, dataset.time_col, dataset.group_col, valid_metrics)
         bfs = self._calc_bayes_factors(trend_regs)
         discoveries = self._detect_empirical_discoveries(dataset, rel_regs, mv_regs, trend_regs)
 
         narrative = self._build_summary_narrative(
-            dataset.title, valid_metrics, desc_stats, trend_regs, corrs, rel_regs, mv_regs, discoveries, angle
+            dataset.title, valid_metrics, desc_stats, trend_regs, corrs, rel_regs, mv_regs, discoveries, angle, two_way_anova
         )
 
         return EmpiricalAnalysisResult(
@@ -182,6 +253,7 @@ class EduDataAnalyzer:
             empirical_discoveries=discoveries,
             summary_narrative=narrative,
             raw_df=df,
+            two_way_anova=two_way_anova,
         )
 
     def _calc_descriptive_stats(
@@ -312,15 +384,41 @@ class EduDataAnalyzer:
                 sig = "statistically significant (p < .05)" if p_val < 0.05 else "not statistically significant (p >= .05)"
                 interp = f"{strength.capitalize()} {direction} correlation ({sig})"
 
+                n_pair = len(pair)
+                df_corr = max(1, n_pair - 2)
+                # Test of zero correlation: t-statistic
+                denom = math.sqrt(max(1e-9, 1.0 - r_val ** 2))
+                t_stat = float(round(r_val * math.sqrt(df_corr) / denom, 2))
+
+                # Fisher's z-transformation for 95% CI of r
+                z = 0.5 * math.log(max(1e-9, (1.0 + r_val) / max(1e-9, 1.0 - r_val)))
+                se_z = 1.0 / math.sqrt(max(1, n_pair - 3))
+                z_l = z - 1.96 * se_z
+                z_u = z + 1.96 * se_z
+                r_ci_l = float(round(math.tanh(z_l), 3))
+                r_ci_u = float(round(math.tanh(z_u), 3))
+
+                # Correlation Bayes Factor (BF10) via JZS / BIC delta
+                r2_clamped = max(0.001, min(0.999, r_sq))
+                log_bf = -0.5 * (n_pair * math.log(1.0 - r2_clamped) + math.log(n_pair))
+                bf10 = float(round(math.exp(max(-20.0, min(log_bf, 20.0))), 2))
+                evidence = interpret_bayes_factor(bf10)
+
                 results.append(
                     CorrelationResult(
                         metric_x=m1,
                         metric_y=m2,
                         pearson_r=float(round(r_val, 3)),
                         p_value=float(round(p_val, 4)),
-                        n=int(len(pair)),
+                        n=int(n_pair),
                         r_squared=float(round(r_sq, 3)),
                         interpretation=interp,
+                        t_stat=t_stat,
+                        df=df_corr,
+                        ci_lower=r_ci_l,
+                        ci_upper=r_ci_u,
+                        bf10=bf10,
+                        evidence_label=evidence,
                     )
                 )
         return results
@@ -528,6 +626,14 @@ class EduDataAnalyzer:
 
                         status_str = f"VIF Validated: Maximum VIF = {round(max_vif_val, 2)} <= 5.0 threshold (No severe multicollinearity)."
 
+                        # Model Bayes Factor (BF10) vs Null Model via BIC delta
+                        n_m = len(sub_df)
+                        k_m = len(preds)
+                        r2_clamped = max(0.001, min(0.999, r_sq_val))
+                        log_bf_m = -0.5 * (n_m * math.log(1.0 - r2_clamped) + k_m * math.log(n_m))
+                        model_bf10 = float(round(math.exp(max(-20.0, min(log_bf_m, 20.0))), 2))
+                        model_evidence = interpret_bayes_factor(model_bf10)
+
                         accepted_model = MultivariateRegressionResult(
                             dependent_var=outcome,
                             predictors=list(preds),
@@ -547,6 +653,8 @@ class EduDataAnalyzer:
                             discovery_insights=insights,
                             ci_lower=ci_lower_dict,
                             ci_upper=ci_upper_dict,
+                            model_bf10=model_bf10,
+                            model_evidence_label=model_evidence,
                         )
                         break
                     else:
@@ -600,6 +708,174 @@ class EduDataAnalyzer:
                 pass
         return bfs
 
+    def _calc_two_way_anova(
+        self,
+        df: pd.DataFrame,
+        time_col: Optional[str],
+        group_col: Optional[str],
+        metrics: List[str],
+    ) -> Optional[TwoWayAnovaResult]:
+        """
+        Calculates Factorial Two-Way Analysis of Variance (ANOVA) with partial eta-squared
+        and Bayesian Evidence Factor (BF10) for both main effects and interaction.
+        Follows APA 7th statistical reporting standards.
+        """
+        if not metrics or len(df) < 6:
+            return None
+
+        y_col = metrics[0]
+        if not pd.to_numeric(df[y_col], errors="coerce").notnull().any():
+            return None
+
+        fa_name = "Temporal Period"
+        fb_name = group_col if group_col else "Institutional Category"
+        sub = None
+
+        # Strategy 1: Crossed time_col (Early vs Late) x group_col
+        if time_col and time_col in df.columns and group_col and group_col in df.columns:
+            med_t = df[time_col].median() if pd.to_numeric(df[time_col], errors="coerce").notnull().all() else None
+            if med_t is not None and df[time_col].nunique() >= 2:
+                fa_series = np.where(df[time_col] <= med_t, "Early", "Late")
+                top_grps = df[group_col].value_counts().nlargest(3).index.tolist()
+                mask = df[group_col].isin(top_grps)
+                ct = pd.crosstab(pd.Series(fa_series)[mask], df.loc[mask, group_col])
+                if ct.shape[0] >= 2 and ct.shape[1] >= 2 and (ct > 0).all().all():
+                    sub = pd.DataFrame({
+                        "y": pd.to_numeric(df.loc[mask, y_col], errors="coerce"),
+                        "fa": pd.Series(fa_series)[mask].values,
+                        "fb": df.loc[mask, group_col].values,
+                    }).dropna()
+                    fa_name = f"Temporal Period (Early [<= {int(med_t) if isinstance(med_t, (int, float)) and not np.isnan(med_t) else med_t}] vs. Late)"
+                    fb_name = group_col
+
+        # Strategy 2: Bivariate Median Splits on Key Educational Metrics if time/group uncrossed
+        if sub is None or len(sub) < 6:
+            m_candidates = [m for m in metrics if m != y_col and pd.to_numeric(df[m], errors="coerce").notnull().sum() >= 6]
+            if len(m_candidates) >= 2:
+                m1, m2 = m_candidates[0], m_candidates[1]
+                med1 = df[m1].median()
+                med2 = df[m2].median()
+                sub = pd.DataFrame({
+                    "y": pd.to_numeric(df[y_col], errors="coerce"),
+                    "fa": np.where(df[m1] <= med1, f"Low_{m1[:12]}", f"High_{m1[:12]}"),
+                    "fb": np.where(df[m2] <= med2, f"Low_{m2[:12]}", f"High_{m2[:12]}"),
+                }).dropna()
+                fa_name = f"{m1} (Median Split)"
+                fb_name = f"{m2} (Median Split)"
+            elif len(m_candidates) == 1 and group_col and group_col in df.columns:
+                m1 = m_candidates[0]
+                med1 = df[m1].median()
+                top_grps = df[group_col].value_counts().nlargest(2).index.tolist()
+                mask = df[group_col].isin(top_grps)
+                sub = pd.DataFrame({
+                    "y": pd.to_numeric(df.loc[mask, y_col], errors="coerce"),
+                    "fa": np.where(df.loc[mask, m1] <= med1, f"Low_{m1[:12]}", f"High_{m1[:12]}"),
+                    "fb": df.loc[mask, group_col].values,
+                }).dropna()
+                fa_name = f"{m1} (Median Split)"
+                fb_name = group_col
+
+        if sub is None or len(sub) < 6:
+            return None
+
+        fa_levels = [str(x) for x in sub["fa"].unique()]
+        fb_levels = [str(x) for x in sub["fb"].unique()]
+        if len(fa_levels) < 2 or len(fb_levels) < 2:
+            return None
+
+        n_total = len(sub)
+        df_resid_full = n_total - (len(fa_levels) * len(fb_levels))
+        can_fit_interaction = df_resid_full >= 2
+
+        try:
+            if HAS_STATSMODELS and smf is not None and anova_lm is not None:
+                formula = "y ~ C(fa) * C(fb)" if can_fit_interaction else "y ~ C(fa) + C(fb)"
+                ols_model = smf.ols(formula, data=sub).fit()
+                a_table = anova_lm(ols_model, typ=2)
+
+                ss_err = float(a_table.loc["Residual", "sum_sq"])
+                df_err = int(a_table.loc["Residual", "df"])
+                ms_err = float(round(ss_err / max(1, df_err), 3))
+
+                def extract_effect(key: str, display_name: str) -> AnovaFactorEffect:
+                    if key in a_table.index and not np.isnan(a_table.loc[key, "F"]):
+                        ss_val = float(round(a_table.loc[key, "sum_sq"], 3))
+                        df_val = int(a_table.loc[key, "df"])
+                        ms_val = float(round(ss_val / max(1, df_val), 3))
+                        f_val = float(round(a_table.loc[key, "F"], 2))
+                        p_val = float(round(a_table.loc[key, "PR(>F)"], 4))
+                        eta_p = float(round(ss_val / max(1e-9, ss_val + ss_err), 3))
+
+                        denom_term = max(1e-9, (f_val * df_val) / max(1, df_err))
+                        log_bf = 0.5 * (n_total * math.log(1.0 + denom_term) - df_val * math.log(n_total))
+                        bf10 = float(round(math.exp(max(-20.0, min(20.0, log_bf))), 2))
+                        evidence = interpret_bayes_factor(bf10)
+
+                        return AnovaFactorEffect(
+                            source_name=display_name,
+                            ss=ss_val,
+                            df=df_val,
+                            ms=ms_val,
+                            f_stat=f_val,
+                            p_value=p_val,
+                            eta_sq_partial=eta_p,
+                            bf10=bf10,
+                            evidence_label=evidence,
+                        )
+                    else:
+                        return AnovaFactorEffect(
+                            source_name=display_name,
+                            ss=0.0,
+                            df=0,
+                            ms=0.0,
+                            f_stat=0.0,
+                            p_value=1.0,
+                            eta_sq_partial=0.0,
+                            bf10=1.0,
+                            evidence_label="Anecdotal evidence for H0",
+                        )
+
+                eff_a = extract_effect("C(fa)", f"Main Effect: {fa_name}")
+                eff_b = extract_effect("C(fb)", f"Main Effect: {fb_name}")
+                eff_int = extract_effect("C(fa):C(fb)", f"Interaction Effect: {fa_name} x {fb_name}")
+
+                ss_total = float(round(eff_a.ss + eff_b.ss + eff_int.ss + ss_err, 3))
+                df_total = int(eff_a.df + eff_b.df + eff_int.df + df_err)
+
+                p_a_str = "< .001" if eff_a.p_value < 0.001 else f"= {eff_a.p_value:.3f}"
+                p_b_str = "< .001" if eff_b.p_value < 0.001 else f"= {eff_b.p_value:.3f}"
+                apa_lines = [
+                    f"Two-way factorial ANOVA revealed a main effect of {fa_name}, F({eff_a.df}, {df_err}) = {eff_a.f_stat:.2f}, p {p_a_str}, partial eta^2 = {eff_a.eta_sq_partial:.3f}, BF_10 = {eff_a.bf10:.2f} ({eff_a.evidence_label}).",
+                    f"A main effect of {fb_name} was also observed, F({eff_b.df}, {df_err}) = {eff_b.f_stat:.2f}, p {p_b_str}, partial eta^2 = {eff_b.eta_sq_partial:.3f}, BF_10 = {eff_b.bf10:.2f} ({eff_b.evidence_label}).",
+                ]
+                if eff_int.df > 0:
+                    p_int_str = "< .001" if eff_int.p_value < 0.001 else f"= {eff_int.p_value:.3f}"
+                    apa_lines.append(
+                        f"The interaction effect ({fa_name} x {fb_name}) was F({eff_int.df}, {df_err}) = {eff_int.f_stat:.2f}, p {p_int_str}, partial eta^2 = {eff_int.eta_sq_partial:.3f}, BF_10 = {eff_int.bf10:.2f} ({eff_int.evidence_label})."
+                    )
+
+                return TwoWayAnovaResult(
+                    outcome_metric=y_col,
+                    factor_a_name=fa_name,
+                    factor_b_name=fb_name,
+                    factor_a_levels=fa_levels,
+                    factor_b_levels=fb_levels,
+                    factor_a_effect=eff_a,
+                    factor_b_effect=eff_b,
+                    interaction_effect=eff_int,
+                    error_ss=float(round(ss_err, 3)),
+                    error_df=df_err,
+                    error_ms=ms_err,
+                    total_ss=ss_total,
+                    total_df=df_total,
+                    apa_report=" ".join(apa_lines),
+                )
+            else:
+                return None
+        except Exception as e:
+            logger.warning(f"Could not compute Two-Way ANOVA: {e}")
+            return None
+
     def _detect_empirical_discoveries(
         self,
         dataset: EducationDataset,
@@ -620,7 +896,7 @@ class EduDataAnalyzer:
         if mv_regs:
             top_m = mv_regs[0]
             discoveries.append(
-                f"Multivariate OLS on '{top_m.dependent_var}' explained {round(top_m.r_squared * 100, 1)}% of variance (Adj. R^2 = {top_m.adj_r_squared}, F = {top_m.f_stat}, p = {top_m.f_pvalue}). {top_m.collinearity_status}"
+                f"Multivariate OLS on '{top_m.dependent_var}' explained {round(top_m.r_squared * 100, 1)}% of variance (Adj. R^2 = {top_m.adj_r_squared}, F = {top_m.f_stat}, p = {top_m.f_pvalue}, Model BF_10 = {top_m.model_bf10} [{top_m.model_evidence_label}]). {top_m.collinearity_status}"
             )
 
         # 3. Trajectory discovery
@@ -643,6 +919,7 @@ class EduDataAnalyzer:
         mv_regs: List[MultivariateRegressionResult],
         discoveries: List[str],
         angle: Optional[DatasetResearchAngle],
+        two_way_anova: Optional[TwoWayAnovaResult] = None,
     ) -> str:
         lines = [f"Statistical Empirical Synthesis for: {title}"]
         if angle:
@@ -654,6 +931,27 @@ class EduDataAnalyzer:
             for d in discoveries:
                 lines.append(f"- [Discovery] {d}")
 
+        if two_way_anova:
+            lines.append(f"\n### Factorial Two-Way ANOVA (Outcome: '{two_way_anova.outcome_metric}'):")
+            lines.append(f"- Factor A: {two_way_anova.factor_a_name} (Levels: {', '.join(two_way_anova.factor_a_levels)})")
+            lines.append(f"- Factor B: {two_way_anova.factor_b_name} (Levels: {', '.join(two_way_anova.factor_b_levels)})")
+            lines.append(f"- APA Statistical Summary: {two_way_anova.apa_report}")
+            fa = two_way_anova.factor_a_effect
+            fb = two_way_anova.factor_b_effect
+            fi = two_way_anova.interaction_effect
+            lines.append(f"  * Factor A Effect: F({fa.df}, {two_way_anova.error_df}) = {fa.f_stat:.2f}, p = {fa.p_value:.4f}, eta_p^2 = {fa.eta_sq_partial:.3f}, BF_10 = {fa.bf10:.2f} ({fa.evidence_label})")
+            lines.append(f"  * Factor B Effect: F({fb.df}, {two_way_anova.error_df}) = {fb.f_stat:.2f}, p = {fb.p_value:.4f}, eta_p^2 = {fb.eta_sq_partial:.3f}, BF_10 = {fb.bf10:.2f} ({fb.evidence_label})")
+            if fi.df > 0:
+                lines.append(f"  * Interaction Effect: F({fi.df}, {two_way_anova.error_df}) = {fi.f_stat:.2f}, p = {fi.p_value:.4f}, eta_p^2 = {fi.eta_sq_partial:.3f}, BF_10 = {fi.bf10:.2f} ({fi.evidence_label})")
+
+        if corrs:
+            lines.append("\n### Bivariate Correlations & Zero-Correlation Tests (with Bayes Factor BF10):")
+            for c in corrs[:4]:
+                lines.append(
+                    f"- {c.metric_x} vs. {c.metric_y}: r = {c.pearson_r:+.3f} (95% CI [{c.ci_lower:+.3f}, {c.ci_upper:+.3f}]), "
+                    f"t({c.df}) = {c.t_stat:+.2f}, p = {c.p_value:.4f}, BF_10 = {c.bf10:.2f} ({c.evidence_label})"
+                )
+
         if mv_regs:
             lines.append("\n### Multivariate OLS Regression & Multicollinearity Control:")
             for m in mv_regs:
@@ -661,7 +959,7 @@ class EduDataAnalyzer:
                     f"- Model: Outcome = {m.dependent_var} | Predictors = {', '.join(m.predictors)}"
                 )
                 lines.append(
-                    f"  R^2 = {m.r_squared}, Adj. R^2 = {m.adj_r_squared}, F({len(m.predictors)}, {m.n_obs - len(m.predictors) - 1}) = {m.f_stat}, p = {m.f_pvalue}"
+                    f"  R^2 = {m.r_squared}, Adj. R^2 = {m.adj_r_squared}, F({len(m.predictors)}, {m.n_obs - len(m.predictors) - 1}) = {m.f_stat}, p = {m.f_pvalue}, Model BF_10 = {m.model_bf10:.2f} ({m.model_evidence_label})"
                 )
                 lines.append(f"  Collinearity Diagnostics: {m.collinearity_status}")
                 lines.append("  Predictor Statistics:")

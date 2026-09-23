@@ -47,3 +47,29 @@ def test_analyzer_computations():
     # Check empirical discoveries
     assert len(res.empirical_discoveries) > 0
     assert "VIF" in res.summary_narrative
+
+    # Check Two-Way Factorial ANOVA
+    assert res.two_way_anova is not None
+    assert res.two_way_anova.outcome_metric != ""
+    assert res.two_way_anova.factor_a_effect.f_stat >= 0
+    assert 0.0 <= res.two_way_anova.factor_a_effect.eta_sq_partial <= 1.0
+    assert res.two_way_anova.factor_a_effect.bf10 > 0
+    assert res.two_way_anova.factor_b_effect.f_stat >= 0
+    assert 0.0 <= res.two_way_anova.factor_b_effect.eta_sq_partial <= 1.0
+    assert res.two_way_anova.factor_b_effect.bf10 > 0
+    assert "F(" in res.two_way_anova.apa_report
+    assert "partial eta^2 =" in res.two_way_anova.apa_report
+    assert "BF_10 =" in res.two_way_anova.apa_report
+
+    # Check Bivariate Correlation Zero-Test & Bayes Factor
+    assert len(res.correlations) > 0
+    c0 = res.correlations[0]
+    assert c0.df >= 1
+    assert c0.ci_lower <= c0.pearson_r <= c0.ci_upper
+    assert c0.bf10 > 0
+    assert len(c0.evidence_label) > 0
+
+    # Check Multivariate Regression Bayes Factor
+    assert res.multivariate_regressions[0].model_bf10 > 0
+    assert len(res.multivariate_regressions[0].model_evidence_label) > 0
+

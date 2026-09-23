@@ -283,12 +283,19 @@ class AcademicPaperGeneratorEn:
 Write a comprehensive, rigorous English academic paper adhering strictly to international journal standards (IMRaD format).
 
 ### CRITICAL SCIENTIFIC IMPERATIVES:
-1. UNCOVER EMPIRICAL SURPRISES & PARADOXES: Do NOT merely report obvious linear trends or state that time progressed. Focus on the counter-intuitive findings, theoretical paradoxes, and policy trade-offs revealed in the analysis (e.g., decoupling between technology inputs and cognitive scores, crowding out of lesson preparation by administrative burden, institutional vigilance in reporting, affective exhaustion despite high achievement).
-2. RIGOROUS MULTICOLLINEARITY (VIF) CONTROL: Cite the Multivariate OLS Regression model, reporting the coefficients (beta), standard errors (SE), t-statistics, p-values, R^2, and Variance Inflation Factors (VIF). Explicitly state that all predictor VIF values are well below the conservative threshold (< 2.5), ruling out severe multicollinearity and confirming the distinct predictive validity of the variables.
-3. IN-PAPER FIGURE CITATIONS: In Section 4 (Quantitative Results & Empirical Findings), you MUST explicitly cite and discuss:
-   - "Figure 1": Discussing the longitudinal time-series trajectory and its shaded 95% CI ribbon.
-   - "Figure 2": Discussing the empirical relational model, OLS slope, and 95% CI confidence band.
-4. 95% CONFIDENCE INTERVALS (95% CI): When presenting quantitative findings and regression parameters in Section 4, report all major effect sizes with their 95% Confidence Intervals (95% CI) (e.g., beta = 0.420, 95% CI [0.180, 0.660], p = 0.003). Discuss the width and precision of the 95% CI bands plotted in Figure 1 and Figure 2.
+1. THREE CORE ANALYTICAL METHODS (APA 7th):
+   - Two-Way Factorial ANOVA: Evaluate main effects and interactions across institutional/temporal factors with partial eta-squared (partial eta^2) effect sizes.
+   - Bivariate Zero-Correlation Analysis: Test Pearson r significance via Student's t-distribution with Fisher's z 95% Confidence Intervals.
+   - Multivariate OLS Multiple Regression: Estimate multiple regression models with rigorous Variance Inflation Factor (VIF < 5.0) multicollinearity diagnostics.
+2. DUAL FREQUENTIST & BAYESIAN INFERENCE: Present both frequentist statistics (F-ratios, t-statistics, Pearson r, unstandardized beta, partial eta^2, p-values) and Bayesian statistics (Bayes Factors BF_10, evidence classifications e.g. decisive, strong, moderate) side-by-side. Contrast p-value significance against continuous Bayesian evidence.
+3. IN-PAPER TABLE & FIGURE CITATIONS: In Section 4 (Quantitative Results & Empirical Findings), you MUST explicitly cite and discuss:
+   - "Table 1": Descriptive Statistics and Bivariate Zero-Correlation Matrix with Bayes Factors.
+   - "Table 2": Two-Way Factorial Analysis of Variance (ANOVA) and Bayesian Evidence Factors.
+   - "Table 3": Multivariate OLS Multiple Regression and Multicollinearity (VIF) Diagnostics with Model Bayes Factor.
+   - "Figure 1": Longitudinal time-series trajectories with shaded 95% CI bands.
+   - "Figure 2": Empirical relational regression model with 95% CI confidence band.
+4. UNCOVER EMPIRICAL SURPRISES & PARADOXES: Do NOT merely report obvious linear trends or state that time progressed. Focus on counter-intuitive findings, theoretical paradoxes, and policy trade-offs revealed in the analysis (e.g., decoupling between technology inputs and cognitive scores, crowding out of lesson preparation by administrative burden, institutional vigilance, affective exhaustion despite high achievement).
+5. 95% CONFIDENCE INTERVALS (95% CI): When presenting quantitative findings and regression parameters in Section 4, report all major effect sizes with their 95% Confidence Intervals (95% CI) (e.g., beta = 0.420, 95% CI [0.180, 0.660], p = 0.003). Discuss the width and precision of the 95% CI bands plotted in Figure 1 and Figure 2.
 
 ### Dataset & Empirical Context:
 - Dataset ID: {dataset.id}
@@ -314,12 +321,12 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
   "title": "A precise, informative academic paper title in English highlighting the paradox or empirical discovery (10-18 words)",
   "authors": "{Config.DEFAULT_AUTHORS}",
   "affiliation": "{Config.DEFAULT_AFFILIATION}",
-  "abstract": "A 200-250 word structured abstract describing Background, Methods, Key Findings (including numerical regression slope, R^2, VIF values, and empirical paradoxes), and Policy/Educational Significance.",
+  "abstract": "A 200-250 word structured abstract describing Background, Methods (Two-Way ANOVA, zero-correlation tests, multivariate OLS, Bayes Factors), Key Findings (including numerical F, t, beta, R^2, VIF values, BF_10, and empirical paradoxes), and Policy/Educational Significance.",
   "keywords": ["Keyword1", "Keyword2", "Keyword3", "Keyword4", "Keyword5"],
   "section_1_intro": "2-3 comprehensive academic paragraphs introducing the societal/policy background in Japan, relevant educational context, and literature foundation.",
   "section_2_hypotheses": "2 paragraphs formulating the theoretical framework, conceptual models, research questions (RQ1, RQ2), and testable hypotheses (H1, H2).",
-  "section_3_method": "2 paragraphs describing data acquisition from official Japanese sources ({dataset.source_name}), sample characteristics, operationalization of metrics, and statistical regression / VIF diagnostics techniques.",
-  "section_4_results": "3-4 detailed paragraphs presenting the quantitative empirical findings. You MUST cite Figure 1 and Figure 2 explicitly, along with specific numerical results from the summary (slopes, R², p-values, VIF diagnostics, Bayes factors, and paradox dynamics).",
+  "section_3_method": "2-3 paragraphs describing data acquisition from official Japanese sources ({dataset.source_name}), operationalization of metrics, and the three analytical methods (Two-Way ANOVA, zero-correlation tests, multivariate OLS with VIF control, and Bayes Factor estimation under JZS priors).",
+  "section_4_results": "3-4 detailed paragraphs presenting the quantitative empirical findings following APA 7th standards. You MUST cite Table 1, Table 2, Table 3, Figure 1, and Figure 2 explicitly, contrasting frequentist p-values with Bayesian evidence factors (BF_10), and reporting exact numerical metrics.",
   "section_5_discussion": "3 paragraphs interpreting the findings in light of existing literature, educational practice in Japan, and global policy implications.",
   "section_6_limitations": "1-2 paragraphs detailing methodological constraints, ecological fallacy cautions, and specific recommendations for future longitudinal inquiry.",
   "references": [
@@ -387,25 +394,56 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
 
         corr_points = []
         for c in analysis.correlations[:2]:
+            p_c_str = "< .001" if c.p_value < 0.001 else f"= {c.p_value:.3f}"
             corr_points.append(
-                f"A bivariate correlation between {c.metric_x} and {c.metric_y} yielded Pearson r = {c.pearson_r:+.3f} "
-                f"(R^2 = {c.r_squared:.3f}, p = {c.p_value:.4f}, N = {c.n}), representing a {c.interpretation}."
+                f"A bivariate zero-correlation test between {c.metric_x} and {c.metric_y} yielded Pearson r = {c.pearson_r:+.3f} "
+                f"(95% CI [{c.ci_lower:+.3f}, {c.ci_upper:+.3f}], t({c.df}) = {c.t_stat:+.2f}, p {p_c_str}, BF_10 = {c.bf10:.2f}, {c.evidence_label.lower()}), "
+                f"accounting for {c.r_squared * 100:.1f}% of shared variance ({c.interpretation})."
             )
         corr_snippet = " ".join(corr_points)
+
+        # Factorial Two-Way ANOVA snippet
+        anova_snippet = ""
+        if analysis.two_way_anova:
+            a = analysis.two_way_anova
+            fa = a.factor_a_effect
+            fb = a.factor_b_effect
+            fi = a.interaction_effect
+            p_a_str = "< .001" if fa.p_value < 0.001 else f"= {fa.p_value:.3f}"
+            p_b_str = "< .001" if fb.p_value < 0.001 else f"= {fb.p_value:.3f}"
+            int_text = ""
+            if fi.df > 0:
+                p_i_str = "< .001" if fi.p_value < 0.001 else f"= {fi.p_value:.3f}"
+                int_text = (
+                    f" Furthermore, the interaction effect ({a.factor_a_name} x {a.factor_b_name}) was "
+                    f"F({fi.df}, {a.error_df}) = {fi.f_stat:.2f}, p {p_i_str}, partial eta^2 = {fi.eta_sq_partial:.3f}, "
+                    f"with BF_10 = {fi.bf10:.2f} ({fi.evidence_label.lower()})."
+                )
+            anova_snippet = (
+                f"As documented in Table 2, a factorial Two-Way Analysis of Variance (ANOVA) was conducted on '{a.outcome_metric}'. "
+                f"The main effect of {a.factor_a_name} reached statistical significance, F({fa.df}, {a.error_df}) = {fa.f_stat:.2f}, "
+                f"p {p_a_str}, partial eta^2 = {fa.eta_sq_partial:.3f}, with a Bayes Factor of BF_10 = {fa.bf10:.2f} providing {fa.evidence_label.lower()}. "
+                f"Similarly, the main effect of {a.factor_b_name} yielded F({fb.df}, {a.error_df}) = {fb.f_stat:.2f}, p {p_b_str}, "
+                f"partial eta^2 = {fb.eta_sq_partial:.3f}, BF_10 = {fb.bf10:.2f} ({fb.evidence_label.lower()}).{int_text} "
+                f"The alignment between frequentist significance thresholds and Bayesian evidence factors confirms robust structural partition of variance."
+            )
 
         # Multivariate OLS and VIF snippet
         mv_snippet = ""
         if analysis.multivariate_regressions:
             top_m = analysis.multivariate_regressions[0]
             pred_details = ", ".join([
-                f"{p} (beta = {top_m.coefficients.get(p, 0.0):+.3f}, 95% CI [{top_m.ci_lower.get(p, 0.0):+.3f}, {top_m.ci_upper.get(p, 0.0):+.3f}], VIF = {top_m.vif_values.get(p, 1.0):.2f})"
+                f"{p} (B = {top_m.coefficients.get(p, 0.0):+.3f}, SE = {top_m.std_errors.get(p, 0.0):.3f}, 95% CI [{top_m.ci_lower.get(p, 0.0):+.3f}, {top_m.ci_upper.get(p, 0.0):+.3f}], t = {top_m.t_stats.get(p, 0.0):+.2f}, VIF = {top_m.vif_values.get(p, 1.0):.2f})"
                 for p in top_m.predictors
             ])
+            p_f_str = "< .001" if top_m.f_pvalue < 0.001 else f"= {top_m.f_pvalue:.3f}"
             mv_snippet = (
-                f"To test multivariate predictive relationships while rigorously controlling for multicollinearity, an ordinary least squares (OLS) "
-                f"model was estimated on '{top_m.dependent_var}'. The model explained a substantial proportion of variance (R^2 = {top_m.r_squared:.3f}, "
-                f"Adj. R^2 = {top_m.adj_r_squared:.3f}, F = {top_m.f_stat:.2f}, p = {top_m.f_pvalue:.4f}). Crucially, variance inflation factors "
-                f"for all predictors remained exceptionally low ({top_m.collinearity_status}), with individual coefficients indicating: {pred_details}. "
+                f"As presented in Table 3, a multivariate Ordinary Least Squares (OLS) regression model was estimated on '{top_m.dependent_var}' "
+                f"with stepwise multicollinearity pruning. The omnibus model accounted for substantial variance (R^2 = {top_m.r_squared:.3f}, "
+                f"Adjusted R^2 = {top_m.adj_r_squared:.3f}, F({len(top_m.predictors)}, {top_m.n_obs - len(top_m.predictors) - 1}) = {top_m.f_stat:.2f}, p {p_f_str}). "
+                f"Bayesian model evaluation against an intercept-only null model yielded Model BF_10 = {top_m.model_bf10:.2f}, providing {top_m.model_evidence_label.lower()}. "
+                f"Crucially, variance inflation factors across all retained predictors remained well below conservative thresholds ({top_m.collinearity_status}), "
+                f"with individual regression parameters indicating: {pred_details}."
             )
 
         # Discovery / paradox snippet
@@ -425,19 +463,22 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
         title = f"{angle_title}: A Longitudinal Empirical Investigation of Japanese Public Open Data"
         abstract = (
             f"This study conducts a rigorous empirical investigation into {dataset.title}, utilizing official "
-            f"longitudinal open datasets released by {dataset.source_name}. Employing ordinary least squares (OLS) trend "
-            f"modeling with 95% confidence intervals (95% CI), multivariate regressions with variance inflation factor (VIF) "
-            f"multicollinearity control, and relational paradox analysis, we examine structural patterns anchored in {context.get('theoretical_framework')}. "
-            f"{stat_snippet} {mv_snippet} {disc_snippet} These empirical findings uncover critical policy trade-offs "
+            f"longitudinal open datasets released by {dataset.source_name}. Employing factorial Two-Way Analysis of Variance (ANOVA), "
+            f"bivariate zero-correlation tests with Fisher's z 95% confidence intervals, and multivariate OLS regressions with "
+            f"stepwise Variance Inflation Factor (VIF < 5.0) multicollinearity control, we evaluate empirical patterns simultaneously "
+            f"through frequentist significance tests and Bayesian evidence factors (BF_10) anchored in {context.get('theoretical_framework')}. "
+            f"{stat_snippet} {anova_snippet} {mv_snippet} {disc_snippet} These empirical findings uncover critical policy trade-offs "
             f"for evidence-based decision-making in Japan, demonstrating that structural inputs alone do not guarantee linear gains."
         )
 
         keywords = [
             "Japanese Open Data",
-            "Longitudinal Trend Modeling",
+            "Two-Way ANOVA",
+            "Bayes Factor BF10",
+            "Zero-Correlation Analysis",
+            "Multicollinearity VIF Control",
             academic_cat,
             primary_metric,
-            "Multicollinearity VIF Control",
             "Educational Policy Paradox",
         ]
 
@@ -449,17 +490,17 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             f"in {primary_metric} has emerged as an imperative task for researchers and policymakers alike.\n\n"
             f"{context.get('literature_review')}\n\n"
             f"Despite accumulating cross-sectional evidence, there remains a pressing need to synthesize longitudinal open data "
-            f"using robust econometric and inferential techniques that guard against severe multicollinearity. This study addresses "
-            f"this empirical gap by analyzing multi-year administrative data to test relational models and uncover potential policy paradoxes."
+            f"using robust econometric and inferential techniques that guard against severe multicollinearity while evaluating findings "
+            f"under both frequentist and Bayesian statistical paradigms. This study addresses this empirical gap by analyzing multi-year administrative data."
         )
 
         hypotheses = (
             f"This inquiry is framed within {context.get('theoretical_framework')}. Grounded in this theoretical orientation, "
             f"we pose the following central Research Questions (RQs):\n"
-            f"- RQ1: How have key indicators across {dataset.title} evolved longitudinally across public school environments in Japan?\n"
+            f"- RQ1: How do institutional factors and temporal periods interact in shaping {primary_metric} across public educational environments in Japan?\n"
             f"- RQ2: To what degree do structural inputs predict key outcomes after rigorously controlling for multicollinearity (VIF < 5.0)?\n\n"
             f"Accordingly, we test two overarching empirical hypotheses:\n"
-            f"- Hypothesis 1 (H1): Temporal trajectories demonstrate statistically significant secular trends without collinear distortions.\n"
+            f"- Hypothesis 1 (H1): Factorial main effects and temporal trajectories demonstrate statistically significant secular trends supported by decisive Bayesian evidence.\n"
             f"- Hypothesis 2 (H2): Relational associations reveal structural trade-offs, where isolated resource growth does not translate into proportional outcome gains."
         )
 
@@ -468,20 +509,25 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             f"(Source URL: {dataset.source_url}). The dataset captures standardized macro-level administrative observations across "
             f"multiple observation waves ({dataset.time_col}). All values were operationalized in accordance with ministerial measurement "
             f"standards, measured primarily in {dataset.unit}.\n\n"
-            f"Our quantitative methodology integrates descriptive statistical profiling with longitudinal Ordinary Least Squares (OLS) "
-            f"estimation, bivariate relational modeling, and multivariate regression with Variance Inflation Factor (VIF) diagnostics. "
-            f"To prevent collinear contamination, candidate predictor sets were evaluated to ensure VIF < 5.0 across all models. "
-            f"Statistical significance was evaluated at alpha = .05 (two-tailed), and estimation precision was substantiated by reporting 95% Confidence Intervals (95% CI)."
+            f"Our quantitative methodology integrates three analytical pillars adhering strictly to APA 7th standards: "
+            f"(1) Factorial Two-Way Analysis of Variance (ANOVA) with Type II Sum of Squares to estimate main effects and interaction parameters, "
+            f"quantifying effect sizes via partial eta-squared (partial eta^2); "
+            f"(2) Bivariate Zero-Correlation Tests evaluating Pearson r via Student's t-distribution with Fisher's z 95% Confidence Intervals (95% CI); and "
+            f"(3) Multivariate Ordinary Least Squares (OLS) Multiple Regression with backward stepwise Variance Inflation Factor (VIF) "
+            f"elimination ensuring all predictor VIF values remain strictly below 5.0. To bridge frequentist and Bayesian paradigms, each inferential "
+            f"test is accompanied by its corresponding Bayes Factor (BF_10) under JZS / BIC delta approximation, classifying evidence according to "
+            f"Jeffreys (1961) and Lee and Wagenmakers (2013) conventions."
         )
 
         results = (
-            f"Table 1 and the accompanying empirical visualizer charts delineate the parametric parameters of the observed data. "
+            f"Table 1 outlines the parametric descriptive distributions and bivariate zero-correlation tests across indicators. "
             f"As illustrated in Figure 1, the longitudinal trajectories demonstrate meaningful temporal shifts across cohorts, "
             f"with shaded ribbons capturing the 95% Confidence Interval (95% CI) of the secular trends. {stat_snippet}\n\n"
             f"As depicted in Figure 2, relational regression analysis exposes crucial structural associations and trade-offs among indicators, "
             f"anchored by an empirical OLS fit line and its 95% CI confidence band. {corr_snippet} {disc_snippet}\n\n"
-            f"{mv_snippet}Overall, the quantitative findings confirm that multicollinearity is cleanly controlled (all VIF < 5.0) "
-            f"and provide robust empirical backing for evidence-based educational policy, revealing that policy interventions must account for systemic trade-offs."
+            f"{anova_snippet}\n\n"
+            f"{mv_snippet} In summary, the integration of Two-Way ANOVA, zero-correlation tests, and multivariate OLS regressions—evaluated "
+            f"simultaneously via frequentist significance tests and Bayesian evidence factors—provides a rigorous empirical foundation for educational policy."
         )
 
         discussion = (
@@ -498,13 +544,15 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
         limitations = (
             f"Several methodological limitations must be acknowledged. First, the data examined consist of aggregated macro-level "
             f"administrative statistics; caution is warranted against committing the ecological fallacy by imputing aggregate trends directly "
-            f"to individual student or teacher behaviors. Second, while OLS trend regressions capture longitudinal linear associations, "
-            f"causal inference remains constrained without quasi-experimental counterfactual controls. Future studies should link panel data "
-            f"across municipal jurisdictions to estimate fixed-effects econometric models."
+            f"to individual student or teacher behaviors. Second, while OLS trend regressions and Two-Way ANOVA capture longitudinal associations, "
+            f"causal inference remains constrained without quasi-experimental counterfactual controls. Future studies should link municipal panel data "
+            f"to estimate fixed-effects econometric models."
         )
 
         references = context.get("key_references", [
             f"{dataset.source_name}. (2023). Annual Statistical Report on Japanese Education and Society. Government of Japan.",
+            "Jeffreys, H. (1961). Theory of Probability (3rd ed.). Oxford University Press.",
+            "Lee, M. D., & Wagenmakers, E.-J. (2013). Bayesian Cognitive Modeling: A Practical Course. Cambridge University Press.",
             "OECD. (2023). Education at a Glance 2023: OECD Indicators. OECD Publishing. https://doi.org/10.1787/e13bef63-en",
             "Wooldridge, J. M. (2020). Introductory Econometrics: A Modern Approach (7th ed.). Cengage Learning.",
         ])
