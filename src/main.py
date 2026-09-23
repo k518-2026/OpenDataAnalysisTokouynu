@@ -97,11 +97,14 @@ def main():
     history = [] if args.force else storage.load_history()
 
     # 2. Select dataset and research angle
-    topic = (args.topic or Config.DEFAULT_TOPIC or "all").strip().lower()
+    topic = (args.topic or Config.DEFAULT_TOPIC or "all").strip().strip("'\"").lower()
+    target_dataset = args.dataset.strip().strip("'\"") if args.dataset else ""
+    target_angle = args.angle.strip().strip("'\"") if args.angle else ""
+
     dataset, angle = catalog.select_next_dataset_and_angle(
         posted_history=history,
-        target_dataset_id=args.dataset,
-        target_angle_id=args.angle,
+        target_dataset_id=target_dataset,
+        target_angle_id=target_angle,
         target_topic=topic,
     )
 
@@ -155,23 +158,14 @@ def main():
     )
 
     # 9. WordPress Publishing
-    pub_type = (args.publisher or Config.BLOG_PUBLISHER_TYPE or "wordpress_rest").strip().lower()
+    raw_publisher = args.publisher or Config.BLOG_PUBLISHER_TYPE or "wordpress_mail"
+    pub_type = raw_publisher.strip().strip("'\"").lower()
     published_url = None
 
-    if pub_type == "wordpress_rest":
-        logger.info("Publishing to WordPress via REST API...")
-        rest_publisher = WordPressRestPublisher()
-        published_url = rest_publisher.publish(
-            paper=paper,
-            analysis=analysis,
-            dataset=dataset,
-            figure_paths=figure_paths,
-            peer_review=peer_review,
-            pdf_path=pdf_path,
-            dry_run=args.dry_run,
-        )
-    elif pub_type == "wordpress_mail":
-        logger.info("Publishing to WordPress via Post by Email (SMTP)...")
+    logger.info(f"Selected Publisher Mode: '{pub_type}'")
+
+    if pub_type == "wordpress_mail":
+        logger.info(f"Publishing to WordPress via Post by Email (SMTP) to {Config.WP_SITE_URL}...")
         mail_publisher = WordPressMailPublisher()
         published_url = mail_publisher.publish(
             paper=paper,
@@ -182,9 +176,33 @@ def main():
             pdf_path=pdf_path,
             dry_run=args.dry_run,
         )
-    else:
+        if not published_url and not args.dry_run:
+            logger.error("❌ Failed to send email to WordPress. Please check WP_POST_EMAIL, SMTP_USER, and SMTP_PASS secrets.")
+            sys.exit(1)
+
+    elif pub_type == "wordpress_rest":
+        logger.info(f"Publishing to WordPress via REST API to {Config.WP_SITE_URL}...")
+        rest_publisher = WordPressRestPublisher()
+        published_url = rest_publisher.publish(
+            paper=paper,
+            analysis=analysis,
+            dataset=dataset,
+            figure_paths=figure_paths,
+            peer_review=peer_review,
+            pdf_path=pdf_path,
+            dry_run=args.dry_run,
+        )
+        if not published_url and not args.dry_run:
+            logger.error("❌ Failed to publish via WordPress REST API. Please check WP_USER and WP_APP_PASSWORD secrets.")
+            sys.exit(1)
+
+    elif pub_type == "markdown_only":
         logger.info("Publisher set to local markdown only. Skipping external web publication.")
         published_url = local_md
+
+    else:
+        logger.error(f"❌ Unknown publisher type: '{pub_type}'. Expected 'wordpress_mail', 'wordpress_rest', or 'markdown_only'.")
+        sys.exit(1)
 
     # 10. Update persistent history and PAPERS_ARCHIVE.md
     if not args.dry_run and published_url:
@@ -196,7 +214,7 @@ def main():
         )
 
     logger.info("================================================================")
-    logger.info(f"🎉 Pipeline Execution Complete!")
+    logger.info("🎉 Pipeline Execution Complete!")
     logger.info(f"Article Link: {published_url or 'N/A'}")
     logger.info("================================================================")
 

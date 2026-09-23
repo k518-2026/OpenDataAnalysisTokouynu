@@ -47,8 +47,19 @@ class WordPressMailPublisher(BasePublisher):
             logger.info(f"Dry-run mode: Simulating WordPress email publication to {target_site} via {Config.WP_POST_EMAIL or 'post-by-email'}.")
             return f"{target_site}/simulated-mail-post-{paper.dataset_id}"
 
-        if not Config.WP_POST_EMAIL or not Config.SMTP_USER or not Config.SMTP_PASS:
-            logger.error("SMTP or WP_POST_EMAIL credentials missing. Cannot publish via email.")
+        missing = []
+        if not Config.WP_POST_EMAIL:
+            missing.append("WP_POST_EMAIL (WordPress Post by Email target address)")
+        if not Config.SMTP_USER:
+            missing.append("SMTP_USER (Sender email, e.g. Gmail)")
+        if not Config.SMTP_PASS:
+            missing.append("SMTP_PASS (Sender email app password)")
+
+        if missing:
+            logger.error("❌ Cannot publish via email because required environment secrets are missing:")
+            for m in missing:
+                logger.error(f"   - Missing: {m}")
+            logger.error("👉 Please add them in GitHub Repository Settings -> Secrets and variables -> Actions.")
             return None
 
         # Shortcodes for WordPress Post by Email

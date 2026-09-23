@@ -90,28 +90,28 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_BRANCH: ${{ github.ref_name }}
         run: |
-          ARGS=""
+          ARGS=()
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            ARGS="$ARGS --dry-run"
+            ARGS+=("--dry-run")
           fi
           if [ "${{ github.event.inputs.force }}" = "true" ]; then
-            ARGS="$ARGS --force"
+            ARGS+=("--force")
           fi
-          if [ -n "${{ github.event.inputs.topic }}" ]; then
-            ARGS="$ARGS --topic '${{ github.event.inputs.topic }}'"
+          if [ -n "${{ github.event.inputs.topic }}" ] && [ "${{ github.event.inputs.topic }}" != "all" ]; then
+            ARGS+=("--topic" "${{ github.event.inputs.topic }}")
           fi
           if [ -n "${{ github.event.inputs.dataset }}" ]; then
-            ARGS="$ARGS --dataset '${{ github.event.inputs.dataset }}'"
+            ARGS+=("--dataset" "${{ github.event.inputs.dataset }}")
           fi
           if [ -n "${{ github.event.inputs.angle }}" ]; then
-            ARGS="$ARGS --angle '${{ github.event.inputs.angle }}'"
+            ARGS+=("--angle" "${{ github.event.inputs.angle }}")
           fi
           if [ -n "${{ github.event.inputs.publisher }}" ]; then
-            ARGS="$ARGS --publisher '${{ github.event.inputs.publisher }}'"
+            ARGS+=("--publisher" "${{ github.event.inputs.publisher }}")
           fi
 
-          echo "Executing pipeline with options: $ARGS"
-          python -m src.main $ARGS
+          echo "Executing pipeline with arguments: ${ARGS[@]}"
+          python -m src.main "${ARGS[@]}"
 
       - name: Commit and Push Updated Archive & Reports
         if: github.event.inputs.dry_run != 'true'
