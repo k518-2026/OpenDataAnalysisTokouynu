@@ -1,0 +1,125 @@
+{
+  "id": "japan_high_school_informatics",
+  "title": "Japanese Upper Secondary Informatics: Programming Curricula and University Entrance Exam Preparation",
+  "category": "info",
+  "region": "japan",
+  "source_name": "文部科学省・全国高等学校情報教育研究会",
+  "source_url": "https://www.mext.go.jp/a_menu/shotou/zyouhou/detail/1416756.htm",
+  "description": "Survey on the implementation of compulsory programming education (Information I), language selection (Python vs JavaScript), and preparatory measures for the Common Test for University Admissions.",
+  "unit": "%",
+  "time_col": "Year",
+  "group_col": "Curriculum_Track",
+  "recommended_chart": "trend_line",
+  "metrics": [
+    "Python_Adoption_Pct",
+    "JavaScript_Adoption_Pct",
+    "Common_Test_Prep_Pct",
+    "Inquiry_Lab_Adoption_Pct"
+  ],
+  "data": [
+    {
+      "Year": 2021,
+      "Curriculum_Track": "Public_High_Schools",
+      "Python_Adoption_Pct": 28.5,
+      "JavaScript_Adoption_Pct": 22.1,
+      "Common_Test_Prep_Pct": 35.0,
+      "Inquiry_Lab_Adoption_Pct": 25.4
+    },
+    {
+      "Year": 2022,
+      "Curriculum_Track": "Public_High_Schools",
+      "Python_Adoption_Pct": 48.2,
+      "JavaScript_Adoption_Pct": 25.4,
+      "Common_Test_Prep_Pct": 62.4,
+      "Inquiry_Lab_Adoption_Pct": 48.1
+    },
+    {
+      "Year": 2023,
+      "Curriculum_Track": "Public_High_Schools",
+      "Python_Adoption_Pct": 68.7,
+      "JavaScript_Adoption_Pct": 26.8,
+      "Common_Test_Prep_Pct": 81.3,
+      "Inquiry_Lab_Adoption_Pct": 69.5
+    },
+    {
+      "Year": 2024,
+      "Curriculum_Track": "Public_High_Schools",
+      "Python_Adoption_Pct": 82.4,
+      "JavaScript_Adoption_Pct": 27.2,
+      "Common_Test_Prep_Pct": 92.5,
+      "Inquiry_Lab_Adoption_Pct": 84.0
+    },
+    {
+      "Year": 2025,
+      "Curriculum_Track": "Public_High_Schools",
+      "Python_Adoption_Pct": 89.1,
+      "JavaScript_Adoption_Pct": 26.5,
+      "Common_Test_Prep_Pct": 96.8,
+      "Inquiry_Lab_Adoption_Pct": 91.2
+    },
+    {
+      "Year": 2021,
+      "Curriculum_Track": "Private_High_Schools",
+      "Python_Adoption_Pct": 34.0,
+      "JavaScript_Adoption_Pct": 28.5,
+      "Common_Test_Prep_Pct": 42.1,
+      "Inquiry_Lab_Adoption_Pct": 31.8
+    },
+    {
+      "Year": 2022,
+      "Curriculum_Track": "Private_High_Schools",
+      "Python_Adoption_Pct": 55.4,
+      "JavaScript_Adoption_Pct": 30.2,
+      "Common_Test_Prep_Pct": 71.0,
+      "Inquiry_Lab_Adoption_Pct": 56.4
+    },
+    {
+      "Year": 2023,
+      "Curriculum_Track": "Private_High_Schools",
+      "Python_Adoption_Pct": 74.6,
+      "JavaScript_Adoption_Pct": 31.0,
+      "Common_Test_Prep_Pct": 88.4,
+      "Inquiry_Lab_Adoption_Pct": 75.2
+    },
+    {
+      "Year": 2024,
+      "Curriculum_Track": "Private_High_Schools",
+      "Python_Adoption_Pct": 86.8,
+      "JavaScript_Adoption_Pct": 30.5,
+      "Common_Test_Prep_Pct": 95.2,
+      "Inquiry_Lab_Adoption_Pct": 88.5
+    },
+    {
+      "Year": 2025,
+      "Curriculum_Track": "Private_High_Schools",
+      "Python_Adoption_Pct": 92.3,
+      "JavaScript_Adoption_Pct": 29.8,
+      "Common_Test_Prep_Pct": 98.4,
+      "Inquiry_Lab_Adoption_Pct": 94.1
+    }
+  ],
+  "observation_unit": "集計年度・学科別の時系列データ系列（5年度分×2学科＝計10系列）",
+  "sample_population_note": "全国の国公私立高等学校（約4,800校、情報科担当教員約5,000名）を対象とした指導実態調査",
+  "sample_population_size": "全国約4,800校（高校情報科担当教員約5,000名）",
+  "title_ja": "【高校情報教育実態調査】「情報I」プログラミング指導とICT環境の推移",
+  "research_angles": [
+    {
+      "id": "programming_language_diffusion",
+      "title": "Curricular Technology Diffusion: Python Adoption in Upper Secondary Informatics Education in Japan",
+      "focus_metrics": [
+        "Python_Adoption_Pct",
+        "JavaScript_Adoption_Pct",
+        "Common_Test_Prep_Pct"
+      ],
+      "research_questions": [
+        "Which programming paradigms have achieved institutional dominance within Japan's 'Information I' curriculum?",
+        "Does university entrance exam inclusion accelerate hands-on computational lab implementation?"
+      ],
+      "hypotheses": [
+        "Python adoption demonstrates monotonic market dominance over legacy web scripting languages.",
+        "Schools with active university entrance exam preparation allocate higher proportions of instructional time to lab coding."
+      ],
+      "theoretical_framework": "Diffusion of Innovations Theory (Rogers, 2003)"
+    }
+  ]
+}

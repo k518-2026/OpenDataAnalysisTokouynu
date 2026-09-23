@@ -1,0 +1,22 @@
+# Core data & numerical computation
+pandas>=2.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Visualization (Publication quality charts)
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# LLM Academic Paper Generation
+google-genai>=0.1.1
+anthropic>=0.18.0
+
+# Networking & API
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# PDF Generation
+reportlab>=4.0.0
+
+# Testing
+pytest>=7.4.0

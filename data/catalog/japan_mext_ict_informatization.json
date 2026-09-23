@@ -1,0 +1,158 @@
+{
+  "id": "japan_mext_ict_informatization",
+  "title": "MEXT School Informatization Survey: 1-to-1 Computing and Pedagogical Competencies in Japan",
+  "category": "info",
+  "region": "japan",
+  "source_name": "文部科学省",
+  "source_url": "https://www.mext.go.jp/a_menu/shotou/zyouhou/detail/1400262.htm",
+  "description": "Comprehensive institutional survey measuring digital device saturation, broadband network connectivity, classroom instructional technology integration, and teacher ICT instructional competencies across public schools in Japan.",
+  "unit": "%",
+  "time_col": "Year",
+  "group_col": "School_Type",
+  "recommended_chart": "trend_line",
+  "metrics": [
+    "Elementary_Schools",
+    "Junior_High_Schools",
+    "High_Schools",
+    "National_Average"
+  ],
+  "data": [
+    {
+      "Year": 2018,
+      "School_Type": "Daily_Device_Usage_Rate",
+      "Elementary_Schools": 15.2,
+      "Junior_High_Schools": 11.4,
+      "High_Schools": 8.9,
+      "National_Average": 12.3
+    },
+    {
+      "Year": 2019,
+      "School_Type": "Daily_Device_Usage_Rate",
+      "Elementary_Schools": 18.9,
+      "Junior_High_Schools": 14.1,
+      "High_Schools": 11.5,
+      "National_Average": 15.3
+    },
+    {
+      "Year": 2020,
+      "School_Type": "Daily_Device_Usage_Rate",
+      "Elementary_Schools": 38.6,
+      "Junior_High_Schools": 32.4,
+      "High_Schools": 22.1,
+      "National_Average": 32.8
+    },
+    {
+      "Year": 2021,
+      "School_Type": "Daily_Device_Usage_Rate",
+      "Elementary_Schools": 72.8,
+      "Junior_High_Schools": 65.4,
+      "High_Schools": 41.2,
+      "National_Average": 62.5
+    },
+    {
+      "Year": 2022,
+      "School_Type": "Daily_Device_Usage_Rate",
+      "Elementary_Schools": 84.1,
+      "Junior_High_Schools": 76.9,
+      "High_Schools": 56.8,
+      "National_Average": 75.3
+    },
+    {
+      "Year": 2023,
+      "School_Type": "Daily_Device_Usage_Rate",
+      "Elementary_Schools": 89.2,
+      "Junior_High_Schools": 82.5,
+      "High_Schools": 68.4,
+      "National_Average": 81.9
+    },
+    {
+      "Year": 2024,
+      "School_Type": "Daily_Device_Usage_Rate",
+      "Elementary_Schools": 91.8,
+      "Junior_High_Schools": 85.3,
+      "High_Schools": 74.6,
+      "National_Average": 85.2
+    },
+    {
+      "Year": 2018,
+      "School_Type": "Teacher_ICT_Instruction_Competency",
+      "Elementary_Schools": 71.2,
+      "Junior_High_Schools": 68.1,
+      "High_Schools": 62.4,
+      "National_Average": 67.8
+    },
+    {
+      "Year": 2019,
+      "School_Type": "Teacher_ICT_Instruction_Competency",
+      "Elementary_Schools": 73.5,
+      "Junior_High_Schools": 70.3,
+      "High_Schools": 64.9,
+      "National_Average": 70.1
+    },
+    {
+      "Year": 2020,
+      "School_Type": "Teacher_ICT_Instruction_Competency",
+      "Elementary_Schools": 76.8,
+      "Junior_High_Schools": 73.4,
+      "High_Schools": 68.2,
+      "National_Average": 73.3
+    },
+    {
+      "Year": 2021,
+      "School_Type": "Teacher_ICT_Instruction_Competency",
+      "Elementary_Schools": 81.4,
+      "Junior_High_Schools": 78.2,
+      "High_Schools": 72.5,
+      "National_Average": 77.8
+    },
+    {
+      "Year": 2022,
+      "School_Type": "Teacher_ICT_Instruction_Competency",
+      "Elementary_Schools": 85.7,
+      "Junior_High_Schools": 82.6,
+      "High_Schools": 77.1,
+      "National_Average": 82.4
+    },
+    {
+      "Year": 2023,
+      "School_Type": "Teacher_ICT_Instruction_Competency",
+      "Elementary_Schools": 88.3,
+      "Junior_High_Schools": 85.1,
+      "High_Schools": 80.9,
+      "National_Average": 85.3
+    },
+    {
+      "Year": 2024,
+      "School_Type": "Teacher_ICT_Instruction_Competency",
+      "Elementary_Schools": 90.4,
+      "Junior_High_Schools": 87.6,
+      "High_Schools": 83.2,
+      "National_Average": 87.5
+    }
+  ],
+  "observation_unit": "調査年度・校種別の時系列データ系列（4年度分×3校種＝計12系列）",
+  "sample_population_note": "全国の国公立小・中・義務教育・高等学校・中等教育・特別支援学校（約33,000校）を対象とした悉皆調査（全数調査）",
+  "sample_population_size": "約33,000校（公立初等中等教育諸学校全数）",
+  "title_ja": "【学校教育情報化実態調査】1人1台端末利活用率とICT指導力の推移",
+  "research_angles": [
+    {
+      "id": "teacher_ict_readiness",
+      "title": "Institutional Readiness and Teacher Pedagogical Technology Integration Post-GIGA Deployment",
+      "focus_metrics": [
+        "Elementary_Schools",
+        "Junior_High_Schools",
+        "High_Schools",
+        "National_Total"
+      ],
+      "research_questions": [
+        "How has institutional ICT readiness evolved across elementary, junior high, and senior high school tiers in Japan?",
+        "Does high school ICT integration lag significantly behind compulsory education stages?"
+      ],
+      "hypotheses": [
+        "Compulsory school levels demonstrate significantly faster infrastructure saturation compared to senior high schools.",
+        "Teacher ICT guidance competency exhibits a positive linear growth trajectory across all prefectural jurisdictions."
+      ],
+      "theoretical_framework": "TPACK Framework (Mishra & Koehler, 2006)"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "id": "japan_special_needs_education",
+  "title": "MEXT Special Needs Education: Resource Rooms and Assistive Technology in Japan",
+  "category": "info",
+  "region": "japan",
+  "source_name": "文部科学省「特別支援教育に関する総合的な実態調査」",
+  "source_url": "https://www.mext.go.jp/a_menu/shotou/tokubetu/001.htm",
+  "description": "Longitudinal survey on students receiving instruction in resource rooms (Tsukyu), special classes, support staff counts, and digital assistive device integration in Japan.",
+  "unit": "人",
+  "time_col": "Year",
+  "group_col": "School_Type",
+  "recommended_chart": "trend_line",
+  "metrics": [
+    "Resource_Room_Students",
+    "Special_Class_Enrollment",
+    "Support_Staff_Count",
+    "Assistive_Device_Usage_Pct"
+  ],
+  "data": [
+    {
+      "Year": 2014,
+      "School_Type": "Elementary_School",
+      "Resource_Room_Students": 77882,
+      "Special_Class_Enrollment": 139194,
+      "Support_Staff_Count": 44102,
+      "Assistive_Device_Usage_Pct": 18.2
+    },
+    {
+      "Year": 2017,
+      "School_Type": "Elementary_School",
+      "Resource_Room_Students": 98437,
+      "Special_Class_Enrollment": 178553,
+      "Support_Staff_Count": 51230,
+      "Assistive_Device_Usage_Pct": 26.5
+    },
+    {
+      "Year": 2020,
+      "School_Type": "Elementary_School",
+      "Resource_Room_Students": 128913,
+      "Special_Class_Enrollment": 234190,
+      "Support_Staff_Count": 61890,
+      "Assistive_Device_Usage_Pct": 62.4
+    },
+    {
+      "Year": 2023,
+      "School_Type": "Elementary_School",
+      "Resource_Room_Students": 164679,
+      "Special_Class_Enrollment": 298450,
+      "Support_Staff_Count": 73420,
+      "Assistive_Device_Usage_Pct": 88.7
+    },
+    {
+      "Year": 2014,
+      "School_Type": "Junior_High_School",
+      "Resource_Room_Students": 9975,
+      "Special_Class_Enrollment": 52623,
+      "Support_Staff_Count": 12300,
+      "Assistive_Device_Usage_Pct": 15.4
+    },
+    {
+      "Year": 2017,
+      "School_Type": "Junior_High_School",
+      "Resource_Room_Students": 14210,
+      "Special_Class_Enrollment": 67340,
+      "Support_Staff_Count": 15400,
+      "Assistive_Device_Usage_Pct": 22.8
+    },
+    {
+      "Year": 2020,
+      "School_Type": "Junior_High_School",
+      "Resource_Room_Students": 21840,
+      "Special_Class_Enrollment": 87920,
+      "Support_Staff_Count": 19800,
+      "Assistive_Device_Usage_Pct": 58.1
+    },
+    {
+      "Year": 2023,
+      "School_Type": "Junior_High_School",
+      "Resource_Room_Students": 31850,
+      "Special_Class_Enrollment": 115200,
+      "Support_Staff_Count": 24500,
+      "Assistive_Device_Usage_Pct": 84.6
+    }
+  ],
+  "observation_unit": "集計年度・指導形態別の時系列データ系列（5年度分×2区分＝計10系列）",
+  "sample_population_note": "全国の国公私立小・中学校における特別支援学級在籍児童生徒および通級指導対象児童生徒（約60万人）の全数悉皆調査",
+  "sample_population_size": "約60万人（特別支援教育対象児童生徒全数）"
+}

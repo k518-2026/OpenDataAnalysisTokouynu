@@ -1,0 +1,175 @@
+{
+  "id": "japan_national_assessment_math",
+  "title": "National Assessment of Academic Ability: Mathematics Achievement and Affective Trends in Japan",
+  "category": "math",
+  "region": "japan",
+  "source_name": "文部科学省・国立教育政策研究所",
+  "source_url": "https://www.nier.go.jp/kaihatsu/zenkokugakuryoku.html",
+  "description": "Longitudinal empirical monitoring of elementary (Grade 6) and lower secondary (Grade 3) mathematics test scores alongside affective engagement, perceived utility value, and digital device integration.",
+  "unit": "%",
+  "time_col": "Year",
+  "group_col": "School_Level",
+  "recommended_chart": "trend_line",
+  "metrics": [
+    "Mean_Score_Pct",
+    "Enjoyment_Rate_Pct",
+    "Perceived_Utility_Pct",
+    "Digital_Device_Usage_Pct"
+  ],
+  "data": [
+    {
+      "Year": 2017,
+      "School_Level": "Elementary_Math",
+      "Mean_Score_Pct": 66.8,
+      "Enjoyment_Rate_Pct": 65.4,
+      "Perceived_Utility_Pct": 78.2,
+      "Digital_Device_Usage_Pct": 18.5
+    },
+    {
+      "Year": 2018,
+      "School_Level": "Elementary_Math",
+      "Mean_Score_Pct": 63.5,
+      "Enjoyment_Rate_Pct": 65.1,
+      "Perceived_Utility_Pct": 77.9,
+      "Digital_Device_Usage_Pct": 21.2
+    },
+    {
+      "Year": 2019,
+      "School_Level": "Elementary_Math",
+      "Mean_Score_Pct": 66.7,
+      "Enjoyment_Rate_Pct": 66.0,
+      "Perceived_Utility_Pct": 78.5,
+      "Digital_Device_Usage_Pct": 25.4
+    },
+    {
+      "Year": 2021,
+      "School_Level": "Elementary_Math",
+      "Mean_Score_Pct": 70.3,
+      "Enjoyment_Rate_Pct": 67.2,
+      "Perceived_Utility_Pct": 79.1,
+      "Digital_Device_Usage_Pct": 58.7
+    },
+    {
+      "Year": 2022,
+      "School_Level": "Elementary_Math",
+      "Mean_Score_Pct": 63.3,
+      "Enjoyment_Rate_Pct": 66.8,
+      "Perceived_Utility_Pct": 79.4,
+      "Digital_Device_Usage_Pct": 78.3
+    },
+    {
+      "Year": 2023,
+      "School_Level": "Elementary_Math",
+      "Mean_Score_Pct": 62.7,
+      "Enjoyment_Rate_Pct": 65.9,
+      "Perceived_Utility_Pct": 78.8,
+      "Digital_Device_Usage_Pct": 83.1
+    },
+    {
+      "Year": 2024,
+      "School_Level": "Elementary_Math",
+      "Mean_Score_Pct": 63.6,
+      "Enjoyment_Rate_Pct": 66.5,
+      "Perceived_Utility_Pct": 79.2,
+      "Digital_Device_Usage_Pct": 85.6
+    },
+    {
+      "Year": 2017,
+      "School_Level": "JuniorHigh_Math",
+      "Mean_Score_Pct": 64.9,
+      "Enjoyment_Rate_Pct": 53.2,
+      "Perceived_Utility_Pct": 72.8,
+      "Digital_Device_Usage_Pct": 12.3
+    },
+    {
+      "Year": 2018,
+      "School_Level": "JuniorHigh_Math",
+      "Mean_Score_Pct": 60.3,
+      "Enjoyment_Rate_Pct": 52.8,
+      "Perceived_Utility_Pct": 72.1,
+      "Digital_Device_Usage_Pct": 14.8
+    },
+    {
+      "Year": 2019,
+      "School_Level": "JuniorHigh_Math",
+      "Mean_Score_Pct": 60.3,
+      "Enjoyment_Rate_Pct": 53.6,
+      "Perceived_Utility_Pct": 72.5,
+      "Digital_Device_Usage_Pct": 17.9
+    },
+    {
+      "Year": 2021,
+      "School_Level": "JuniorHigh_Math",
+      "Mean_Score_Pct": 57.5,
+      "Enjoyment_Rate_Pct": 54.1,
+      "Perceived_Utility_Pct": 73.0,
+      "Digital_Device_Usage_Pct": 52.1
+    },
+    {
+      "Year": 2022,
+      "School_Level": "JuniorHigh_Math",
+      "Mean_Score_Pct": 51.4,
+      "Enjoyment_Rate_Pct": 53.5,
+      "Perceived_Utility_Pct": 72.4,
+      "Digital_Device_Usage_Pct": 71.9
+    },
+    {
+      "Year": 2023,
+      "School_Level": "JuniorHigh_Math",
+      "Mean_Score_Pct": 51.4,
+      "Enjoyment_Rate_Pct": 53.2,
+      "Perceived_Utility_Pct": 71.8,
+      "Digital_Device_Usage_Pct": 78.4
+    },
+    {
+      "Year": 2024,
+      "School_Level": "JuniorHigh_Math",
+      "Mean_Score_Pct": 53.1,
+      "Enjoyment_Rate_Pct": 53.9,
+      "Perceived_Utility_Pct": 72.7,
+      "Digital_Device_Usage_Pct": 81.2
+    }
+  ],
+  "observation_unit": "調査年度・校種別の時系列データ系列（5年度分×2校種＝計10系列）",
+  "sample_population_note": "全国の国公私立小学校第6学年および中学校第3学年の原則全児童生徒（約200万人規模、約29,000校）を対象とした悉皆調査（全数調査）",
+  "sample_population_size": "約200万人（全国小6・中3全児童生徒悉皆）",
+  "title_ja": "【全国学力調査】小・中学校における算数・数学の平均正答率と意識推移",
+  "research_angles": [
+    {
+      "id": "math_affective_gap",
+      "title": "The Decoupling of Achievement and Affective Value in Japanese Mathematics Education",
+      "focus_metrics": [
+        "Mean_Score_Pct",
+        "Enjoyment_Rate_Pct",
+        "Perceived_Utility_Pct"
+      ],
+      "research_questions": [
+        "Does cognitive achievement in mathematics correlate positively with student subject enjoyment across educational tiers?",
+        "How has the longitudinal gap between utility valuation and intrinsic interest evolved?"
+      ],
+      "hypotheses": [
+        "Despite sustained high test scores, intrinsic enjoyment exhibits a statistically significant negative longitudinal trend.",
+        "Secondary school students exhibit significantly steeper declines in mathematics affinity than primary pupils."
+      ],
+      "theoretical_framework": "Expectancy-Value Theory (Eccles & Wigfield, 2002)"
+    },
+    {
+      "id": "giga_device_impact",
+      "title": "Evaluating the Longitudinal Impact of 1-to-1 Device Implementation on Mathematics Learning Engagement",
+      "focus_metrics": [
+        "Digital_Device_Usage_Pct",
+        "Mean_Score_Pct",
+        "Enjoyment_Rate_Pct"
+      ],
+      "research_questions": [
+        "How rapidly has digital terminal utilization expanded under the GIGA School Initiative?",
+        "Is increased classroom digital terminal usage associated with shifts in cognitive test outcomes?"
+      ],
+      "hypotheses": [
+        "Digital device integration experienced an exponential structural surge post-2020.",
+        "Classroom device utilization demonstrates positive bivariate correlation with subject interest."
+      ],
+      "theoretical_framework": "Technology Acceptance Model & Digital Pedagogy (Davis, 1989)"
+    }
+  ]
+}

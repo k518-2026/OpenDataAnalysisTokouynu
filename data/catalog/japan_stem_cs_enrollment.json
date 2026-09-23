@@ -1,0 +1,114 @@
+{
+  "id": "japan_stem_cs_enrollment",
+  "title": "MEXT School Basic Survey: Collegiate STEM and Computer Science Enrollment and Gender Ratios in Japan",
+  "category": "math",
+  "region": "japan",
+  "source_name": "文部科学省",
+  "source_url": "https://www.mext.go.jp/b_menu/toukei/chousa01/kihon/1267995.htm",
+  "description": "Longitudinal administrative monitoring of undergraduate and graduate admissions in science, engineering, and computer science disciplines, tracking institutional expansion and female student participation rates.",
+  "unit": "人",
+  "time_col": "Year",
+  "group_col": "Academic_Field",
+  "recommended_chart": "trend_line",
+  "metrics": [
+    "Total_Admissions",
+    "Female_Admissions",
+    "Female_Percentage"
+  ],
+  "data": [
+    {
+      "Year": 2015,
+      "Academic_Field": "Computer_Science_Engineering",
+      "Total_Admissions": 28400,
+      "Female_Admissions": 4120,
+      "Female_Percentage": 14.5
+    },
+    {
+      "Year": 2016,
+      "Academic_Field": "Computer_Science_Engineering",
+      "Total_Admissions": 29100,
+      "Female_Admissions": 4350,
+      "Female_Percentage": 14.9
+    },
+    {
+      "Year": 2017,
+      "Academic_Field": "Computer_Science_Engineering",
+      "Total_Admissions": 30200,
+      "Female_Admissions": 4680,
+      "Female_Percentage": 15.5
+    },
+    {
+      "Year": 2018,
+      "Academic_Field": "Computer_Science_Engineering",
+      "Total_Admissions": 31500,
+      "Female_Admissions": 5040,
+      "Female_Percentage": 16.0
+    },
+    {
+      "Year": 2019,
+      "Academic_Field": "Computer_Science_Engineering",
+      "Total_Admissions": 32800,
+      "Female_Admissions": 5410,
+      "Female_Percentage": 16.5
+    },
+    {
+      "Year": 2020,
+      "Academic_Field": "Computer_Science_Engineering",
+      "Total_Admissions": 34600,
+      "Female_Admissions": 5980,
+      "Female_Percentage": 17.3
+    },
+    {
+      "Year": 2021,
+      "Academic_Field": "Computer_Science_Engineering",
+      "Total_Admissions": 36200,
+      "Female_Admissions": 6510,
+      "Female_Percentage": 18.0
+    },
+    {
+      "Year": 2022,
+      "Academic_Field": "Computer_Science_Engineering",
+      "Total_Admissions": 38100,
+      "Female_Admissions": 7240,
+      "Female_Percentage": 19.0
+    },
+    {
+      "Year": 2023,
+      "Academic_Field": "Computer_Science_Engineering",
+      "Total_Admissions": 40500,
+      "Female_Admissions": 8100,
+      "Female_Percentage": 20.0
+    },
+    {
+      "Year": 2024,
+      "Academic_Field": "Computer_Science_Engineering",
+      "Total_Admissions": 42800,
+      "Female_Admissions": 9070,
+      "Female_Percentage": 21.2
+    }
+  ],
+  "observation_unit": "調査年度別の時系列データ系列（2014〜2023年度の計10系列）",
+  "sample_population_note": "全国の国公私立大学（約800大学、在学者約300万人、入学者約60万人）を対象とした学校基本調査（文部科学省基幹統計・全数調査）",
+  "sample_population_size": "約60万人/年（全国大学学部入学者全数）",
+  "title_ja": "【学校基本調査】情報科学・工学系学科入学者数と女子比率の推移",
+  "research_angles": [
+    {
+      "id": "female_stem_parity",
+      "title": "Gender Parity Trajectories in Collegiate Computing and Engineering Admissions in Japan",
+      "focus_metrics": [
+        "Female_Percentage",
+        "Total_Admissions",
+        "Female_Admissions"
+      ],
+      "research_questions": [
+        "To what extent has female enrollment in Japanese collegiate computer science programs shifted over the last decade?",
+        "Do computer science faculties exhibit distinct gender integration patterns relative to traditional engineering disciplines?"
+      ],
+      "hypotheses": [
+        "Female representation in computer science demonstrates a statistically significant positive trend.",
+        "Overall female STEM enrollment remains below OECD benchmark parity levels."
+      ],
+      "theoretical_framework": "Social Cognitive Career Theory & Science Capital (Archer et al., 2015)"
+    }
+  ]
+}

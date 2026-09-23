@@ -1,0 +1,93 @@
+{
+  "id": "unesco_world_ict_skills",
+  "title": "UNESCO / ITU Global ICT Skills: Youth Programming and Digital Competency Benchmarks",
+  "category": "info",
+  "region": "global",
+  "source_name": "UNESCO・ITU",
+  "source_url": "http://data.uis.unesco.org/",
+  "description": "Cross-national indicators measuring youth and adult digital proficiency, computational programming skills, advanced spreadsheet modeling, and presentation creation across global economies.",
+  "unit": "%",
+  "time_col": "Year",
+  "group_col": "Country",
+  "recommended_chart": "ranking_bar",
+  "metrics": [
+    "Programming_Skill_Rate_Pct",
+    "Advanced_Spreadsheet_Usage_Pct",
+    "Presentation_Creation_Rate_Pct"
+  ],
+  "data": [
+    {
+      "Year": 2023,
+      "Country": "Finland",
+      "Programming_Skill_Rate_Pct": 28.4,
+      "Advanced_Spreadsheet_Usage_Pct": 62.1,
+      "Presentation_Creation_Rate_Pct": 74.3
+    },
+    {
+      "Year": 2023,
+      "Country": "オランダ",
+      "Programming_Skill_Rate_Pct": 26.1,
+      "Advanced_Spreadsheet_Usage_Pct": 59.8,
+      "Presentation_Creation_Rate_Pct": 71.5
+    },
+    {
+      "Year": 2023,
+      "Country": "エストニア",
+      "Programming_Skill_Rate_Pct": 25.8,
+      "Advanced_Spreadsheet_Usage_Pct": 58.4,
+      "Presentation_Creation_Rate_Pct": 69.2
+    },
+    {
+      "Year": 2023,
+      "Country": "Singapore",
+      "Programming_Skill_Rate_Pct": 24.5,
+      "Advanced_Spreadsheet_Usage_Pct": 57.1,
+      "Presentation_Creation_Rate_Pct": 70.8
+    },
+    {
+      "Year": 2023,
+      "Country": "スウェーデン",
+      "Programming_Skill_Rate_Pct": 23.9,
+      "Advanced_Spreadsheet_Usage_Pct": 56.7,
+      "Presentation_Creation_Rate_Pct": 68.4
+    },
+    {
+      "Year": 2023,
+      "Country": "イギリス",
+      "Programming_Skill_Rate_Pct": 19.8,
+      "Advanced_Spreadsheet_Usage_Pct": 51.2,
+      "Presentation_Creation_Rate_Pct": 64.1
+    },
+    {
+      "Year": 2023,
+      "Country": "ドイツ",
+      "Programming_Skill_Rate_Pct": 18.2,
+      "Advanced_Spreadsheet_Usage_Pct": 49.3,
+      "Presentation_Creation_Rate_Pct": 61.9
+    },
+    {
+      "Year": 2023,
+      "Country": "Japan",
+      "Programming_Skill_Rate_Pct": 14.6,
+      "Advanced_Spreadsheet_Usage_Pct": 43.5,
+      "Presentation_Creation_Rate_Pct": 55.2
+    },
+    {
+      "Year": 2023,
+      "Country": "South_Korea",
+      "Programming_Skill_Rate_Pct": 22.3,
+      "Advanced_Spreadsheet_Usage_Pct": 54.8,
+      "Presentation_Creation_Rate_Pct": 67.5
+    },
+    {
+      "Year": 2023,
+      "Country": "OECD平均",
+      "Programming_Skill_Rate_Pct": 17.5,
+      "Advanced_Spreadsheet_Usage_Pct": 48.6,
+      "Presentation_Creation_Rate_Pct": 62.0
+    }
+  ],
+  "observation_unit": "UNESCO/ITU統計における主要10か国の国別集計データ（計10か国）",
+  "sample_population_note": "ユネスコ加盟国における全国代表抽出標本（15〜24歳青少年人口および成人人口）",
+  "sample_population_size": "主要10か国の青少年人口代表標本"
+}

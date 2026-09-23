@@ -1,0 +1,131 @@
+name: Daily Japanese Open Data Empirical Analysis & English Paper Publisher
+
+on:
+  # Daily scheduled execution at 06:00 JST (21:00 UTC previous day)
+  schedule:
+    - cron: '0 21 * * *'
+
+  # Manual execution trigger from GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (Simulate without publishing to WordPress or modifying history)'
+        type: boolean
+        required: false
+        default: false
+      force:
+        description: 'Force execution (Ignore rotation history and publish topic)'
+        type: boolean
+        required: false
+        default: false
+      topic:
+        description: 'Target topic category filter (e.g. all, math, info, policy)'
+        type: string
+        required: false
+        default: 'all'
+      dataset:
+        description: 'Specific dataset ID to analyze (e.g. japan_national_assessment_math)'
+        type: string
+        required: false
+        default: ''
+      angle:
+        description: 'Specific research angle ID to analyze'
+        type: string
+        required: false
+        default: ''
+      publisher:
+        description: 'Publishing method (wordpress_rest / wordpress_mail / markdown_only)'
+        type: choice
+        options:
+          - wordpress_rest
+          - wordpress_mail
+          - markdown_only
+        default: wordpress_rest
+
+permissions:
+  contents: write
+
+jobs:
+  run-daily-paper:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install System Fonts & Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-dejavu-core fonts-liberation
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run Pipeline (Generate Academic Paper & Publish)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_TEXT_MODEL: ${{ vars.GEMINI_TEXT_MODEL || 'gemini-2.5-flash' }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          WP_SITE_URL: ${{ secrets.WP_SITE_URL || 'https://kouynu.wordpress.com' }}
+          WP_USER: ${{ secrets.WP_USER }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+          WP_POST_STATUS: ${{ vars.WP_POST_STATUS || 'publish' }}
+          DEFAULT_CATEGORIES: ${{ vars.DEFAULT_CATEGORIES || 'Open Data Analysis,Educational Policy,Empirical Research' }}
+          WP_POST_EMAIL: ${{ secrets.WP_POST_EMAIL }}
+          SMTP_HOST: ${{ vars.SMTP_HOST || 'smtp.gmail.com' }}
+          SMTP_PORT: ${{ vars.SMTP_PORT || '587' }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          BLOG_PUBLISHER_TYPE: ${{ github.event.inputs.publisher || vars.BLOG_PUBLISHER_TYPE || 'wordpress_rest' }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_BRANCH: ${{ github.ref_name }}
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            ARGS="$ARGS --force"
+          fi
+          if [ -n "${{ github.event.inputs.topic }}" ]; then
+            ARGS="$ARGS --topic '${{ github.event.inputs.topic }}'"
+          fi
+          if [ -n "${{ github.event.inputs.dataset }}" ]; then
+            ARGS="$ARGS --dataset '${{ github.event.inputs.dataset }}'"
+          fi
+          if [ -n "${{ github.event.inputs.angle }}" ]; then
+            ARGS="$ARGS --angle '${{ github.event.inputs.angle }}'"
+          fi
+          if [ -n "${{ github.event.inputs.publisher }}" ]; then
+            ARGS="$ARGS --publisher '${{ github.event.inputs.publisher }}'"
+          fi
+
+          echo "Executing pipeline with options: $ARGS"
+          python -m src.main $ARGS
+
+      - name: Commit and Push Updated Archive & Reports
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action [Daily Paper Publisher]"
+
+          # Stage new reports, figures, PDFs, and history files
+          git add data/posted_papers.json data/PAPERS_ARCHIVE.md reports/ || true
+
+          if git status --porcelain | grep -q .; then
+            JST_DATE=$(TZ='Asia/Tokyo' date +'%Y-%m-%d')
+            git commit -m "Auto: Publish daily empirical research paper for $JST_DATE [skip ci]"
+            git push origin ${{ github.ref_name }}
+          else
+            echo "No changes detected to commit."
+          fi

@@ -1,0 +1,158 @@
+{
+  "id": "oecd_pisa_math_ict",
+  "title": "OECD PISA Comparative Data: Mathematics Literacy, Gender Differentials, and Digital Device Integration",
+  "category": "math",
+  "region": "global",
+  "source_name": "OECD（経済協力開発機構）",
+  "source_url": "https://www.oecd.org/pisa/",
+  "description": "International triennial assessment of 15-year-old student performance in mathematics literacy, gender gap dynamics, and digital device utilization patterns across major OECD economies including Japan.",
+  "unit": "点",
+  "time_col": "Year",
+  "group_col": "Country",
+  "recommended_chart": "trend_line",
+  "metrics": [
+    "Math_Literacy_Score",
+    "Male_Math_Score",
+    "Female_Math_Score",
+    "Gender_Score_Gap"
+  ],
+  "data": [
+    {
+      "Year": 2003,
+      "Country": "Japan",
+      "Math_Literacy_Score": 534,
+      "Male_Math_Score": 539,
+      "Female_Math_Score": 529,
+      "Gender_Score_Gap": 10
+    },
+    {
+      "Year": 2006,
+      "Country": "Japan",
+      "Math_Literacy_Score": 523,
+      "Male_Math_Score": 531,
+      "Female_Math_Score": 515,
+      "Gender_Score_Gap": 16
+    },
+    {
+      "Year": 2009,
+      "Country": "Japan",
+      "Math_Literacy_Score": 529,
+      "Male_Math_Score": 534,
+      "Female_Math_Score": 524,
+      "Gender_Score_Gap": 10
+    },
+    {
+      "Year": 2012,
+      "Country": "Japan",
+      "Math_Literacy_Score": 536,
+      "Male_Math_Score": 545,
+      "Female_Math_Score": 527,
+      "Gender_Score_Gap": 18
+    },
+    {
+      "Year": 2015,
+      "Country": "Japan",
+      "Math_Literacy_Score": 532,
+      "Male_Math_Score": 539,
+      "Female_Math_Score": 525,
+      "Gender_Score_Gap": 14
+    },
+    {
+      "Year": 2018,
+      "Country": "Japan",
+      "Math_Literacy_Score": 527,
+      "Male_Math_Score": 532,
+      "Female_Math_Score": 522,
+      "Gender_Score_Gap": 10
+    },
+    {
+      "Year": 2022,
+      "Country": "Japan",
+      "Math_Literacy_Score": 536,
+      "Male_Math_Score": 541,
+      "Female_Math_Score": 531,
+      "Gender_Score_Gap": 10
+    },
+    {
+      "Year": 2022,
+      "Country": "Singapore",
+      "Math_Literacy_Score": 575,
+      "Male_Math_Score": 580,
+      "Female_Math_Score": 570,
+      "Gender_Score_Gap": 10
+    },
+    {
+      "Year": 2022,
+      "Country": "South_Korea",
+      "Math_Literacy_Score": 527,
+      "Male_Math_Score": 532,
+      "Female_Math_Score": 522,
+      "Gender_Score_Gap": 10
+    },
+    {
+      "Year": 2022,
+      "Country": "Estonia",
+      "Math_Literacy_Score": 510,
+      "Male_Math_Score": 512,
+      "Female_Math_Score": 508,
+      "Gender_Score_Gap": 4
+    },
+    {
+      "Year": 2022,
+      "Country": "カナダ",
+      "Math_Literacy_Score": 497,
+      "Male_Math_Score": 501,
+      "Female_Math_Score": 493,
+      "Gender_Score_Gap": 8
+    },
+    {
+      "Year": 2022,
+      "Country": "イギリス",
+      "Math_Literacy_Score": 489,
+      "Male_Math_Score": 494,
+      "Female_Math_Score": 484,
+      "Gender_Score_Gap": 10
+    },
+    {
+      "Year": 2022,
+      "Country": "United_States",
+      "Math_Literacy_Score": 465,
+      "Male_Math_Score": 472,
+      "Female_Math_Score": 458,
+      "Gender_Score_Gap": 14
+    },
+    {
+      "Year": 2022,
+      "Country": "OECD_Average",
+      "Math_Literacy_Score": 472,
+      "Male_Math_Score": 477,
+      "Female_Math_Score": 468,
+      "Gender_Score_Gap": 9
+    }
+  ],
+  "observation_unit": "PISA2022主要参加国・地域別の国際比較データ（計10か国・地域）",
+  "sample_population_note": "PISA参加約80か国・地域の15歳生徒約60万人（日本国内は層化二段抽出による約180校・約6,000名）",
+  "sample_population_size": "国際約60万人（国内約6,000名標本）",
+  "title_ja": "【OECD PISA】主要国の数学的リテラシー得点とデジタル活用の比較",
+  "research_angles": [
+    {
+      "id": "pisa_japan_comparative",
+      "title": "Cognitive Resilience and Socio-Digital Dynamics: Evaluating Japan's PISA Mathematics Trajectory",
+      "focus_metrics": [
+        "Math_Literacy_Score",
+        "Gender_Score_Gap",
+        "Male_Math_Score",
+        "Female_Math_Score"
+      ],
+      "research_questions": [
+        "How does Japan's mathematics literacy trajectory compare longitudinally against OECD benchmarks?",
+        "Has the gender score gap converged toward parity over successive PISA assessment waves?"
+      ],
+      "hypotheses": [
+        "Japan demonstrates statistically significant resilience in mathematics literacy relative to global post-pandemic trends.",
+        "The gender score differential in mathematics remains narrow but statistically persistent."
+      ],
+      "theoretical_framework": "Comparative Educational Achievement Framework (OECD, 2023)"
+    }
+  ]
+}
