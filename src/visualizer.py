@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import matplotlib
 matplotlib.use("Agg")  # Non-interactive backend
@@ -49,6 +49,89 @@ class EduDataVisualizer:
     def __init__(self, output_dir: Optional[Path] = None):
         self.output_dir = output_dir or TEMP_DIR
         self.output_dir.mkdir(parents=True, exist_ok=True)
+
+    @staticmethod
+    def _find_optimal_box_and_legend_locs(
+        x_vals: np.ndarray,
+        y_vals: np.ndarray,
+        ax: plt.Axes,
+    ) -> Tuple[Dict[str, Any], str]:
+        """
+        Dynamically evaluates plot space to identify the emptiest quadrants/regions for
+        placing statistical annotations and legends without occluding any data points or lines.
+        """
+        s_x = pd.Series(x_vals)
+        s_y = pd.to_numeric(pd.Series(y_vals), errors="coerce")
+        s_x_num = pd.to_numeric(s_x, errors="coerce")
+        if s_x_num.notna().sum() >= len(s_x) * 0.5:
+            valid = pd.DataFrame({"x": s_x_num, "y": s_y}).dropna()
+        else:
+            unique_cats = {cat: i for i, cat in enumerate(s_x.unique())}
+            s_x_cat = s_x.map(unique_cats)
+            valid = pd.DataFrame({"x": s_x_cat, "y": s_y}).dropna()
+
+        if len(valid) == 0:
+            return {"x": 0.05, "y": 0.92, "ha": "left", "va": "top"}, "lower right"
+
+        x_clean = valid["x"].values
+        y_clean = valid["y"].values
+
+        x_min, x_max = ax.get_xlim()
+        y_min, y_max = ax.get_ylim()
+        x_span = max(x_max - x_min, 1e-6)
+        y_span = max(y_max - y_min, 1e-6)
+
+        u = (x_clean - x_min) / x_span
+        v = (y_clean - y_min) / y_span
+
+        candidates_stat = [
+            {"name": "lower right", "x_range": (0.50, 0.99), "y_range": (0.01, 0.40), "stat_kwargs": {"x": 0.95, "y": 0.05, "ha": "right", "va": "bottom"}},
+            {"name": "upper right", "x_range": (0.50, 0.99), "y_range": (0.60, 0.99), "stat_kwargs": {"x": 0.95, "y": 0.95, "ha": "right", "va": "top"}},
+            {"name": "lower left",  "x_range": (0.01, 0.50), "y_range": (0.01, 0.40), "stat_kwargs": {"x": 0.05, "y": 0.05, "ha": "left", "va": "bottom"}},
+            {"name": "upper left",  "x_range": (0.01, 0.50), "y_range": (0.60, 0.99), "stat_kwargs": {"x": 0.05, "y": 0.95, "ha": "left", "va": "top"}},
+        ]
+
+        scored_stat = []
+        for cand in candidates_stat:
+            x0, x1 = cand["x_range"]
+            y0, y1 = cand["y_range"]
+            inside_mask = (u >= x0 - 0.02) & (u <= x1 + 0.02) & (v >= y0 - 0.02) & (v <= y1 + 0.02)
+            inside_count = int(np.sum(inside_mask))
+            cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+            dists = np.sqrt((u - cx) ** 2 + (v - cy) ** 2)
+            min_dist = float(np.min(dists)) if len(dists) > 0 else 1.0
+            penalty = inside_count * 1000.0 - min_dist * 5.0
+            scored_stat.append((penalty, cand))
+
+        scored_stat.sort(key=lambda s: s[0])
+        best_stat_zone = scored_stat[0][1]
+        chosen_stat_name = best_stat_zone["name"]
+
+        candidates_legend = [
+            {"name": "upper right", "x_range": (0.55, 0.99), "y_range": (0.78, 0.99), "legend_loc": "upper right"},
+            {"name": "upper left",  "x_range": (0.01, 0.45), "y_range": (0.78, 0.99), "legend_loc": "upper left"},
+            {"name": "lower right", "x_range": (0.55, 0.99), "y_range": (0.01, 0.22), "legend_loc": "lower right"},
+            {"name": "lower left",  "x_range": (0.01, 0.45), "y_range": (0.01, 0.22), "legend_loc": "lower left"},
+        ]
+
+        scored_legend = []
+        for cand in candidates_legend:
+            if cand["name"] == chosen_stat_name:
+                continue
+            x0, x1 = cand["x_range"]
+            y0, y1 = cand["y_range"]
+            inside_mask = (u >= x0 - 0.02) & (u <= x1 + 0.02) & (v >= y0 - 0.02) & (v <= y1 + 0.02)
+            inside_count = int(np.sum(inside_mask))
+            cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+            dists = np.sqrt((u - cx) ** 2 + (v - cy) ** 2)
+            min_dist = float(np.min(dists)) if len(dists) > 0 else 1.0
+            penalty = inside_count * 1000.0 - min_dist * 5.0
+            scored_legend.append((penalty, cand))
+
+        scored_legend.sort(key=lambda s: s[0])
+        best_legend_zone = scored_legend[0][1]
+
+        return best_stat_zone["stat_kwargs"], best_legend_zone["legend_loc"]
 
     def generate_figures(
         self, dataset: EducationDataset, analysis: EmpiricalAnalysisResult
@@ -195,16 +278,21 @@ class EduDataVisualizer:
         angle_title = analysis.research_angle.title if analysis.research_angle else dataset.title
         ax.set_title(f"Figure 1. Longitudinal Trajectory: {angle_title}", pad=14, loc="left")
 
+        # Dynamic whitespace positioning for badge and legend
+        ax.margins(y=0.20, x=0.04)
+        stat_pos, legend_loc = self._find_optimal_box_and_legend_locs(x, y, ax)
+
         # 95% CI annotation badge
         ax.text(
-            0.02,
-            0.96,
+            stat_pos["x"],
+            stat_pos["y"],
             "Shaded bands represent 95% Confidence Intervals (95% CI)",
             transform=ax.transAxes,
             fontsize=8.5,
             fontstyle="italic",
             color="#475569",
-            verticalalignment="top",
+            horizontalalignment=stat_pos["ha"],
+            verticalalignment=stat_pos["va"],
             bbox=dict(boxstyle="round,pad=0.35", facecolor="#ffffff", edgecolor="#cbd5e1", alpha=0.92),
         )
 
@@ -215,7 +303,7 @@ class EduDataVisualizer:
         ax.spines["left"].set_color("#64748b")
         ax.spines["bottom"].set_color("#64748b")
 
-        ax.legend(frameon=True, facecolor="#ffffff", edgecolor="#e2e8f0", loc="best")
+        ax.legend(frameon=True, facecolor="#ffffff", edgecolor="#e2e8f0", loc=legend_loc)
 
         # English Source Translation mapping
         source_name = self._translate_source(dataset.source_name)
@@ -339,6 +427,16 @@ class EduDataVisualizer:
             zorder=4,
         )
 
+        # Add comfortable margins so points and annotations never hug the canvas border
+        x_min_val, x_max_val = float(x.min()), float(x.max())
+        y_min_val, y_max_val = float(y.min()), float(y.max())
+        x_span = max(x_max_val - x_min_val, 1.0)
+        y_span = max(y_max_val - y_min_val, 1.0)
+        ax.set_xlim(x_min_val - 0.08 * x_span, x_max_val + 0.08 * x_span)
+        ax.set_ylim(y_min_val - 0.12 * y_span, y_max_val + 0.25 * y_span)
+
+        stat_pos, legend_loc = self._find_optimal_box_and_legend_locs(x, y, ax)
+
         # Annotate statistical metrics including VIF and 95% CI
         stat_box = (
             f"Pearson r = {r_val:+.3f}\n"
@@ -352,12 +450,13 @@ class EduDataVisualizer:
             stat_box = "★ EMPIRICAL PARADOX / DISCOVERY ★\n" + stat_box
 
         ax.text(
-            0.05,
-            0.92,
+            stat_pos["x"],
+            stat_pos["y"],
             stat_box,
             transform=ax.transAxes,
             fontsize=9.5,
-            verticalalignment="top",
+            horizontalalignment=stat_pos["ha"],
+            verticalalignment=stat_pos["va"],
             bbox=dict(
                 boxstyle="round,pad=0.5",
                 facecolor="#fffbeb" if is_paradox else "#ffffff",
@@ -377,7 +476,7 @@ class EduDataVisualizer:
         for spine in ["top", "right"]:
             ax.spines[spine].set_visible(False)
 
-        ax.legend(frameon=True, facecolor="#ffffff", edgecolor="#e2e8f0", loc="lower right")
+        ax.legend(frameon=True, facecolor="#ffffff", edgecolor="#e2e8f0", loc=legend_loc)
 
         fig.text(
             0.99,
