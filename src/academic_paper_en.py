@@ -301,6 +301,42 @@ class AcademicPaperGeneratorEn:
             parts = paper.title.split(":")
             paper.title = f"{parts[0].strip()}: {' - '.join(p.strip() for p in parts[1:])}"
 
+        # Eliminate Unicode subscript characters that cause missing glyph tofu boxes (■) in standard fonts and PDF
+        tofu_map = {
+            "BF₁₀": "BF10",
+            "BF₀₁": "BF01",
+            "BF_10": "BF10",
+            "BF_01": "BF01",
+            "₁₀": "10",
+            "₀₁": "01",
+            "₁": "1",
+            "₀": "0",
+            "₂": "2",
+            "ηₚ²": "η²",
+            "ηₚ": "η",
+            "\u209a": "",  # LATIN SUBSCRIPT SMALL LETTER P (triggers black box tofu in standard fonts)
+            "\u1d62": "",  # LATIN SUBSCRIPT SMALL LETTER I
+            "\u2081": "1",
+            "\u2080": "0",
+        }
+        def clean_tofu(s: str) -> str:
+            if not s:
+                return ""
+            for k, v in tofu_map.items():
+                s = s.replace(k, v)
+            return s
+
+        paper.title = clean_tofu(paper.title)
+        paper.abstract = clean_tofu(paper.abstract)
+        paper.keywords = [clean_tofu(k) for k in paper.keywords]
+        paper.section_1_intro = clean_tofu(paper.section_1_intro)
+        paper.section_2_hypotheses = clean_tofu(paper.section_2_hypotheses)
+        paper.section_3_method = clean_tofu(paper.section_3_method)
+        paper.section_4_results = clean_tofu(paper.section_4_results)
+        paper.section_5_discussion = clean_tofu(paper.section_5_discussion)
+        paper.section_6_limitations = clean_tofu(paper.section_6_limitations)
+        paper.references = [clean_tofu(r) for r in paper.references]
+
         return paper
 
     def _generate_with_gemini(
@@ -454,14 +490,14 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
                 corr_points.append(
                     f"A bivariate zero-correlation test between {mx_name} and {my_name} revealed a statistically significant "
                     f"linear association, Pearson r = {r_str}, 95% CI [{c.ci_lower:.2f}, {c.ci_upper:.2f}], "
-                    f"t({c.df}) = {c.t_stat:.2f}, p {p_c_str}, BF₁₀ = {bf_str} ({c.evidence_label}), "
+                    f"t({c.df}) = {c.t_stat:.2f}, p {p_c_str}, BF10 = {bf_str} ({c.evidence_label}), "
                     f"accounting for {c.r_squared * 100:.1f}% of shared variance."
                 )
             else:
                 corr_points.append(
                     f"A bivariate zero-correlation test between {mx_name} and {my_name} showed no statistically significant "
                     f"linear association, Pearson r = {r_str}, 95% CI [{c.ci_lower:.2f}, {c.ci_upper:.2f}], "
-                    f"t({c.df}) = {c.t_stat:.2f}, p {p_c_str}, with a Bayes factor of BF₁₀ = {bf_str} ({c.evidence_label}) "
+                    f"t({c.df}) = {c.t_stat:.2f}, p {p_c_str}, with a Bayes factor of BF10 = {bf_str} ({c.evidence_label}) "
                     f"favoring the null hypothesis of independence."
                 )
         corr_snippet = " ".join(corr_points)
@@ -490,15 +526,15 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
                 bf_i_str = format_bayes_factor(fi.bf10)
                 int_text = (
                     f" Furthermore, the interaction effect ({fa_clean} × {fb_clean}) yielded "
-                    f"F({fi.df}, {a.error_df}) = {fi.f_stat:.2f}, p {p_i_str}, partial ηₚ² = {eta_i_str}, "
-                    f"with BF₁₀ = {bf_i_str} ({fi.evidence_label})."
+                    f"F({fi.df}, {a.error_df}) = {fi.f_stat:.2f}, p {p_i_str}, partial η² = {eta_i_str}, "
+                    f"with BF10 = {bf_i_str} ({fi.evidence_label})."
                 )
             anova_snippet = (
                 f"As documented in Table 2, a factorial Two-Way Analysis of Variance (ANOVA) was conducted on {outcome_clean}. "
                 f"The main effect of {fa_clean} reached statistical significance, F({fa.df}, {a.error_df}) = {fa.f_stat:.2f}, "
-                f"p {p_a_str}, partial ηₚ² = {eta_a_str}, with a Bayes factor of BF₁₀ = {bf_a_str} providing {fa.evidence_label}. "
+                f"p {p_a_str}, partial η² = {eta_a_str}, with a Bayes factor of BF10 = {bf_a_str} providing {fa.evidence_label}. "
                 f"Similarly, the main effect of {fb_clean} was F({fb.df}, {a.error_df}) = {fb.f_stat:.2f}, p {p_b_str}, "
-                f"partial ηₚ² = {eta_b_str}, BF₁₀ = {bf_b_str} ({fb.evidence_label}).{int_text} "
+                f"partial η² = {eta_b_str}, BF10 = {bf_b_str} ({fb.evidence_label}).{int_text} "
                 f"The alignment between frequentist significance thresholds and continuous Bayesian evidence factors confirms robust structural partition of variance."
             )
 
@@ -520,7 +556,7 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
                 f"As presented in Table 3, an Ordinary Least Squares (OLS) multiple regression model was estimated on {dep_clean} "
                 f"with stepwise multicollinearity pruning. The omnibus model accounted for substantial variance, R² = {r2_str}, "
                 f"adjusted R² = {adj_r2_str}, F({len(top_m.predictors)}, {top_m.n_obs - len(top_m.predictors) - 1}) = {top_m.f_stat:.2f}, p {p_f_str}. "
-                f"Bayesian model evaluation against an intercept-only null model yielded Model BF₁₀ = {bf_m_str}, providing {top_m.model_evidence_label}. "
+                f"Bayesian model evaluation against an intercept-only null model yielded Model BF10 = {bf_m_str}, providing {top_m.model_evidence_label}. "
                 f"{top_m.collinearity_status} Individual parameter estimates indicated: {pred_details}."
             )
 
@@ -545,7 +581,7 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             f"longitudinal open datasets released by {dataset.source_name}. Employing factorial Two-Way Analysis of Variance (ANOVA), "
             f"bivariate zero-correlation tests with Fisher's z 95% confidence intervals, and multivariate OLS regressions with "
             f"stepwise Variance Inflation Factor (VIF < 5.0) multicollinearity control, we evaluate empirical patterns simultaneously "
-            f"through frequentist significance tests and Bayesian evidence factors (BF₁₀) anchored in {context.get('theoretical_framework')}. "
+            f"through frequentist significance tests and Bayesian evidence factors (BF10) anchored in {context.get('theoretical_framework')}. "
             f"{stat_snippet} {anova_snippet} {mv_snippet} {disc_snippet} These empirical findings uncover critical policy trade-offs "
             f"for evidence-based decision-making in Japan, demonstrating that structural inputs alone do not guarantee linear gains."
         )
@@ -590,11 +626,11 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             f"standards, measured primarily in {dataset.unit}.\n\n"
             f"Our quantitative methodology integrates three analytical pillars adhering strictly to APA 7th standards: "
             f"(1) Factorial Two-Way Analysis of Variance (ANOVA) with Type II Sum of Squares to estimate main effects and interaction parameters, "
-            f"quantifying effect sizes via partial eta-squared (partial ηₚ²); "
+            f"quantifying effect sizes via partial eta-squared (partial η²); "
             f"(2) Bivariate Zero-Correlation Tests evaluating Pearson r via Student's t-distribution with Fisher's z 95% Confidence Intervals (95% CI); and "
             f"(3) Multivariate Ordinary Least Squares (OLS) Multiple Regression with backward stepwise Variance Inflation Factor (VIF) "
             f"elimination ensuring all predictor VIF values remain strictly below 5.0. To bridge frequentist and Bayesian paradigms, each inferential "
-            f"test is accompanied by its corresponding Bayes Factor (BF₁₀) under JZS / BIC delta approximation, classifying evidence according to "
+            f"test is accompanied by its corresponding Bayes Factor (BF10) under JZS / BIC delta approximation, classifying evidence according to "
             f"Jeffreys (1961) and Lee and Wagenmakers (2013) conventions."
         )
 

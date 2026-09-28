@@ -96,6 +96,8 @@ def test_pdf_generation_with_figures(tmp_path):
     assert pdf_path is not None
     assert pdf_path.exists()
     assert pdf_path.stat().st_size > 1000  # Non-empty PDF
+    # Verify no missing glyph ZapfDingbats fallback tofu boxes
+    assert b"ZapfDingbats" not in pdf_path.read_bytes(), "PDF contains ZapfDingbats font fallback (tofu boxes)"
 
 
 def test_academic_nomenclature_and_apa_formatting():
@@ -134,5 +136,17 @@ def test_academic_nomenclature_and_apa_formatting():
 
         # 5. No raw dataset ID in figure captions
         assert f"for {ds.id}" not in article_html, f"Found raw dataset ID '{ds.id}' in figure captions of {ds.id}"
+
+        # 6. No Unicode subscripts that cause missing glyph tofu (■) in standard fonts / PDF
+        tofu_chars = ["\u2080", "\u2081", "\u2082", "\u209a", "\u1d62"]
+        for ch in tofu_chars:
+            assert ch not in paper.title, f"Found Unicode subscript '{hex(ord(ch))}' in title of {ds.id}"
+            assert ch not in paper.abstract, f"Found Unicode subscript '{hex(ord(ch))}' in abstract of {ds.id}"
+            assert ch not in article_html, f"Found Unicode subscript '{hex(ord(ch))}' in HTML of {ds.id}"
+            assert ch not in article_md, f"Found Unicode subscript '{hex(ord(ch))}' in Markdown of {ds.id}"
+
+        # 7. Standard APA 7th Bayes factor and effect size notation (BF10 and partial η²)
+        assert "BF₁₀" not in article_html and "BF₁₀" not in article_md
+        assert "ηₚ²" not in article_html and "ηₚ²" not in article_md
 
 

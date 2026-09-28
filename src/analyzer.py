@@ -1028,7 +1028,7 @@ class EduDataAnalyzer:
             discoveries.append(
                 f"Multivariate OLS on '{dep_clean}' explained {round(top_m.r_squared * 100, 1)}% of variance "
                 f"(R² = {r2_str}, Adj. R² = {adj_r2_str}, F = {top_m.f_stat:.2f}, p {p_f_str}, "
-                f"Model BF₁₀ = {bf_str} [{top_m.model_evidence_label}]). {top_m.collinearity_status}"
+                f"Model BF10 = {bf_str} [{top_m.model_evidence_label}]). {top_m.collinearity_status}"
             )
 
         # 3. Trajectory discovery

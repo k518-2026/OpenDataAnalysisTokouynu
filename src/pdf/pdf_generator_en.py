@@ -14,6 +14,40 @@ from src.config import PDF_REPORTS_DIR
 logger = logging.getLogger(__name__)
 
 
+def clean_pdf_text(text: str) -> str:
+    """Sanitizes text for ReportLab Helvetica/WinAnsiEncoding to prevent missing glyph tofu boxes."""
+    if not text:
+        return ""
+    replacements = {
+        "BF₁₀": "BF10",
+        "BF₀₁": "BF01",
+        "BF_10": "BF10",
+        "BF_01": "BF01",
+        "₁₀": "10",
+        "₀₁": "01",
+        "₁": "1",
+        "₀": "0",
+        "₂": "2",
+        "ηₚ²": "η²",
+        "ηₚ": "η",
+        "\u209a": "",  # LATIN SUBSCRIPT SMALL LETTER P
+        "\u1d62": "",  # LATIN SUBSCRIPT SMALL LETTER I
+        "\u2080": "0",
+        "\u2081": "1",
+        "\u2082": "2",
+        "\u2083": "3",
+        "\u2084": "4",
+        "\u2085": "5",
+        "\u2086": "6",
+        "\u2087": "7",
+        "\u2088": "8",
+        "\u2089": "9",
+    }
+    for k, v in replacements.items():
+        text = text.replace(k, v)
+    return text
+
+
 class AcademicPaperPdfGeneratorEn:
     """Generates PDF versions of English academic papers with in-paper figures."""
 
@@ -121,17 +155,17 @@ class AcademicPaperPdfGeneratorEn:
             story = []
 
             # Title & Meta
-            story.append(Paragraph(paper.title, title_style))
+            story.append(Paragraph(clean_pdf_text(paper.title), title_style))
             if paper.affiliation and paper.affiliation != paper.authors:
-                story.append(Paragraph(f"<b>Authors:</b> {paper.authors} &bull; <i>{paper.affiliation}</i>", meta_style))
+                story.append(Paragraph(clean_pdf_text(f"<b>Authors:</b> {paper.authors} &bull; <i>{paper.affiliation}</i>"), meta_style))
             else:
-                story.append(Paragraph(f"<b>Authors / Organization:</b> {paper.authors}", meta_style))
+                story.append(Paragraph(clean_pdf_text(f"<b>Authors / Organization:</b> {paper.authors}"), meta_style))
             story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#cbd5e1"), spaceAfter=14))
 
             # Abstract
             story.append(Paragraph("Abstract", abstract_heading))
-            story.append(Paragraph(paper.abstract, abstract_body))
-            story.append(Paragraph(f"<b>Keywords:</b> {', '.join(paper.keywords)}", meta_style))
+            story.append(Paragraph(clean_pdf_text(paper.abstract), abstract_body))
+            story.append(Paragraph(clean_pdf_text(f"<b>Keywords:</b> {', '.join(paper.keywords)}"), meta_style))
             story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#e2e8f0"), spaceAfter=14))
 
             # Sections
@@ -145,10 +179,10 @@ class AcademicPaperPdfGeneratorEn:
             ]
 
             for heading, content in sections:
-                story.append(Paragraph(heading, h2_style))
+                story.append(Paragraph(clean_pdf_text(heading), h2_style))
                 for p in content.split("\n\n"):
                     if p.strip():
-                        story.append(Paragraph(p.strip(), body_style))
+                        story.append(Paragraph(clean_pdf_text(p.strip()), body_style))
 
                 # Embed Figures directly in Section 4: Quantitative Results
                 if "4. Quantitative Results" in heading and figure_paths:
@@ -159,7 +193,7 @@ class AcademicPaperPdfGeneratorEn:
                                 # Width 460 pt, height 260 pt
                                 story.append(Image(str(fig_path), width=460, height=260))
                                 story.append(Spacer(1, 4))
-                                caption = f"Figure {idx + 1}: Empirical Quantitative Trajectory & Relational Fit for {paper.dataset_id}."
+                                caption = clean_pdf_text(f"Figure {idx + 1}: Empirical Quantitative Trajectory & Relational Fit for {paper.dataset_id}.")
                                 story.append(Paragraph(caption, caption_style))
                                 story.append(Spacer(1, 10))
                             except Exception as img_err:
@@ -170,7 +204,7 @@ class AcademicPaperPdfGeneratorEn:
             # References
             story.append(Paragraph("7. References", h2_style))
             for ref in paper.references:
-                story.append(Paragraph(f"&bull; {ref}", body_style))
+                story.append(Paragraph(clean_pdf_text(f"&bull; {ref}"), body_style))
 
             doc.build(story)
             logger.info(f"Successfully generated PDF with figures: {output_path.name}")
