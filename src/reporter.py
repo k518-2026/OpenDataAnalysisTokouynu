@@ -12,7 +12,13 @@ from pathlib import Path
 from typing import List, Optional
 
 from src.academic_paper_en import AcademicPaperEn
-from src.analyzer import EmpiricalAnalysisResult
+from src.analyzer import (
+    EmpiricalAnalysisResult,
+    format_academic_metric,
+    format_apa_p,
+    format_apa_stat,
+    format_bayes_factor,
+)
 from src.fetchers.base import EducationDataset
 from src.peer_review_en import PeerReviewReportEn
 
@@ -99,15 +105,16 @@ class EduReportBuilder:
         lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
         for idx, ds in enumerate(analysis.descriptive_stats):
             corr = analysis.correlations[idx] if idx < len(analysis.correlations) else None
-            pair_str = f"{corr.metric_x} vs. {corr.metric_y}" if corr else "—"
-            r_str = f"{corr.pearson_r:+.3f} [{corr.ci_lower:+.2f}, {corr.ci_upper:+.2f}]" if corr else "—"
-            t_str = f"{corr.t_stat:+.2f} ({corr.df})" if corr else "—"
-            p_str = f"{corr.p_value:.4f}" if corr else "—"
-            bf_str = f"{corr.bf10:.2f}" if corr else "—"
+            metric_clean = format_academic_metric(ds.metric, title_case=True)
+            pair_str = f"{format_academic_metric(corr.metric_x, title_case=True)} vs. {format_academic_metric(corr.metric_y, title_case=True)}" if corr else "—"
+            r_str = f"{format_apa_stat(corr.pearson_r, decimals=2, bounded=True)} [{format_apa_stat(corr.ci_lower, decimals=2, bounded=True)}, {format_apa_stat(corr.ci_upper, decimals=2, bounded=True)}]" if corr else "—"
+            t_str = f"{format_apa_stat(corr.t_stat, decimals=2, bounded=False)} ({corr.df})" if corr else "—"
+            p_str = format_apa_p(corr.p_value, with_operator=False) if corr else "—"
+            bf_str = format_bayes_factor(corr.bf10) if corr else "—"
             ev_str = corr.evidence_label if corr else "—"
 
             lines.append(
-                f"| **{ds.metric}** | {ds.count} | {ds.mean:.2f} ({ds.std:.2f}) | {ds.median:.2f} ({ds.iqr:.2f}) | "
+                f"| **{metric_clean}** | {ds.count} | {ds.mean:.2f} ({ds.std:.2f}) | {ds.median:.2f} ({ds.iqr:.2f}) | "
                 f"{pair_str} | {r_str} | {t_str} | {p_str} | {bf_str} | {ev_str} |"
             )
         lines.append(
@@ -118,25 +125,29 @@ class EduReportBuilder:
         # APA Table 2 Markdown
         if analysis.two_way_anova:
             a = analysis.two_way_anova
+            outcome_clean = format_academic_metric(a.outcome_metric, title_case=True)
+            fa_clean = format_academic_metric(a.factor_a_effect.source_name, title_case=True)
+            fb_clean = format_academic_metric(a.factor_b_effect.source_name, title_case=True)
             lines.append(f"\n### Table 2")
-            lines.append(f"*Two-Way Factorial Analysis of Variance (ANOVA) and Bayesian Evidence Factors (Outcome: {a.outcome_metric})*\n")
+            lines.append(f"*Two-Way Factorial Analysis of Variance (ANOVA) and Bayesian Evidence Factors (Outcome: {outcome_clean})*\n")
             lines.append("| Source of Variation | SS | df | MS | F | p-value | Partial eta^2 | BF10 | Evidence Interpretation |")
             lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
             lines.append(
-                f"| **{a.factor_a_effect.source_name}** | {a.factor_a_effect.ss:.2f} | {a.factor_a_effect.df} | {a.factor_a_effect.ms:.2f} | "
-                f"{a.factor_a_effect.f_stat:.2f} | {a.factor_a_effect.p_value:.4f} | {a.factor_a_effect.eta_sq_partial:.3f} | "
-                f"{a.factor_a_effect.bf10:.2f} | {a.factor_a_effect.evidence_label} |"
+                f"| **{fa_clean}** | {a.factor_a_effect.ss:.2f} | {a.factor_a_effect.df} | {a.factor_a_effect.ms:.2f} | "
+                f"{format_apa_stat(a.factor_a_effect.f_stat, decimals=2, bounded=False)} | {format_apa_p(a.factor_a_effect.p_value, with_operator=False)} | {format_apa_stat(a.factor_a_effect.eta_sq_partial, decimals=3, bounded=True)} | "
+                f"{format_bayes_factor(a.factor_a_effect.bf10)} | {a.factor_a_effect.evidence_label} |"
             )
             lines.append(
-                f"| **{a.factor_b_effect.source_name}** | {a.factor_b_effect.ss:.2f} | {a.factor_b_effect.df} | {a.factor_b_effect.ms:.2f} | "
-                f"{a.factor_b_effect.f_stat:.2f} | {a.factor_b_effect.p_value:.4f} | {a.factor_b_effect.eta_sq_partial:.3f} | "
-                f"{a.factor_b_effect.bf10:.2f} | {a.factor_b_effect.evidence_label} |"
+                f"| **{fb_clean}** | {a.factor_b_effect.ss:.2f} | {a.factor_b_effect.df} | {a.factor_b_effect.ms:.2f} | "
+                f"{format_apa_stat(a.factor_b_effect.f_stat, decimals=2, bounded=False)} | {format_apa_p(a.factor_b_effect.p_value, with_operator=False)} | {format_apa_stat(a.factor_b_effect.eta_sq_partial, decimals=3, bounded=True)} | "
+                f"{format_bayes_factor(a.factor_b_effect.bf10)} | {a.factor_b_effect.evidence_label} |"
             )
             if a.interaction_effect.df > 0:
+                fi_clean = format_academic_metric(a.interaction_effect.source_name, title_case=True)
                 lines.append(
-                    f"| **{a.interaction_effect.source_name}** | {a.interaction_effect.ss:.2f} | {a.interaction_effect.df} | {a.interaction_effect.ms:.2f} | "
-                    f"{a.interaction_effect.f_stat:.2f} | {a.interaction_effect.p_value:.4f} | {a.interaction_effect.eta_sq_partial:.3f} | "
-                    f"{a.interaction_effect.bf10:.2f} | {a.interaction_effect.evidence_label} |"
+                    f"| **{fi_clean}** | {a.interaction_effect.ss:.2f} | {a.interaction_effect.df} | {a.interaction_effect.ms:.2f} | "
+                    f"{format_apa_stat(a.interaction_effect.f_stat, decimals=2, bounded=False)} | {format_apa_p(a.interaction_effect.p_value, with_operator=False)} | {format_apa_stat(a.interaction_effect.eta_sq_partial, decimals=3, bounded=True)} | "
+                    f"{format_bayes_factor(a.interaction_effect.bf10)} | {a.interaction_effect.evidence_label} |"
                 )
             lines.append(
                 f"| **Residual (Error)** | {a.error_ss:.2f} | {a.error_df} | {a.error_ms:.2f} | — | — | — | — | — |"
@@ -145,18 +156,20 @@ class EduReportBuilder:
                 f"| **Total** | {a.total_ss:.2f} | {a.total_df} | — | — | — | — | — | — |"
             )
             lines.append(
-                f"\n*Note. Dependent Variable: {a.outcome_metric}. Type II Sum of Squares. "
+                f"\n*Note. Dependent Variable: {outcome_clean}. Type II Sum of Squares. "
                 f"Partial eta^2 = SS_effect / (SS_effect + SS_error). BF10 represents Bayes Factor supporting H1 relative to H0.*"
             )
 
         # APA Table 3 Markdown
         if analysis.multivariate_regressions:
             top_m = analysis.multivariate_regressions[0]
+            dep_clean = format_academic_metric(top_m.dependent_var, title_case=True)
             lines.append(f"\n### Table 3")
-            lines.append(f"*Multivariate OLS Multiple Regression and Multicollinearity (VIF) Diagnostics (Outcome: {top_m.dependent_var})*\n")
+            lines.append(f"*Multivariate OLS Multiple Regression and Multicollinearity (VIF) Diagnostics (Outcome: {dep_clean})*\n")
             lines.append("| Predictor | Beta (SE) | 95% CI | t-stat | p-value | VIF Diagnostics | Significance |")
             lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
             for p in top_m.predictors:
+                p_clean = format_academic_metric(p, title_case=True)
                 c = top_m.coefficients.get(p, 0.0)
                 se = top_m.std_errors.get(p, 0.0)
                 cil = top_m.ci_lower.get(p, c - 1.96 * se)
@@ -165,10 +178,19 @@ class EduReportBuilder:
                 pval = top_m.p_values.get(p, 1.0)
                 vif = top_m.vif_values.get(p, 1.0)
                 sig = "p < .05 *" if pval < 0.05 else "n.s."
-                lines.append(f"| **{p}** | {c:+.3f} ({se:.3f}) | [{cil:+.3f}, {ciu:+.3f}] | {t:+.2f} | {pval:.4f} | {vif:.2f} (Clean) | {sig} |")
+                lines.append(
+                    f"| **{p_clean}** | {format_apa_stat(c, decimals=3, bounded=False)} ({format_apa_stat(se, decimals=3, bounded=False)}) | "
+                    f"[{format_apa_stat(cil, decimals=3, bounded=False)}, {format_apa_stat(ciu, decimals=3, bounded=False)}] | "
+                    f"{format_apa_stat(t, decimals=2, bounded=False)} | {format_apa_p(pval, with_operator=False)} | {vif:.2f} | {sig} |"
+                )
+            r2_str = format_apa_stat(top_m.r_squared, decimals=3, bounded=True)
+            adj_r2_str = format_apa_stat(top_m.adj_r_squared, decimals=3, bounded=True)
+            f_str = format_apa_stat(top_m.f_stat, decimals=2, bounded=False)
+            f_p_str = format_apa_p(top_m.f_pvalue, with_operator=True)
+            bf_str = format_bayes_factor(top_m.model_bf10)
             lines.append(
-                f"\n*Note. Model Fit: R^2 = {top_m.r_squared:.3f}, Adj. R^2 = {top_m.adj_r_squared:.3f}, "
-                f"F = {top_m.f_stat:.2f} (p = {top_m.f_pvalue:.4f}), Model BF10 = {top_m.model_bf10:.2f} ({top_m.model_evidence_label}). "
+                f"\n*Note. Model Fit: R^2 = {r2_str}, Adj. R^2 = {adj_r2_str}, "
+                f"F = {f_str} (p {f_p_str}), Model BF10 = {bf_str} ({top_m.model_evidence_label}). "
                 f"All Variance Inflation Factors (VIF) < 5.0 confirm the complete absence of severe multicollinearity.*"
             )
 
@@ -181,16 +203,28 @@ class EduReportBuilder:
         rows = []
         for idx, ds in enumerate(analysis.descriptive_stats):
             corr = analysis.correlations[idx] if idx < len(analysis.correlations) else None
-            pair_str = f"{corr.metric_x} vs. {corr.metric_y}" if corr else "&mdash;"
-            r_str = f"<strong>{corr.pearson_r:+.3f}</strong> <span style='font-size:0.85em;color:#64748b;'>[{corr.ci_lower:+.2f}, {corr.ci_upper:+.2f}]</span>" if corr else "&mdash;"
-            t_str = f"{corr.t_stat:+.2f} ({corr.df})" if corr else "&mdash;"
-            p_str = f"{corr.p_value:.4f}" if corr else "&mdash;"
-            bf_str = f"{corr.bf10:.2f}" if corr else "&mdash;"
-            ev_str = f"<span style='color:#0369a1;font-weight:600;'>{corr.evidence_label}</span>" if corr else "&mdash;"
+            metric_clean = format_academic_metric(ds.metric, title_case=True)
+            if corr:
+                pair_str = f"{format_academic_metric(corr.metric_x, title_case=True)} vs. {format_academic_metric(corr.metric_y, title_case=True)}"
+                r_val = format_apa_stat(corr.pearson_r, decimals=2, bounded=True)
+                ci_l = format_apa_stat(corr.ci_lower, decimals=2, bounded=True)
+                ci_u = format_apa_stat(corr.ci_upper, decimals=2, bounded=True)
+                r_str = f"<strong>{r_val}</strong> <span style='font-size:0.85em;color:#64748b;'>[{ci_l}, {ci_u}]</span>"
+                t_str = f"{format_apa_stat(corr.t_stat, decimals=2, bounded=False)} ({corr.df})"
+                p_str = format_apa_p(corr.p_value, with_operator=False)
+                bf_str = format_bayes_factor(corr.bf10)
+                ev_str = f"<span style='color:#0369a1;font-weight:600;'>{corr.evidence_label}</span>"
+            else:
+                pair_str = "&mdash;"
+                r_str = "&mdash;"
+                t_str = "&mdash;"
+                p_str = "&mdash;"
+                bf_str = "&mdash;"
+                ev_str = "&mdash;"
 
             rows.append(f"""
   <tr style="border-bottom: 1px solid #f1f5f9;">
-    <td style="padding: 10px 12px; font-weight: 600; color: #1e293b; text-align: left;">{ds.metric}</td>
+    <td style="padding: 10px 12px; font-weight: 600; color: #1e293b; text-align: left;">{metric_clean}</td>
     <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums;">{ds.count}</td>
     <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums;">{ds.mean:.2f} ({ds.std:.2f})</td>
     <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums;">{ds.median:.2f} ({ds.iqr:.2f})</td>
@@ -240,22 +274,27 @@ class EduReportBuilder:
             return ""
 
         a = analysis.two_way_anova
+        outcome_clean = format_academic_metric(a.outcome_metric, title_case=True)
         fa = a.factor_a_effect
         fb = a.factor_b_effect
         fi = a.interaction_effect
 
+        fa_name = format_academic_metric(fa.source_name, title_case=True)
+        fb_name = format_academic_metric(fb.source_name, title_case=True)
+
         int_row_html = ""
         if fi.df > 0:
+            fi_name = format_academic_metric(fi.source_name, title_case=True)
             int_row_html = f"""
   <tr style="border-bottom: 1px solid #f1f5f9;">
-    <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{fi.source_name}</td>
+    <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{fi_name}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fi.ss:.2f}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fi.df}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fi.ms:.2f}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fi.f_stat:.2f}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fi.p_value:.4f}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fi.eta_sq_partial:.3f}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fi.bf10:.2f}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{format_apa_stat(fi.f_stat, decimals=2, bounded=False)}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{format_apa_p(fi.p_value, with_operator=False)}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{format_apa_stat(fi.eta_sq_partial, decimals=3, bounded=True)}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{format_bayes_factor(fi.bf10)}</td>
     <td style="padding: 10px 14px; text-align: left; font-size: 0.88em; color: #0369a1;">{fi.evidence_label}</td>
   </tr>
 """
@@ -263,7 +302,7 @@ class EduReportBuilder:
         return f"""
 <div style="margin: 36px 0 28px 0; overflow-x: auto;">
   <div style="font-weight: 700; color: #1e3a8a; font-size: 1.15em; margin-bottom: 2px;">Table 2</div>
-  <div style="font-style: italic; color: #334155; font-size: 1.0em; margin-bottom: 12px;">Two-Way Factorial Analysis of Variance (ANOVA) and Bayesian Evidence Factors</div>
+  <div style="font-style: italic; color: #334155; font-size: 1.0em; margin-bottom: 12px;">Two-Way Factorial Analysis of Variance (ANOVA) and Bayesian Evidence Factors (Outcome: {outcome_clean})</div>
   <table style="width: 100%; border-collapse: collapse; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.9em; border-top: 2px solid #1e3a8a; border-bottom: 2px solid #1e3a8a;">
     <thead>
       <tr style="background-color: #f8fafc; border-bottom: 1px solid #1e3a8a; color: #1e3a8a;">
@@ -280,25 +319,25 @@ class EduReportBuilder:
     </thead>
     <tbody>
       <tr style="border-bottom: 1px solid #f1f5f9;">
-        <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{fa.source_name}</td>
+        <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{fa_name}</td>
         <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fa.ss:.2f}</td>
         <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fa.df}</td>
         <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fa.ms:.2f}</td>
-        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fa.f_stat:.2f}</td>
-        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fa.p_value:.4f}</td>
-        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fa.eta_sq_partial:.3f}</td>
-        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fa.bf10:.2f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{format_apa_stat(fa.f_stat, decimals=2, bounded=False)}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{format_apa_p(fa.p_value, with_operator=False)}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{format_apa_stat(fa.eta_sq_partial, decimals=3, bounded=True)}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{format_bayes_factor(fa.bf10)}</td>
         <td style="padding: 10px 14px; text-align: left; font-size: 0.88em; color: #0369a1;">{fa.evidence_label}</td>
       </tr>
       <tr style="border-bottom: 1px solid #f1f5f9;">
-        <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{fb.source_name}</td>
+        <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{fb_name}</td>
         <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fb.ss:.2f}</td>
         <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fb.df}</td>
         <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fb.ms:.2f}</td>
-        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fb.f_stat:.2f}</td>
-        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{fb.p_value:.4f}</td>
-        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fb.eta_sq_partial:.3f}</td>
-        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{fb.bf10:.2f}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{format_apa_stat(fb.f_stat, decimals=2, bounded=False)}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{format_apa_p(fb.p_value, with_operator=False)}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{format_apa_stat(fb.eta_sq_partial, decimals=3, bounded=True)}</td>
+        <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;">{format_bayes_factor(fb.bf10)}</td>
         <td style="padding: 10px 14px; text-align: left; font-size: 0.88em; color: #0369a1;">{fb.evidence_label}</td>
       </tr>
       {int_row_html}
@@ -327,7 +366,7 @@ class EduReportBuilder:
     </tbody>
   </table>
   <div style="font-size: 0.84em; color: #64748b; margin-top: 8px; line-height: 1.5;">
-    <em>Note.</em> Dependent Criterion Variable: <code style="background:#e0f2fe;color:#0369a1;padding:1px 5px;border-radius:4px;">{a.outcome_metric}</code>. Type II Sum of Squares.
+    <em>Note.</em> Dependent Criterion Variable: <span style="background:#e0f2fe;color:#0369a1;padding:1px 5px;border-radius:4px;font-weight:600;">{outcome_clean}</span>. Type II Sum of Squares.
     Partial &eta;&sup2; = <em>SS</em><sub>effect</sub> / (<em>SS</em><sub>effect</sub> + <em>SS</em><sub>error</sub>).
     <em>BF</em><sub>10</sub> represents the Bayes Factor supporting the alternative hypothesis <em>H</em><sub>1</sub> relative to the null <em>H</em><sub>0</sub> under JZS / BIC delta.
   </div>
@@ -340,8 +379,10 @@ class EduReportBuilder:
             return ""
 
         top_m = analysis.multivariate_regressions[0]
+        dep_clean = format_academic_metric(top_m.dependent_var, title_case=True)
         rows = []
         for p in top_m.predictors:
+            p_clean = format_academic_metric(p, title_case=True)
             c = top_m.coefficients.get(p, 0.0)
             se = top_m.std_errors.get(p, 0.0)
             cil = top_m.ci_lower.get(p, c - 1.96 * se)
@@ -355,33 +396,39 @@ class EduReportBuilder:
                 else '<span style="color:#64748b;">n.s.</span>'
             )
             vif_badge = (
-                f'<span style="color:#059669;font-weight:600;">{vif:.2f} (Clean)</span>'
+                f'<span style="color:#059669;font-weight:600;">{vif:.2f}</span>'
                 if vif < 5.0
-                else f'<span style="color:#dc2626;font-weight:600;">{vif:.2f} (High)</span>'
+                else f'<span style="color:#dc2626;font-weight:600;">{vif:.2f} (VIF &ge; 5)</span>'
             )
 
             rows.append(f"""
   <tr style="border-bottom: 1px solid #f1f5f9;">
-    <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{p}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{c:+.3f}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #64748b;">{se:.3f}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #475569; font-size: 0.9em;">[{cil:+.3f}, {ciu:+.3f}]</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{t:+.2f}</td>
-    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{pval:.4f}</td>
+    <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; text-align: left;">{p_clean}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{format_apa_stat(c, decimals=3, bounded=False)}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #64748b;">{format_apa_stat(se, decimals=3, bounded=False)}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: #475569; font-size: 0.9em;">[{format_apa_stat(cil, decimals=3, bounded=False)}, {format_apa_stat(ciu, decimals=3, bounded=False)}]</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{format_apa_stat(t, decimals=2, bounded=False)}</td>
+    <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{format_apa_p(pval, with_operator=False)}</td>
     <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{vif_badge}</td>
     <td style="padding: 10px 14px; text-align: right;">{sig_badge}</td>
   </tr>
 """)
         rows_html = "".join(rows)
 
+        r2_str = format_apa_stat(top_m.r_squared, decimals=3, bounded=True)
+        adj_r2_str = format_apa_stat(top_m.adj_r_squared, decimals=3, bounded=True)
+        f_str = format_apa_stat(top_m.f_stat, decimals=2, bounded=False)
+        f_p_str = format_apa_p(top_m.f_pvalue, with_operator=True)
+        bf_str = format_bayes_factor(top_m.model_bf10)
+
         return f"""
 <div style="margin: 36px 0 28px 0; overflow-x: auto;">
   <div style="font-weight: 700; color: #1e3a8a; font-size: 1.15em; margin-bottom: 2px;">Table 3</div>
-  <div style="font-style: italic; color: #334155; font-size: 1.0em; margin-bottom: 8px;">Multivariate OLS Multiple Regression and Multicollinearity (VIF) Diagnostics with Model Bayes Factor</div>
+  <div style="font-style: italic; color: #334155; font-size: 1.0em; margin-bottom: 8px;">Multivariate OLS Multiple Regression and Multicollinearity (VIF) Diagnostics with Model Bayes Factor (Outcome: {dep_clean})</div>
   <div style="margin-bottom: 12px; font-size: 0.9em; color: #334155;">
-    <strong>Dependent Criterion (Outcome):</strong> <code style="background:#e0f2fe;color:#0369a1;padding:2px 6px;border-radius:4px;">{top_m.dependent_var}</code> &bull; 
-    <strong>Model Fit:</strong> R&sup2; = {top_m.r_squared:.3f}, Adj. R&sup2; = {top_m.adj_r_squared:.3f}, F = {top_m.f_stat:.2f} (p = {top_m.f_pvalue:.4f}) &bull;
-    <strong>Model BF<sub>10</sub>:</strong> {top_m.model_bf10:.2f} (<span style="color:#0369a1;font-weight:600;">{top_m.model_evidence_label}</span>)
+    <strong>Dependent Criterion (Outcome):</strong> <span style="background:#e0f2fe;color:#0369a1;padding:2px 6px;border-radius:4px;font-weight:600;">{dep_clean}</span> &bull; 
+    <strong>Model Fit:</strong> <em>R</em>&sup2; = {r2_str}, Adj. <em>R</em>&sup2; = {adj_r2_str}, <em>F</em> = {f_str} (<em>p</em> {f_p_str}) &bull;
+    <strong>Model BF<sub>10</sub>:</strong> {bf_str} (<span style="color:#0369a1;font-weight:600;">{top_m.model_evidence_label}</span>)
   </div>
   <table style="width: 100%; border-collapse: collapse; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.9em; border-top: 2px solid #1e3a8a; border-bottom: 2px solid #1e3a8a;">
     <thead>
@@ -401,7 +448,7 @@ class EduReportBuilder:
     </tbody>
   </table>
   <div style="font-size: 0.84em; color: #64748b; margin-top: 8px; line-height: 1.5;">
-    <em>Note.</em> Multicollinearity Verification: {top_m.collinearity_status} All Variance Inflation Factors (VIF) &lt; 5.0 confirm the absence of severe multicollinearity.
+    <em>Note.</em> Multicollinearity Diagnostics: {top_m.collinearity_status}
   </div>
 </div>
 """

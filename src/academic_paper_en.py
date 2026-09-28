@@ -15,7 +15,14 @@ from google import genai
 from google.genai import types
 
 from src.academic_contexts_en import get_academic_context
-from src.analyzer import EmpiricalAnalysisResult
+from src.analyzer import (
+    EmpiricalAnalysisResult,
+    format_academic_metric,
+    format_apa_p,
+    format_apa_stat,
+    format_bayes_factor,
+    ACADEMIC_METRIC_MAP,
+)
 from src.config import Config
 from src.fetchers.base import DatasetResearchAngle, EducationDataset
 
@@ -52,10 +59,16 @@ class AcademicPaperEn:
 
         figs_md = ""
         if figure_paths:
-            figs_md = "\n\n" + "\n\n".join([
-                f"![Figure {idx + 1}]({p})\n*Figure {idx + 1}: Empirical Quantitative Trajectory and Relational Fit for {self.dataset_id}.*"
-                for idx, p in enumerate(figure_paths)
-            ])
+            clean_t = self.title.split(":")[0].strip() if ":" in self.title else self.title.strip()
+            figs_md_list = []
+            for idx, p in enumerate(figure_paths):
+                cap = (
+                    f"Longitudinal Trajectory and 95% Confidence Intervals for {clean_t}"
+                    if idx == 0
+                    else f"Bivariate Relational Fit and Empirical Regression Model with 95% Confidence Band for {clean_t}"
+                )
+                figs_md_list.append(f"![Figure {idx + 1}]({p})\n*Figure {idx + 1}: {cap}.*")
+            figs_md = "\n\n" + "\n\n".join(figs_md_list)
 
         return f"""# {self.title}
 
@@ -107,8 +120,13 @@ class AcademicPaperEn:
         figs_html = ""
         if figure_urls:
             figs_html = '<div style="margin: 28px 0; text-align: center;">'
+            clean_t = self.title.split(":")[0].strip() if ":" in self.title else self.title.strip()
             for idx, url in enumerate(figure_urls):
-                caption = f"Figure {idx + 1}: Empirical Visualization & Statistical Fit for {self.dataset_id}"
+                caption = (
+                    f"Figure {idx + 1}: Longitudinal Trajectory and 95% Confidence Intervals for {clean_t}"
+                    if idx == 0
+                    else f"Figure {idx + 1}: Bivariate Relational Fit and Empirical Regression Model with 95% Confidence Band for {clean_t}"
+                )
                 figs_html += f"""
 <figure style="margin: 24px 0; text-align: center;">
   <img src="{url}" alt="{caption}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;" />
@@ -265,6 +283,24 @@ class AcademicPaperGeneratorEn:
         paper.section_5_discussion = clean_str(paper.section_5_discussion)
         paper.section_6_limitations = clean_str(paper.section_6_limitations)
         paper.references = [clean_str(r) for r in paper.references]
+
+        # Convert any raw database metric names with underscores into clean academic terminology
+        for raw_m, clean_m in ACADEMIC_METRIC_MAP.items():
+            paper.title = paper.title.replace(raw_m, clean_m)
+            paper.abstract = paper.abstract.replace(raw_m, clean_m.lower())
+            paper.section_1_intro = paper.section_1_intro.replace(raw_m, clean_m.lower())
+            paper.section_2_hypotheses = paper.section_2_hypotheses.replace(raw_m, clean_m.lower())
+            paper.section_3_method = paper.section_3_method.replace(raw_m, clean_m.lower())
+            paper.section_4_results = paper.section_4_results.replace(raw_m, clean_m.lower())
+            paper.section_5_discussion = paper.section_5_discussion.replace(raw_m, clean_m.lower())
+            paper.section_6_limitations = paper.section_6_limitations.replace(raw_m, clean_m.lower())
+            paper.keywords = [k.replace(raw_m, clean_m) for k in paper.keywords]
+
+        # Clean remaining raw underscore identifiers in title/keywords
+        if paper.title.count(":") > 1:
+            parts = paper.title.split(":")
+            paper.title = f"{parts[0].strip()}: {' - '.join(p.strip() for p in parts[1:])}"
+
         return paper
 
     def _generate_with_gemini(
@@ -295,7 +331,12 @@ Write a comprehensive, rigorous English academic paper adhering strictly to inte
    - "Figure 1": Longitudinal time-series trajectories with shaded 95% CI bands.
    - "Figure 2": Empirical relational regression model with 95% CI confidence band.
 4. UNCOVER EMPIRICAL SURPRISES & PARADOXES: Do NOT merely report obvious linear trends or state that time progressed. Focus on counter-intuitive findings, theoretical paradoxes, and policy trade-offs revealed in the analysis (e.g., decoupling between technology inputs and cognitive scores, crowding out of lesson preparation by administrative burden, institutional vigilance, affective exhaustion despite high achievement).
-5. 95% CONFIDENCE INTERVALS (95% CI): When presenting quantitative findings and regression parameters in Section 4, report all major effect sizes with their 95% Confidence Intervals (95% CI) (e.g., beta = 0.420, 95% CI [0.180, 0.660], p = 0.003). Discuss the width and precision of the 95% CI bands plotted in Figure 1 and Figure 2.
+5. 95% CONFIDENCE INTERVALS (95% CI): When presenting quantitative findings and regression parameters in Section 4, report all major effect sizes with their 95% Confidence Intervals (95% CI) (e.g., b = 0.420, 95% CI [0.180, 0.660], p = .003). Discuss the width and precision of the 95% CI bands plotted in Figure 1 and Figure 2.
+6. ACADEMIC ENGLISH NOMENCLATURE & APA 7TH STYLE:
+   - NEVER use raw database column identifiers containing underscores (e.g., do NOT write "Youth_Programming_Skill_Rate_Pct", "Lesson_Prep_Hours_Per_Week", or "Elementary_Total_Time_Min"). Always translate variable names into natural, scholarly English terminology (e.g., "youth programming skill rate", "weekly lesson preparation hours", "elementary total learning time").
+   - Strictly adhere to APA 7th statistical formatting: omit leading zeros for numbers bounded between 0 and 1 (e.g., r = .66, R^2 = .98, p < .001, eta_p^2 = .78). Never write "p = 0.0" or "p = 0.0000" (use p < .001 instead).
+   - Format confidence intervals cleanly without plus signs: 95% CI [2.10, 2.72].
+   - Maintain a sophisticated, formal academic register suitable for top-tier international journals (e.g., Computers & Education, Higher Education, British Journal of Educational Technology). Avoid conversational rhetorical questions and informal filler phrases.
 
 ### Dataset & Empirical Context:
 - Dataset ID: {dataset.id}
@@ -377,29 +418,52 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
         angle: Optional[DatasetResearchAngle],
         context: Dict[str, Any],
     ) -> AcademicPaperEn:
-        """Deterministic, high-quality academic synthesis when LLM is unavailable."""
+        """Deterministic, publication-grade academic synthesis when LLM is unavailable."""
         angle_title = angle.title if angle else f"Empirical Quantitative Evaluation of {dataset.title}"
-        primary_metric = dataset.metrics[0] if dataset.metrics else "Observed Value"
+        if ":" in angle_title:
+            title = f"{angle_title} (A Longitudinal Empirical Investigation of Japanese Public Open Data)"
+        else:
+            title = f"{angle_title}: A Longitudinal Empirical Investigation of Japanese Public Open Data"
+
+        primary_metric = dataset.metrics[0] if dataset.metrics else "Observed Indicator"
+        primary_clean = format_academic_metric(primary_metric, False)
+        primary_title = format_academic_metric(primary_metric, True)
 
         # Build statistical synthesis snippets
         stat_points = []
         for reg in analysis.trend_regressions[:2]:
             grp = f" for {reg.group}" if reg.group else ""
+            m_name = format_academic_metric(reg.metric, False)
+            p_str = format_apa_p(reg.p_value)
+            r2_str = format_apa_stat(reg.r_squared, bounded=True)
             stat_points.append(
-                f"Longitudinal trend regression for {reg.metric}{grp} indicates an estimated slope of beta = {reg.slope:.3f} "
-                f"(95% CI [{reg.ci_lower:+.3f}, {reg.ci_upper:+.3f}], R^2 = {reg.r_squared:.3f}, p = {reg.p_value:.4f}), reflecting a net change of {reg.total_change:+g} {dataset.unit} "
+                f"Longitudinal trend regression for {m_name}{grp} indicates an estimated slope of b = {reg.slope:.2f} "
+                f"(95% CI [{reg.ci_lower:.2f}, {reg.ci_upper:.2f}], R² = {r2_str}, p {p_str}), reflecting a net secular shift of {reg.total_change:+g} {dataset.unit} "
                 f"from {reg.start_year} ({reg.start_value}{dataset.unit}) to {reg.end_year} ({reg.end_value}{dataset.unit})."
             )
         stat_snippet = " ".join(stat_points)
 
         corr_points = []
         for c in analysis.correlations[:2]:
-            p_c_str = "< .001" if c.p_value < 0.001 else f"= {c.p_value:.3f}"
-            corr_points.append(
-                f"A bivariate zero-correlation test between {c.metric_x} and {c.metric_y} yielded Pearson r = {c.pearson_r:+.3f} "
-                f"(95% CI [{c.ci_lower:+.3f}, {c.ci_upper:+.3f}], t({c.df}) = {c.t_stat:+.2f}, p {p_c_str}, BF_10 = {c.bf10:.2f}, {c.evidence_label.lower()}), "
-                f"accounting for {c.r_squared * 100:.1f}% of shared variance ({c.interpretation})."
-            )
+            p_c_str = format_apa_p(c.p_value)
+            r_str = format_apa_stat(c.pearson_r, bounded=True)
+            mx_name = format_academic_metric(c.metric_x, False)
+            my_name = format_academic_metric(c.metric_y, False)
+            bf_str = format_bayes_factor(c.bf10)
+            if c.p_value < 0.05:
+                corr_points.append(
+                    f"A bivariate zero-correlation test between {mx_name} and {my_name} revealed a statistically significant "
+                    f"linear association, Pearson r = {r_str}, 95% CI [{c.ci_lower:.2f}, {c.ci_upper:.2f}], "
+                    f"t({c.df}) = {c.t_stat:.2f}, p {p_c_str}, BF₁₀ = {bf_str} ({c.evidence_label}), "
+                    f"accounting for {c.r_squared * 100:.1f}% of shared variance."
+                )
+            else:
+                corr_points.append(
+                    f"A bivariate zero-correlation test between {mx_name} and {my_name} showed no statistically significant "
+                    f"linear association, Pearson r = {r_str}, 95% CI [{c.ci_lower:.2f}, {c.ci_upper:.2f}], "
+                    f"t({c.df}) = {c.t_stat:.2f}, p {p_c_str}, with a Bayes factor of BF₁₀ = {bf_str} ({c.evidence_label}) "
+                    f"favoring the null hypothesis of independence."
+                )
         corr_snippet = " ".join(corr_points)
 
         # Factorial Two-Way ANOVA snippet
@@ -409,47 +473,63 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             fa = a.factor_a_effect
             fb = a.factor_b_effect
             fi = a.interaction_effect
-            p_a_str = "< .001" if fa.p_value < 0.001 else f"= {fa.p_value:.3f}"
-            p_b_str = "< .001" if fb.p_value < 0.001 else f"= {fb.p_value:.3f}"
+            outcome_clean = format_academic_metric(a.outcome_metric, False)
+            fa_clean = format_academic_metric(a.factor_a_name, False)
+            fb_clean = format_academic_metric(a.factor_b_name, False)
+            p_a_str = format_apa_p(fa.p_value)
+            p_b_str = format_apa_p(fb.p_value)
+            eta_a_str = format_apa_stat(fa.eta_sq_partial, bounded=True)
+            eta_b_str = format_apa_stat(fb.eta_sq_partial, bounded=True)
+            bf_a_str = format_bayes_factor(fa.bf10)
+            bf_b_str = format_bayes_factor(fb.bf10)
+
             int_text = ""
             if fi.df > 0:
-                p_i_str = "< .001" if fi.p_value < 0.001 else f"= {fi.p_value:.3f}"
+                p_i_str = format_apa_p(fi.p_value)
+                eta_i_str = format_apa_stat(fi.eta_sq_partial, bounded=True)
+                bf_i_str = format_bayes_factor(fi.bf10)
                 int_text = (
-                    f" Furthermore, the interaction effect ({a.factor_a_name} x {a.factor_b_name}) was "
-                    f"F({fi.df}, {a.error_df}) = {fi.f_stat:.2f}, p {p_i_str}, partial eta^2 = {fi.eta_sq_partial:.3f}, "
-                    f"with BF_10 = {fi.bf10:.2f} ({fi.evidence_label.lower()})."
+                    f" Furthermore, the interaction effect ({fa_clean} × {fb_clean}) yielded "
+                    f"F({fi.df}, {a.error_df}) = {fi.f_stat:.2f}, p {p_i_str}, partial ηₚ² = {eta_i_str}, "
+                    f"with BF₁₀ = {bf_i_str} ({fi.evidence_label})."
                 )
             anova_snippet = (
-                f"As documented in Table 2, a factorial Two-Way Analysis of Variance (ANOVA) was conducted on '{a.outcome_metric}'. "
-                f"The main effect of {a.factor_a_name} reached statistical significance, F({fa.df}, {a.error_df}) = {fa.f_stat:.2f}, "
-                f"p {p_a_str}, partial eta^2 = {fa.eta_sq_partial:.3f}, with a Bayes Factor of BF_10 = {fa.bf10:.2f} providing {fa.evidence_label.lower()}. "
-                f"Similarly, the main effect of {a.factor_b_name} yielded F({fb.df}, {a.error_df}) = {fb.f_stat:.2f}, p {p_b_str}, "
-                f"partial eta^2 = {fb.eta_sq_partial:.3f}, BF_10 = {fb.bf10:.2f} ({fb.evidence_label.lower()}).{int_text} "
-                f"The alignment between frequentist significance thresholds and Bayesian evidence factors confirms robust structural partition of variance."
+                f"As documented in Table 2, a factorial Two-Way Analysis of Variance (ANOVA) was conducted on {outcome_clean}. "
+                f"The main effect of {fa_clean} reached statistical significance, F({fa.df}, {a.error_df}) = {fa.f_stat:.2f}, "
+                f"p {p_a_str}, partial ηₚ² = {eta_a_str}, with a Bayes factor of BF₁₀ = {bf_a_str} providing {fa.evidence_label}. "
+                f"Similarly, the main effect of {fb_clean} was F({fb.df}, {a.error_df}) = {fb.f_stat:.2f}, p {p_b_str}, "
+                f"partial ηₚ² = {eta_b_str}, BF₁₀ = {bf_b_str} ({fb.evidence_label}).{int_text} "
+                f"The alignment between frequentist significance thresholds and continuous Bayesian evidence factors confirms robust structural partition of variance."
             )
 
         # Multivariate OLS and VIF snippet
         mv_snippet = ""
         if analysis.multivariate_regressions:
             top_m = analysis.multivariate_regressions[0]
+            dep_clean = format_academic_metric(top_m.dependent_var, False)
             pred_details = ", ".join([
-                f"{p} (B = {top_m.coefficients.get(p, 0.0):+.3f}, SE = {top_m.std_errors.get(p, 0.0):.3f}, 95% CI [{top_m.ci_lower.get(p, 0.0):+.3f}, {top_m.ci_upper.get(p, 0.0):+.3f}], t = {top_m.t_stats.get(p, 0.0):+.2f}, VIF = {top_m.vif_values.get(p, 1.0):.2f})"
+                f"{format_academic_metric(p, False)} (B = {top_m.coefficients.get(p, 0.0):.2f}, SE = {top_m.std_errors.get(p, 0.0):.2f}, "
+                f"95% CI [{top_m.ci_lower.get(p, 0.0):.2f}, {top_m.ci_upper.get(p, 0.0):.2f}], t = {top_m.t_stats.get(p, 0.0):.2f}, VIF = {top_m.vif_values.get(p, 1.0):.2f})"
                 for p in top_m.predictors
             ])
-            p_f_str = "< .001" if top_m.f_pvalue < 0.001 else f"= {top_m.f_pvalue:.3f}"
+            p_f_str = format_apa_p(top_m.f_pvalue)
+            r2_str = format_apa_stat(top_m.r_squared, bounded=True)
+            adj_r2_str = format_apa_stat(top_m.adj_r_squared, bounded=True)
+            bf_m_str = format_bayes_factor(top_m.model_bf10)
             mv_snippet = (
-                f"As presented in Table 3, a multivariate Ordinary Least Squares (OLS) regression model was estimated on '{top_m.dependent_var}' "
-                f"with stepwise multicollinearity pruning. The omnibus model accounted for substantial variance (R^2 = {top_m.r_squared:.3f}, "
-                f"Adjusted R^2 = {top_m.adj_r_squared:.3f}, F({len(top_m.predictors)}, {top_m.n_obs - len(top_m.predictors) - 1}) = {top_m.f_stat:.2f}, p {p_f_str}). "
-                f"Bayesian model evaluation against an intercept-only null model yielded Model BF_10 = {top_m.model_bf10:.2f}, providing {top_m.model_evidence_label.lower()}. "
-                f"Crucially, variance inflation factors across all retained predictors remained well below conservative thresholds ({top_m.collinearity_status}), "
-                f"with individual regression parameters indicating: {pred_details}."
+                f"As presented in Table 3, an Ordinary Least Squares (OLS) multiple regression model was estimated on {dep_clean} "
+                f"with stepwise multicollinearity pruning. The omnibus model accounted for substantial variance, R² = {r2_str}, "
+                f"adjusted R² = {adj_r2_str}, F({len(top_m.predictors)}, {top_m.n_obs - len(top_m.predictors) - 1}) = {top_m.f_stat:.2f}, p {p_f_str}. "
+                f"Bayesian model evaluation against an intercept-only null model yielded Model BF₁₀ = {bf_m_str}, providing {top_m.model_evidence_label}. "
+                f"{top_m.collinearity_status} Individual parameter estimates indicated: {pred_details}."
             )
 
         # Discovery / paradox snippet
         disc_snippet = ""
         if analysis.empirical_discoveries:
-            disc_snippet = " " + " ".join([f"Notably, {d}" for d in analysis.empirical_discoveries[:2]])
+            disc_clean = [d for d in analysis.empirical_discoveries if not d.startswith("VIF Validated")]
+            if disc_clean:
+                disc_snippet = " " + " ".join(disc_clean[:2])
 
         cat_map = {
             "math": "Mathematics Education",
@@ -460,13 +540,12 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
         }
         academic_cat = cat_map.get(dataset.category.lower(), dataset.category.capitalize())
 
-        title = f"{angle_title}: A Longitudinal Empirical Investigation of Japanese Public Open Data"
         abstract = (
             f"This study conducts a rigorous empirical investigation into {dataset.title}, utilizing official "
             f"longitudinal open datasets released by {dataset.source_name}. Employing factorial Two-Way Analysis of Variance (ANOVA), "
             f"bivariate zero-correlation tests with Fisher's z 95% confidence intervals, and multivariate OLS regressions with "
             f"stepwise Variance Inflation Factor (VIF < 5.0) multicollinearity control, we evaluate empirical patterns simultaneously "
-            f"through frequentist significance tests and Bayesian evidence factors (BF_10) anchored in {context.get('theoretical_framework')}. "
+            f"through frequentist significance tests and Bayesian evidence factors (BF₁₀) anchored in {context.get('theoretical_framework')}. "
             f"{stat_snippet} {anova_snippet} {mv_snippet} {disc_snippet} These empirical findings uncover critical policy trade-offs "
             f"for evidence-based decision-making in Japan, demonstrating that structural inputs alone do not guarantee linear gains."
         )
@@ -478,7 +557,7 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             "Zero-Correlation Analysis",
             "Multicollinearity VIF Control",
             academic_cat,
-            primary_metric,
+            primary_title,
             "Educational Policy Paradox",
         ]
 
@@ -487,7 +566,7 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             f"demographic transitions, technological advances, and nationwide administrative initiatives. As articulated by {dataset.source_name}, "
             f"the continuous release of standardized open administrative statistics offers unprecedented opportunities for transparent, "
             f"data-driven policy evaluation. In the context of {context.get('policy_context')}, understanding empirical trajectories "
-            f"in {primary_metric} has emerged as an imperative task for researchers and policymakers alike.\n\n"
+            f"in {primary_clean} has emerged as an imperative task for researchers and policymakers alike.\n\n"
             f"{context.get('literature_review')}\n\n"
             f"Despite accumulating cross-sectional evidence, there remains a pressing need to synthesize longitudinal open data "
             f"using robust econometric and inferential techniques that guard against severe multicollinearity while evaluating findings "
@@ -497,7 +576,7 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
         hypotheses = (
             f"This inquiry is framed within {context.get('theoretical_framework')}. Grounded in this theoretical orientation, "
             f"we pose the following central Research Questions (RQs):\n"
-            f"- RQ1: How do institutional factors and temporal periods interact in shaping {primary_metric} across public educational environments in Japan?\n"
+            f"- RQ1: How do institutional factors and temporal periods interact in shaping {primary_clean} across public educational environments in Japan?\n"
             f"- RQ2: To what degree do structural inputs predict key outcomes after rigorously controlling for multicollinearity (VIF < 5.0)?\n\n"
             f"Accordingly, we test two overarching empirical hypotheses:\n"
             f"- Hypothesis 1 (H1): Factorial main effects and temporal trajectories demonstrate statistically significant secular trends supported by decisive Bayesian evidence.\n"
@@ -511,11 +590,11 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             f"standards, measured primarily in {dataset.unit}.\n\n"
             f"Our quantitative methodology integrates three analytical pillars adhering strictly to APA 7th standards: "
             f"(1) Factorial Two-Way Analysis of Variance (ANOVA) with Type II Sum of Squares to estimate main effects and interaction parameters, "
-            f"quantifying effect sizes via partial eta-squared (partial eta^2); "
+            f"quantifying effect sizes via partial eta-squared (partial ηₚ²); "
             f"(2) Bivariate Zero-Correlation Tests evaluating Pearson r via Student's t-distribution with Fisher's z 95% Confidence Intervals (95% CI); and "
             f"(3) Multivariate Ordinary Least Squares (OLS) Multiple Regression with backward stepwise Variance Inflation Factor (VIF) "
             f"elimination ensuring all predictor VIF values remain strictly below 5.0. To bridge frequentist and Bayesian paradigms, each inferential "
-            f"test is accompanied by its corresponding Bayes Factor (BF_10) under JZS / BIC delta approximation, classifying evidence according to "
+            f"test is accompanied by its corresponding Bayes Factor (BF₁₀) under JZS / BIC delta approximation, classifying evidence according to "
             f"Jeffreys (1961) and Lee and Wagenmakers (2013) conventions."
         )
 

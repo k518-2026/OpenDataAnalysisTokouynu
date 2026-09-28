@@ -69,6 +69,120 @@ class TrendRegressionResult:
     ci_upper: float = 0.0
 
 
+def format_apa_p(p: float, with_operator: bool = True) -> str:
+    """Formats p-values according to APA 7th standards (omits leading zero)."""
+    if p < 0.001:
+        return "< .001"
+    formatted = f"{p:.3f}".replace("0.", ".")
+    return f"= {formatted}" if with_operator else formatted
+
+
+def format_apa_stat(val: float, decimals: int = 2, bounded: bool = True) -> str:
+    """Formats statistical values according to APA 7th standards."""
+    if bounded:
+        formatted = f"{val:.{decimals}f}"
+        if formatted.startswith("0."):
+            return formatted[1:]
+        elif formatted.startswith("-0."):
+            return "-" + formatted[2:]
+        return formatted
+    return f"{val:.{decimals}f}"
+
+
+def format_bayes_factor(bf10: float) -> str:
+    """Formats Bayes Factor for clean scientific presentation."""
+    if bf10 > 100000:
+        return f"{bf10:.2e}".replace("e+0", "e").replace("e+", "e")
+    elif bf10 > 1000:
+        return f"{bf10:,.1f}"
+    elif bf10 < 0.001:
+        return "< 0.001"
+    return f"{bf10:.2f}"
+
+
+ACADEMIC_METRIC_MAP: Dict[str, str] = {
+    # UNESCO & Global ICT
+    "Youth_Programming_Skill_Rate_Pct": "Youth Programming Proficiency Rate (%)",
+    "Advanced_Data_Analysis_Skill_Pct": "Advanced Data Analysis Skill Rate (%)",
+    "Tertiary_STEM_Graduation_Share_Pct": "Tertiary STEM Graduation Share (%)",
+    "High_Skill_Tech_Employment_Rate_Pct": "High-Skill Technology Employment Rate (%)",
+    # Upper Secondary Informatics
+    "Python_Adoption_Rate_Pct": "Python Programming Adoption Rate (%)",
+    "Teacher_Informatics_License_Pct": "Informatics Teacher Certification Rate (%)",
+    "Common_Test_Algorithm_Drill_Hours": "Common Test Algorithm Drill Hours",
+    "Student_Autonomous_Project_Pct": "Student Autonomous Inquiry Project Rate (%)",
+    # National Assessment of Academic Ability
+    "Elementary_Math_Mean_Score": "Elementary School Mathematics Mean Score",
+    "JuniorHigh_Math_Mean_Score": "Junior High School Mathematics Mean Score",
+    "Math_Enjoyment_Affinity_Rate_Pct": "Mathematics Learning Affinity Rate (%)",
+    "Math_Utility_Value_Rate_Pct": "Mathematics Perceived Utility Value Rate (%)",
+    "Classroom_Device_Usage_Daily_Pct": "Daily Classroom Device Utilization Rate (%)",
+    # MEXT School Informatization
+    "Student_1to1_Device_Deployment_Pct": "Student 1-to-1 Device Deployment Rate (%)",
+    "High_Speed_Internet_Coverage_Pct": "High-Speed School Network Coverage Rate (%)",
+    "Teacher_ICT_Instruction_Competency_Pct": "Teacher ICT Instructional Competency Rate (%)",
+    "Regular_Curricular_Programming_Pct": "Curricular Programming Implementation Rate (%)",
+    # STEM & College Enrollment
+    "Total_Admissions_CS_Engineering": "Total CS & Engineering Admissions",
+    "Female_Admissions_CS_Engineering": "Female CS & Engineering Admissions",
+    "Female_Admissions_Ratio_Pct": "Female Admissions Share in CS & Engineering (%)",
+    "National_University_Female_Ratio_Pct": "National University CS Female Share (%)",
+    "Private_University_Female_Ratio_Pct": "Private University CS Female Share (%)",
+    # Teacher Workload
+    "Elementary_Teacher_Weekly_Hours_Mean": "Elementary School Teacher Weekly Hours",
+    "JuniorHigh_Teacher_Weekly_Hours_Mean": "Junior High School Teacher Weekly Hours",
+    "Extracurricular_Club_Coaching_Hours": "Extracurricular Club Coaching Hours",
+    "Administrative_Reporting_Hours": "Administrative Reporting & Paperwork Hours",
+    "Lesson_Preparation_Hours_Mean": "Lesson Preparation & Pedagogical Design Hours",
+    # Absenteeism & Student Guidance
+    "Elementary_Absenteeism_Rate_Per_Thousand": "Elementary School Chronic Absenteeism Rate (per 1,000 students)",
+    "JuniorHigh_Absenteeism_Rate_Per_Thousand": "Junior High School Chronic Absenteeism Rate (per 1,000 students)",
+    "Bullying_Incidents_Recognized_Per_Thousand": "Recognized Bullying Incidents (per 1,000 students)",
+    "Online_ICT_Attendance_Accredited_Count": "Online ICT Attendance Accreditation Count",
+    # Special Needs
+    "Special_Needs_Class_Enrollment_Count": "Special Needs Class Enrollment Count",
+    "Resource_Room_Tsukyu_Enrollment_Count": "Resource Room (Tsukyu) Enrollment Count",
+    "Assistive_Technology_Deployment_Pct": "Assistive Technology Deployment Rate (%)",
+    "Individualized_Support_Plan_Pct": "Individualized Support Plan Formulation Rate (%)",
+    # TIMSS Math & Science
+    "Grade4_Math_Mean_Scale_Score": "Grade 4 Mathematics Mean Scale Score",
+    "Grade8_Math_Mean_Scale_Score": "Grade 8 Mathematics Mean Scale Score",
+    "Grade8_Math_Self_Efficacy_Index": "Grade 8 Mathematics Self-Efficacy Index",
+    "Grade8_Math_Valuing_Index": "Grade 8 Mathematics Valuing Index",
+    # OECD PISA
+    "PISA_Math_Mean_Scale_Score": "PISA Mathematics Mean Scale Score",
+    "PISA_Digital_Device_Recreation_Hours": "Daily Digital Device Recreational Screen Hours",
+    "PISA_Digital_Device_Learning_Hours": "Daily Digital Device Learning Screen Hours",
+    "PISA_Digital_Distraction_Index": "PISA Classroom Digital Distraction Index",
+    # OECD TALIS
+    "TALIS_Weekly_Working_Hours_Total": "TALIS Total Weekly Working Hours",
+    "TALIS_Teacher_Self_Efficacy_Index": "TALIS Teacher Self-Efficacy Index",
+    "TALIS_Collaborative_Professionalism_Index": "TALIS Collaborative Lesson Study Index",
+    "TALIS_Administrative_Burden_Hours": "TALIS Administrative Burden Hours",
+    # World Bank Education
+    "Government_Expenditure_On_Education_GDP_Pct": "Government Educational Expenditure (% of GDP)",
+    "Tertiary_Gross_Enrollment_Ratio_Pct": "Tertiary Education Gross Enrollment Ratio (%)",
+    "Pupil_Teacher_Ratio_Primary": "Primary Education Pupil-Teacher Ratio",
+    "Research_And_Development_Expenditure_GDP_Pct": "R&D Expenditure (% of GDP)",
+}
+
+
+def format_academic_metric(metric: str, title_case: bool = True) -> str:
+    """Formats a database metric column name into standard academic prose."""
+    if not metric:
+        return ""
+    if metric in ACADEMIC_METRIC_MAP:
+        res = ACADEMIC_METRIC_MAP[metric]
+        return res if title_case else res.lower()
+    if " (Median Split)" in metric:
+        base = metric.replace(" (Median Split)", "")
+        base_clean = format_academic_metric(base, title_case=title_case)
+        return f"{base_clean} (Median Split)" if title_case else f"{base_clean} (median split)"
+    clean = metric.replace("_Pct", " (%)").replace("_Rate", " Rate").replace("_Hours", " Hours").replace("_Score", " Score").replace("_Count", " Count")
+    clean = clean.replace("_", " ").strip()
+    return clean if title_case else clean.lower()
+
+
 def interpret_bayes_factor(bf10: float) -> str:
     """Interprets Bayes Factor according to Jeffreys (1961) / Lee & Wagenmakers (2013)."""
     if bf10 >= 100.0:
@@ -381,8 +495,14 @@ class EduDataAnalyzer:
                     strength = "negligible"
 
                 direction = "positive" if r_val > 0 else "negative"
-                sig = "statistically significant (p < .05)" if p_val < 0.05 else "not statistically significant (p >= .05)"
-                interp = f"{strength.capitalize()} {direction} correlation ({sig})"
+                r_stat_str = format_apa_stat(r_val, bounded=True)
+                p_stat_str = format_apa_p(p_val)
+                if abs_r < 0.2:
+                    interp = f"negligible correlation (r = {r_stat_str}, p {p_stat_str})"
+                elif p_val < 0.05:
+                    interp = f"statistically significant {strength} {direction} correlation (r = {r_stat_str}, p {p_stat_str})"
+                else:
+                    interp = f"non-significant {strength} {direction} correlation (r = {r_stat_str}, p {p_stat_str})"
 
                 n_pair = len(pair)
                 df_corr = max(1, n_pair - 2)
@@ -453,6 +573,9 @@ class EduDataAnalyzer:
                 # Paradox detection logic
                 is_paradox = False
                 desc = "Standard linear association."
+                clean_x = format_academic_metric(var_x, False)
+                clean_y = format_academic_metric(var_y, False)
+                p_str = format_apa_p(p_val)
 
                 # 1. Decoupling: High input / growth, but flat/negative association with outcome
                 if ("usage" in var_x.lower() or "screen" in var_x.lower() or "hours" in var_x.lower()) and (
@@ -460,7 +583,7 @@ class EduDataAnalyzer:
                 ):
                     if slope <= 0 or (p_val > 0.10 and r_sq < 0.10):
                         is_paradox = True
-                        desc = f"Decoupling Paradox: Increased {var_x} does not yield expected positive gains in {var_y} (slope = {round(slope, 3)}, p = {round(p_val, 3)})."
+                        desc = f"Decoupling Paradox: Increased {clean_x} does not yield proportional positive gains in {clean_y} (b = {slope:.2f}, p {p_str})."
 
                 # 2. Crowding-out: Competing activities (e.g. coaching/paperwork crowding out lesson prep)
                 elif ("coaching" in var_x.lower() or "drill" in var_x.lower() or "paperwork" in var_x.lower() or "burden" in var_x.lower()) and (
@@ -468,19 +591,19 @@ class EduDataAnalyzer:
                 ):
                     if slope < -0.2:
                         is_paradox = True
-                        desc = f"Crowding-Out Paradox: Increased {var_x} exerts a significant suppressive trade-off on {var_y} (slope = {round(slope, 3)}, p = {round(p_val, 3)})."
+                        desc = f"Crowding-Out Paradox: Increased {clean_x} exerts a significant suppressive trade-off on {clean_y} (b = {slope:.2f}, p {p_str})."
 
                 # 3. Expenditure diminishing returns
                 elif "expenditure" in var_x.lower() and "proficiency" in var_y.lower():
                     if p_val > 0.10:
                         is_paradox = True
-                        desc = f"Diminishing Returns: Macro educational expenditure {var_x} shows non-significant direct predictive power on {var_y} (p = {round(p_val, 3)})."
+                        desc = f"Diminishing Returns: Macro educational expenditure in {clean_x} demonstrates non-significant direct predictive power on {clean_y} (p {p_str})."
 
                 # 4. Bullying vigilance
                 elif "bullying" in var_x.lower() and ("attendance" in var_y.lower() or "counselor" in var_y.lower()):
                     if slope > 0:
                         is_paradox = True
-                        desc = f"Institutional Vigilance: Higher reported {var_x} correlates positively with {var_y}, confirming proactive institutional intervention."
+                        desc = f"Institutional Vigilance: Higher reported {clean_x} correlates positively with {clean_y}, reflecting proactive institutional reporting rather than adverse climate."
 
                 t_crit_biv = stats.t.ppf(0.975, df=max(1, len(sub) - 2))
                 biv_ci_l = float(round(slope - t_crit_biv * std_err, 3))
@@ -620,11 +743,13 @@ class EduDataAnalyzer:
                             p_cil = ci_lower_dict.get(p_name, 0.0)
                             p_ciu = ci_upper_dict.get(p_name, 0.0)
                             sig_label = "statistically significant" if p_pval < 0.05 else "non-significant"
+                            p_clean_name = format_academic_metric(p_name, False)
+                            p_val_str = format_apa_p(p_pval)
                             insights.append(
-                                f"Predictor '{p_name}' (beta = {p_coeff}, 95% CI [{p_cil:+.3f}, {p_ciu:+.3f}], p = {p_pval}, VIF = {p_vif}) is {sig_label}."
+                                f"Predictor '{p_clean_name}' (b = {p_coeff:.2f}, 95% CI [{p_cil:.2f}, {p_ciu:.2f}], p {p_val_str}, VIF = {p_vif:.2f}) is {sig_label}."
                             )
 
-                        status_str = f"VIF Validated: Maximum VIF = {round(max_vif_val, 2)} <= 5.0 threshold (No severe multicollinearity)."
+                        status_str = f"All variance inflation factors remained well below 5.0 (maximum VIF = {round(max_vif_val, 2)} < 5.0), confirming the absence of severe multicollinearity."
 
                         # Model Bayes Factor (BF10) vs Null Model via BIC delta
                         n_m = len(sub_df)
@@ -895,15 +1020,24 @@ class EduDataAnalyzer:
         # 2. Insights from multivariate regression
         if mv_regs:
             top_m = mv_regs[0]
+            dep_clean = format_academic_metric(top_m.dependent_var, False)
+            p_f_str = format_apa_p(top_m.f_pvalue)
+            r2_str = format_apa_stat(top_m.r_squared, bounded=True)
+            adj_r2_str = format_apa_stat(top_m.adj_r_squared, bounded=True)
+            bf_str = format_bayes_factor(top_m.model_bf10)
             discoveries.append(
-                f"Multivariate OLS on '{top_m.dependent_var}' explained {round(top_m.r_squared * 100, 1)}% of variance (Adj. R^2 = {top_m.adj_r_squared}, F = {top_m.f_stat}, p = {top_m.f_pvalue}, Model BF_10 = {top_m.model_bf10} [{top_m.model_evidence_label}]). {top_m.collinearity_status}"
+                f"Multivariate OLS on '{dep_clean}' explained {round(top_m.r_squared * 100, 1)}% of variance "
+                f"(R² = {r2_str}, Adj. R² = {adj_r2_str}, F = {top_m.f_stat:.2f}, p {p_f_str}, "
+                f"Model BF₁₀ = {bf_str} [{top_m.model_evidence_label}]). {top_m.collinearity_status}"
             )
 
         # 3. Trajectory discovery
         if trend_regs:
             steepest = max(trend_regs, key=lambda r: abs(r.percent_change))
+            m_clean = format_academic_metric(steepest.metric, False)
             discoveries.append(
-                f"Longitudinal Divergence: '{steepest.metric}' exhibited an overall change of {steepest.total_change:+g} ({steepest.percent_change:+g}%) between {steepest.start_year} and {steepest.end_year}."
+                f"Longitudinal Trajectory Shift: '{m_clean}' exhibited an overall change of {steepest.total_change:+g}{dataset.unit} "
+                f"({steepest.percent_change:+g}%) between {steepest.start_year} and {steepest.end_year}."
             )
 
         return discoveries
@@ -947,30 +1081,42 @@ class EduDataAnalyzer:
         if corrs:
             lines.append("\n### Bivariate Correlations & Zero-Correlation Tests (with Bayes Factor BF10):")
             for c in corrs[:4]:
+                mx = format_academic_metric(c.metric_x, True)
+                my = format_academic_metric(c.metric_y, True)
+                r_str = format_apa_stat(c.pearson_r, bounded=True)
+                p_str = format_apa_p(c.p_value)
+                bf_str = format_bayes_factor(c.bf10)
                 lines.append(
-                    f"- {c.metric_x} vs. {c.metric_y}: r = {c.pearson_r:+.3f} (95% CI [{c.ci_lower:+.3f}, {c.ci_upper:+.3f}]), "
-                    f"t({c.df}) = {c.t_stat:+.2f}, p = {c.p_value:.4f}, BF_10 = {c.bf10:.2f} ({c.evidence_label})"
+                    f"- {mx} vs. {my}: r = {r_str} (95% CI [{c.ci_lower:.2f}, {c.ci_upper:.2f}]), "
+                    f"t({c.df}) = {c.t_stat:.2f}, p {p_str}, BF_10 = {bf_str} ({c.evidence_label})"
                 )
 
         if mv_regs:
             lines.append("\n### Multivariate OLS Regression & Multicollinearity Control:")
             for m in mv_regs:
+                dep_clean = format_academic_metric(m.dependent_var, True)
+                preds_clean = [format_academic_metric(p, True) for p in m.predictors]
+                r2_str = format_apa_stat(m.r_squared, bounded=True)
+                adj_r2_str = format_apa_stat(m.adj_r_squared, bounded=True)
+                p_f_str = format_apa_p(m.f_pvalue)
+                bf_m_str = format_bayes_factor(m.model_bf10)
                 lines.append(
-                    f"- Model: Outcome = {m.dependent_var} | Predictors = {', '.join(m.predictors)}"
+                    f"- Model: Outcome = {dep_clean} | Predictors = {', '.join(preds_clean)}"
                 )
                 lines.append(
-                    f"  R^2 = {m.r_squared}, Adj. R^2 = {m.adj_r_squared}, F({len(m.predictors)}, {m.n_obs - len(m.predictors) - 1}) = {m.f_stat}, p = {m.f_pvalue}, Model BF_10 = {m.model_bf10:.2f} ({m.model_evidence_label})"
+                    f"  R^2 = {r2_str}, Adj. R^2 = {adj_r2_str}, F({len(m.predictors)}, {m.n_obs - len(m.predictors) - 1}) = {m.f_stat:.2f}, p {p_f_str}, Model BF_10 = {bf_m_str} ({m.model_evidence_label})"
                 )
                 lines.append(f"  Collinearity Diagnostics: {m.collinearity_status}")
                 lines.append("  Predictor Statistics:")
                 for pred in m.predictors:
+                    p_name_clean = format_academic_metric(pred, True)
                     c = m.coefficients.get(pred, 0.0)
                     se = m.std_errors.get(pred, 0.0)
                     t = m.t_stats.get(pred, 0.0)
                     p = m.p_values.get(pred, 1.0)
                     vif = m.vif_values.get(pred, 1.0)
                     lines.append(
-                        f"    * {pred}: beta = {c}, SE = {se}, t = {t}, p = {p}, VIF = {vif}"
+                        f"    * {p_name_clean}: b = {c:.2f}, SE = {se:.2f}, t = {t:.2f}, p {format_apa_p(p)}, VIF = {vif:.2f}"
                     )
 
         if rel_regs:

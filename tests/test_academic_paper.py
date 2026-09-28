@@ -98,3 +98,41 @@ def test_pdf_generation_with_figures(tmp_path):
     assert pdf_path.stat().st_size > 1000  # Non-empty PDF
 
 
+def test_academic_nomenclature_and_apa_formatting():
+    from src.reporter import EduReportBuilder
+    catalog = DatasetCatalog()
+    analyzer = EduDataAnalyzer()
+    gen = AcademicPaperGeneratorEn()
+    builder = EduReportBuilder()
+
+    for ds in catalog.list_datasets():
+        res = analyzer.analyze(ds)
+        paper = gen.generate(ds, res)
+        article_html = builder.build_article_html(paper, res, ds, figure_urls=["fig1.png", "fig2.png"])
+        article_md = builder.build_article_markdown(paper, res, ds, figure_paths=[])
+
+        # 1. No raw snake_case metric names in title, abstract, keywords, or tables
+        for metric in ds.metrics:
+            assert metric not in paper.title, f"Raw metric '{metric}' found in title of {ds.id}"
+            assert metric not in paper.abstract, f"Raw metric '{metric}' found in abstract of {ds.id}"
+            assert metric not in paper.keywords, f"Raw metric '{metric}' found in keywords of {ds.id}"
+            assert metric not in article_html, f"Raw metric '{metric}' found in HTML of {ds.id}"
+            assert metric not in article_md, f"Raw metric '{metric}' found in Markdown of {ds.id}"
+
+        # 2. No '+' sign inside confidence intervals (e.g. [+0.25 or [+2.10)
+        assert "[+" not in article_html, f"Found '[+' in HTML for {ds.id}"
+        assert "[+" not in article_md, f"Found '[+' in Markdown for {ds.id}"
+
+        # 3. No '(Clean)' suffix in VIF table
+        assert "(Clean)" not in article_html, f"Found '(Clean)' in HTML for {ds.id}"
+        assert "(Clean)" not in article_md, f"Found '(Clean)' in Markdown for {ds.id}"
+
+        # 4. No 'p = 0.0' or 'p = 0.0000'
+        assert "p = 0.0000" not in article_html, f"Found 'p = 0.0000' in HTML for {ds.id}"
+        assert "p = 0.0000" not in article_md, f"Found 'p = 0.0000' in Markdown for {ds.id}"
+        assert "p = 0.0 " not in article_html and "p = 0.00 " not in article_html
+
+        # 5. No raw dataset ID in figure captions
+        assert f"for {ds.id}" not in article_html, f"Found raw dataset ID '{ds.id}' in figure captions of {ds.id}"
+
+
