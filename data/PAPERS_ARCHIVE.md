@@ -2,11 +2,12 @@
 
 Autonomous daily empirical working papers derived from Japanese government open data.
 
-**Total Published Papers**: `15`  
-**Last Updated**: `2026-09-29 21:06:55`
+**Total Published Papers**: `16`  
+**Last Updated**: `2026-09-30 21:07:11`
 
 | Date | Research Paper Title | Focus Topic | WP Post | PDF Download |
 | :--- | :--- | :--- | :---: | :---: |
+| 2026-09-30 | **Evaluating the Longitudinal Impact of 1-to-1 Device Implementation on Mathematics Learning Engagement: A Longitudinal Empirical Investigation of Japanese Public Open Data** | `giga_device_impact` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_national_assessment_math_giga_device_impact_paper.pdf) |
 | 2026-09-29 | **The Decoupling of Achievement and Affective Value in Japanese Mathematics Education: A Longitudinal Empirical Investigation of Japanese Public Open Data** | `math_affective_gap` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_national_assessment_math_math_affective_gap_paper.pdf) |
 | 2026-09-28 | **The High-Efficiency Expenditure Paradox: Why Japanese Educational Attainment Outperforms Higher-Spending OECD Counterparts (A Longitudinal Empirical Investigation of Japanese Public Open Data)** | `worldbank_spending_efficiency_paradox` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/worldbank_education_indicators_worldbank_spending_efficiency_paradox_paper.pdf) |
 | 2026-09-27 | **The Digital Exposure Paradox in PISA: How Classroom Disciplinary Climate Buffers Excessive Screen Distraction: A Longitudinal Empirical Investigation of Japanese Public Open Data** | `pisa_screen_time_paradox` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/oecd_pisa_math_ict_pisa_screen_time_paradox_paper.pdf) |
