@@ -225,9 +225,32 @@ def main():
             dry_run=args.dry_run,
         )
 
+    # 11. Generate Medium Executive Summary
+    medium_summary_file = None
+    try:
+        from src.medium_summary import MediumSummaryBuilder
+        medium_builder = MediumSummaryBuilder()
+        report_folder = Path(local_md).parent
+        medium_summary_file = report_folder / "medium_summary.md"
+        medium_builder.generate_and_save(
+            paper=paper,
+            output_path=medium_summary_file,
+            analysis=analysis,
+            dataset=dataset,
+            wp_url=published_url,
+            pdf_path=pdf_path,
+            figure_paths=figure_paths,
+        )
+        logger.info(f"📝 Medium Executive Summary Generated: {medium_summary_file}")
+        logger.info("👉 Ready to copy & paste into Medium (https://medium.com/new-story)")
+    except Exception as e:
+        logger.warning(f"Could not generate Medium summary: {e}")
+
     logger.info("================================================================")
     logger.info("🎉 Pipeline Execution Complete!")
     logger.info(f"Article Link: {published_url or 'N/A'}")
+    if medium_summary_file and medium_summary_file.exists():
+        logger.info(f"Medium Summary: {medium_summary_file}")
     logger.info("================================================================")
 
 
