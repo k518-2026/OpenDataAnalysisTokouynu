@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](japan_national_assessment_math_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](japan national_assessment math_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)
@@ -18,7 +18,7 @@ Our latest longitudinal econometric study investigates the underlying structural
 
 - **Factorial ANOVA Effect**: The main effect of temporal period (early [<= 2021] vs. late) reached statistical significance, F(1, 10) = 42.91, p < .001, partial η² = .81, with a Bayes factor of BF10 = 31,024.2 providing Decisive evidence for H1. Similarly, the main effect of school level was F(1, 10) = 0.59, p = .462, partial η² = .06, BF10 = 0.40 (Anecdotal evidence for H0).
 - **Multicollinearity-Controlled OLS**: The omnibus model accounted for substantial variance, R² = .81, adjusted R² = .78, F(2, 11) = 23.82, p < .001. Bayesian model evaluation against an intercept-only null model yielded Model BF10 = 8,605.3, providing Decisive evidence for H1.
-- **Longitudinal Secular Trajectory**: Longitudinal trend regression for digital device usage (%) for Elementary_Math indicates an estimated slope of b = 11.31 (95% CI [8.40, 14.22], R² = .95, p < .001), reflecting a net secular shift of +67.
+- **Longitudinal Secular Trajectory**: Longitudinal trend regression for digital device usage (%) for Elementary Math indicates an estimated slope of b = 11.31 (95% CI [8.40, 14.22], R² = .95, p < .001), reflecting a net secular shift of +67.1 % from 2017 (18.5%) to 2024 (85.6%).
 
 ## 3. Policy & Real-World Implications
 

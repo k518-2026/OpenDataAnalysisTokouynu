@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](japan_stem_cs_enrollment_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](japan stem_cs enrollment_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)
@@ -16,9 +16,7 @@ Our latest longitudinal econometric study investigates the underlying structural
 
 ## 2. Three Key Empirical Discoveries
 
-- **Longitudinal Trajectory Shift**: Significant structural movement documented across multi-year observation cohorts.
-- **Relational Trade-Off**: Statistical decoupling observed between raw resource inputs and key cognitive or operational outcomes.
-- **Bayesian & Frequentist Concurrence**: Hypotheses verified simultaneously via frequentist thresholds and continuous Bayes factors (BF10).
+- **Longitudinal Secular Trajectory**: Longitudinal trend regression for Female Enrollment_Rate Pct for Computer Science_Informatics indicates an estimated slope of beta = 0.645 (95% CI [+0.540, +0.750], R^2 = 0.992, p = 0.0003), reflecting a net change of +5.1 % from 2016 (14.2%) to 2024 (19.3%).
 
 ## 3. Policy & Real-World Implications
 

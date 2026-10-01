@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](unesco_world_ict_skills_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](unesco world_ict skills_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)
@@ -17,6 +17,7 @@ Our latest longitudinal econometric study investigates the underlying structural
 ## 2. Three Key Empirical Discoveries
 
 - **Multicollinearity-Controlled OLS**: Multivariate OLS on 'Advanced Data Analysis Skill Rate (%)' explained 97.8% of variance (Adj. R^2 = 0.97, F = 132.44, p = 0.0, Model BF10 = 3197830.4 [Decisive evidence for H1]).
+- **Longitudinal Secular Trajectory**: Longitudinal trend regression for Youth Programming Proficiency Rate (%) for Japan indicates an estimated slope of beta = 2.405 (95% CI [+2.095, +2.715], R^2 = 0.998, p = 0.0009), reflecting a net change of +14.4 % from 2018 (14.2%) to 2024 (28.6%).
 
 ## 3. Policy & Real-World Implications
 

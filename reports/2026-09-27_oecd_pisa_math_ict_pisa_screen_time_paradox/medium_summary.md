@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](oecd_pisa_math_ict_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](oecd pisa_math ict_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)
@@ -16,9 +16,7 @@ Our latest longitudinal econometric study investigates the underlying structural
 
 ## 2. Three Key Empirical Discoveries
 
-- **Longitudinal Trajectory Shift**: Significant structural movement documented across multi-year observation cohorts.
-- **Relational Trade-Off**: Statistical decoupling observed between raw resource inputs and key cognitive or operational outcomes.
-- **Bayesian & Frequentist Concurrence**: Hypotheses verified simultaneously via frequentist thresholds and continuous Bayes factors (BF10).
+- **Longitudinal Secular Trajectory**: Longitudinal trend regression for Math Literacy_Score for Japan indicates an estimated slope of beta = -0.078 (95% CI [-3.111, +2.956], R^2 = 0.006, p = 0.9224), reflecting a net change of +0 points from 2012 (536.0points) to 2022 (536.0points).
 
 ## 3. Policy & Real-World Implications
 

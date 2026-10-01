@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](japan_teacher_workload_survey_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](japan teacher_workload survey_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)
@@ -16,7 +16,8 @@ Our latest longitudinal econometric study investigates the underlying structural
 
 ## 2. Three Key Empirical Discoveries
 
-- **Multicollinearity-Controlled OLS**: Multivariate OLS on 'Weekly_Total_Hours' explained 99.9% of variance (Adj. R^2 = 0.998, F = 2453.56, p = 0.0, Model BF10 = 485165195.41 [Decisive evidence for H1]).
+- **Multicollinearity-Controlled OLS**: Multivariate OLS on 'Weekly Total_Hours' explained 99.9% of variance (Adj. R^2 = 0.998, F = 2453.56, p = 0.0, Model BF10 = 485165195.41 [Decisive evidence for H1]).
+- **Longitudinal Secular Trajectory**: Longitudinal trend regression for Weekly Total_Hours for Junior High_Teachers indicates an estimated slope of beta = -0.915 (95% CI [-1.120, -0.710], R^2 = 0.985, p = 0.0008), reflecting a net change of -7.1 hours/week from 2016 (63.2hours/week) to 2024 (56.1hours/week).
 
 ## 3. Policy & Real-World Implications
 

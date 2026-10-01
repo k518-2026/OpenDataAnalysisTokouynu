@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](japan_special_needs_education_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](japan special_needs education_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)
@@ -16,7 +16,8 @@ Our latest longitudinal econometric study investigates the underlying structural
 
 ## 2. Three Key Empirical Discoveries
 
-- **Multicollinearity-Controlled OLS**: Multivariate OLS on 'Specialized_Support_Staff_Ratio' explained 99.0% of variance (Adj. R^2 = 0.987, F = 339.77, p = 0.0, Model BF10 = 485165195.41 [Decisive evidence for H1]).
+- **Multicollinearity-Controlled OLS**: Multivariate OLS on 'Specialized Support_Staff Ratio' explained 99.0% of variance (Adj. R^2 = 0.987, F = 339.77, p = 0.0, Model BF10 = 485165195.41 [Decisive evidence for H1]).
+- **Longitudinal Secular Trajectory**: Longitudinal trend regression for Resource Room_Rate Per_1000 for Elementary Schools indicates an estimated slope of beta = 3.400 (95% CI [+3.033, +3.767], R^2 = 0.997, p = 0.0001), reflecting a net change of +26.7 % from 2016 (16.4%) to 2024 (43.1%).
 
 ## 3. Policy & Real-World Implications
 

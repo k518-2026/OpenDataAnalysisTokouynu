@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](japan_timss_math_science_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](japan timss_math science_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)
@@ -16,9 +16,7 @@ Our latest longitudinal econometric study investigates the underlying structural
 
 ## 2. Three Key Empirical Discoveries
 
-- **Longitudinal Trajectory Shift**: Significant structural movement documented across multi-year observation cohorts.
-- **Relational Trade-Off**: Statistical decoupling observed between raw resource inputs and key cognitive or operational outcomes.
-- **Bayesian & Frequentist Concurrence**: Hypotheses verified simultaneously via frequentist thresholds and continuous Bayes factors (BF10).
+- **Longitudinal Secular Trajectory**: Longitudinal trend regression for Scale Score_Mean for Grade4 Math indicates an estimated slope of beta = 1.300 (95% CI [-0.585, +3.185], R^2 = 0.616, p = 0.1157), reflecting a net change of +22 scale score / % from 2007 (568.0scale score / %) to 2023 (590.0scale score / %).
 
 ## 3. Policy & Real-World Implications
 

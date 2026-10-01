@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](japan_school_absenteeism_bullying_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](japan school_absenteeism bullying_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)
@@ -16,9 +16,7 @@ Our latest longitudinal econometric study investigates the underlying structural
 
 ## 2. Three Key Empirical Discoveries
 
-- **Longitudinal Trajectory Shift**: Significant structural movement documented across multi-year observation cohorts.
-- **Relational Trade-Off**: Statistical decoupling observed between raw resource inputs and key cognitive or operational outcomes.
-- **Bayesian & Frequentist Concurrence**: Hypotheses verified simultaneously via frequentist thresholds and continuous Bayes factors (BF10).
+- **Longitudinal Secular Trajectory**: Longitudinal trend regression for Chronic Absenteeism_Rate Per_1000 for Junior High_Schools indicates an estimated slope of beta = 4.995 (95% CI [+2.878, +7.112], R^2 = 0.949, p = 0.0049), reflecting a net change of +38.3 rate per 1000 from 2016 (30.1rate per 1000) to 2024 (68.4rate per 1000).
 
 ## 3. Policy & Real-World Implications
 

@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](japan_mext_ict_informatization_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](japan mext_ict informatization_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)
@@ -16,7 +16,8 @@ Our latest longitudinal econometric study investigates the underlying structural
 
 ## 2. Three Key Empirical Discoveries
 
-- **Multicollinearity-Controlled OLS**: Multivariate OLS on 'Teacher_Instructional_Competency_Pct' explained 99.7% of variance (Adj. R^2 = 0.996, F = 1658.44, p = 0.0, Model BF10 = 485165195.41 [Decisive evidence for H1]).
+- **Multicollinearity-Controlled OLS**: Multivariate OLS on 'Teacher Instructional_Competency Pct' explained 99.7% of variance (Adj. R^2 = 0.996, F = 1658.44, p = 0.0, Model BF10 = 485165195.41 [Decisive evidence for H1]).
+- **Longitudinal Secular Trajectory**: Longitudinal trend regression for Daily Device_Usage Pct for Elementary Schools indicates an estimated slope of beta = 14.854 (95% CI [+9.655, +20.052], R^2 = 0.915, p = 0.0007), reflecting a net change of +76.6 % from 2018 (15.2%) to 2024 (91.8%).
 
 ## 3. Policy & Real-World Implications
 

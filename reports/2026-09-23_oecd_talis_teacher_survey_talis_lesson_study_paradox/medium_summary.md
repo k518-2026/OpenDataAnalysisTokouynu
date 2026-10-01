@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](oecd_talis_teacher_survey_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](oecd talis_teacher survey_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)
@@ -16,9 +16,7 @@ Our latest longitudinal econometric study investigates the underlying structural
 
 ## 2. Three Key Empirical Discoveries
 
-- **Longitudinal Trajectory Shift**: Significant structural movement documented across multi-year observation cohorts.
-- **Relational Trade-Off**: Statistical decoupling observed between raw resource inputs and key cognitive or operational outcomes.
-- **Bayesian & Frequentist Concurrence**: Hypotheses verified simultaneously via frequentist thresholds and continuous Bayes factors (BF10).
+- **Longitudinal Secular Trajectory**: Longitudinal trend regression for Weekly Working_Hours for Japan indicates an estimated slope of beta = 0.016 (R^2 = 0.006, p = 0.9491), reflecting a net change of +0.3 index / % / hours from 2013 (53.9index / % / hours) to 2024 (54.2index / % / hours).
 
 ## 3. Policy & Real-World Implications
 

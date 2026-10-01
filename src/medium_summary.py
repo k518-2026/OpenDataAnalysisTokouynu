@@ -63,6 +63,8 @@ def sanitize_text(text: str) -> str:
         text = text.replace(k, v)
     for raw_m, clean_m in ACADEMIC_METRIC_MAP.items():
         text = text.replace(raw_m, clean_m)
+    # Replace remaining underscores in identifiers (e.g. Elementary_Math -> Elementary Math)
+    text = re.sub(r"([A-Za-z0-9]+)_([A-Za-z0-9]+)", r"\1 \2", text)
     return text
 
 
@@ -331,7 +333,7 @@ Your task is to adapt a peer-reviewed empirical academic paper into an engaging,
             )
             if not traj_match:
                 traj_match = re.search(
-                    r"(Longitudinal trend regression for.*?reflecting a net secular shift.*?\.)",
+                    r"(Longitudinal trend regression for.*?(?:from \d{4}.*?to \d{4}\s*(?:\([^)]*\))?\.|to \d{4}\.|\.\s+[A-Z]))",
                     full_corpus,
                 )
             if traj_match:
