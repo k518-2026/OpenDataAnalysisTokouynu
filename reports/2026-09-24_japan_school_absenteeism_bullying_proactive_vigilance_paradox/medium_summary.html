@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-      line-height: 1.75;
+      line-height: 1.8;
       color: #242424;
       background-color: #f8fafc;
       margin: 0;
@@ -20,34 +20,46 @@
       position: sticky;
       top: 16px;
       z-index: 1000;
-      max-width: 760px;
+      max-width: 820px;
       width: 100%;
-      background: #1e3a8a;
+      background: #0f172a;
       color: #ffffff;
-      padding: 14px 24px;
+      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-radius: 10px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.18);
       box-sizing: border-box;
+      gap: 16px;
+    }
+    .sticky-info {
+      flex: 1;
     }
     .sticky-title {
       font-weight: 700;
-      font-size: 15px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .sticky-subtitle {
-      font-size: 12px;
-      opacity: 0.9;
-      margin-top: 2px;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
     }
     .copy-btn {
       background: #10b981;
       color: #ffffff;
       border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
+      padding: 11px 20px;
+      border-radius: 8px;
       font-weight: 700;
       font-size: 14px;
       cursor: pointer;
@@ -55,6 +67,7 @@
       align-items: center;
       gap: 8px;
       transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
     }
     .copy-btn:hover {
       background: #059669;
@@ -62,8 +75,100 @@
     .copy-btn:active {
       transform: scale(0.98);
     }
+    .canonical-card {
+      max-width: 820px;
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-left: 6px solid #2563eb;
+      padding: 20px 24px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      box-sizing: border-box;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .canonical-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .canonical-badge {
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .canonical-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .canonical-desc {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.6;
+      margin: 8px 0 14px 0;
+    }
+    .url-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .url-input {
+      flex: 1;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 9px 12px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #0f172a;
+    }
+    .url-btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .url-btn:hover {
+      background: #1d4ed8;
+    }
+    .guide-details {
+      font-size: 13px;
+      color: #334155;
+      background: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }
+    .guide-details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #2563eb;
+    }
+    .guide-details ol {
+      margin: 8px 0 4px 0;
+      padding-left: 20px;
+      line-height: 1.7;
+    }
+    .guide-details li {
+      margin-bottom: 4px;
+    }
     .container {
-      max-width: 760px;
+      max-width: 820px;
       width: 100%;
       background: #ffffff;
       padding: 48px;
@@ -124,44 +229,88 @@
 </head>
 <body>
   <div class="sticky-bar">
-    <div>
-      <div class="sticky-title">Medium用リッチテキスト要約</div>
-      <div class="sticky-subtitle">「コピー」を押してMediumエディタで Ctrl+V するだけで、見出しやリンクが綺麗に反映されます</div>
+    <div class="sticky-info">
+      <div class="sticky-title">📰 Medium用 リッチテキスト要約 & 公式設定ツール</div>
+      <div class="sticky-subtitle">「本文をコピー」してMediumエディタで Ctrl+V するだけで、見出しやリストが美しく貼り付けられます</div>
     </div>
-    <button id="copyBtn" class="copy-btn" onclick="copyForMedium()">
-      📋 Medium用にコピー
-    </button>
+    <div class="btn-group">
+      <button id="copyArticleBtn" class="copy-btn" onclick="copyForMedium()">
+        📋 Medium本文をコピー
+      </button>
+    </div>
+  </div>
+
+  <div class="canonical-card">
+    <div class="canonical-header">
+      <span class="canonical-badge">規約遵守・ペナルティ対策</span>
+      <span class="canonical-title">Medium公式 Canonical Link 設定（推奨）</span>
+    </div>
+    <p class="canonical-desc">
+      Mediumでは、記事本文内にWordPressへの誘導リンク（「続きを読む」「PDFはこちら」等）を貼ると、自動巡回AIにより「トラフィック誘導スパム（Violation of Medium Rules）」と判定されアカウントが凍結される恐れがあります。<br>
+      当ツールでは本文を100%独立した完全版記事として作成しています。WordPress原典のSEO評価を安全に維持するため、本文リンクではなく、Medium公式の「<strong>Customize canonical link</strong>」設定をご利用ください。
+    </p>
+    <div class="url-row">
+      <input type="text" id="canonicalUrlInput" value="https://seda68.wordpress.com/?p=latest" readonly class="url-input" />
+      <button id="copyUrlBtn" class="url-btn" onclick="copyCanonicalUrl()">
+        🔗 Canonical URLをコピー
+      </button>
+    </div>
+    <details class="guide-details">
+      <summary>📖 Mediumでの設定手順（クリックで展開・1分で完了）</summary>
+      <ol>
+        <li>上の「<strong>📋 Medium本文をコピー</strong>」を押し、Medium新規投稿画面（<a href="https://medium.com/new-story" target="_blank" rel="noopener">new-story</a>）で <code>Ctrl + V</code> を押して貼り付けます。</li>
+        <li>画像が未反映の場合は、同じフォルダ内の画像ファイル（.png）をドラッグ＆ドロップして配置してください。</li>
+        <li>Medium編集画面右上の「<strong>...</strong>」（3点アイコン）をクリック →「<strong>More settings</strong>」を選択します。</li>
+        <li>設定画面左側メニューの「<strong>Advanced settings</strong>」をクリックします。</li>
+        <li>「<strong>Customize canonical link</strong>」にチェックを入れ、上のCanonical URLを貼り付けて「Save」を押します。</li>
+        <li>右上の「Publish」ボタンを押して公開します（検索エンジンにWordPressが正規の原典として認識され、Mediumでのペナルティも回避されます）。</li>
+      </ol>
+    </details>
   </div>
 
   <div class="container">
     <div id="medium-article-content">
 <h1>The Institutional Vigilance Paradox</h1>
 <h3>What large-scale longitudinal public open data reveals about policy trade-offs and structural constraints.</h3>
-<p><em>By Society for Educational Data Analysis (SEDA) · 4 min read</em></p>
+<p><em>By Society for Educational Data Analysis (SEDA) · 5 min read</em></p>
 <hr />
-<figure style="margin: 24px 0; text-align: center;"><img src="japan_school_absenteeism_bullying_trend.png" alt="Figure 1: Empirical Quantitative Trajectory" style="max-width: 100%; height: auto; border-radius: 6px;" /></figure>
+<figure style="margin: 28px 0; text-align: center;"><img src="japan_school_absenteeism_bullying_trend.png" alt="Figure 1: Longitudinal Trajectory and Secular Shifts" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);" /><figcaption style="margin-top: 8px; font-size: 14px; color: #64748b; font-style: italic;">Figure 1: Longitudinal Trajectory and Secular Shifts</figcaption></figure>
 <p><em>Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.</em></p>
-<h2>1. The Core Paradox (TL;DR)</h2>
+<h2>1. The Core Paradox & Empirical Context</h2>
 <p>In educational policy and public administration, decision-makers frequently operate under the assumption that linear increases in budgetary allocation, digital infrastructure, or institutional interventions guarantee proportional improvements in learning benchmarks. However, multi-year empirical evidence from official administrative open data reveals a far more complex reality.</p>
-<p>Our latest longitudinal econometric study investigates the underlying structural dynamics of <strong>The Institutional Vigilance Paradox: How Aggressive Bullying Recognition and Alternative Digital Attendance Reshape Student Safety Nets: A Longitudinal Empirical Investigation of Japanese Public Open Data</strong>. By synthesizing factorial Two-Way Analysis of Variance (ANOVA), bivariate zero-correlation testing with Fisher's z 95% confidence intervals, and multivariate OLS regressions with backward stepwise Variance Inflation Factor (VIF < 5.0) diagnostics, this analysis reveals significant policy trade-offs and structural bottlenecks that challenge conventional wisdom.</p>
-<h2>2. Three Key Empirical Discoveries</h2>
+<p>Our latest longitudinal econometric study investigates the underlying structural dynamics of <strong>The Institutional Vigilance Paradox: How Aggressive Bullying Recognition and Alternative Digital Attendance Reshape Student Safety Nets: A Longitudinal Empirical Investigation of Japanese Public Open Data</strong>. Across many educational and public policy domains, resource inputs are expanded with the optimistic expectation that scholastic achievement, pedagogical innovation, or operational efficiency will rise in direct proportion. Yet when administrative micro- and macro-level data are analyzed over multi-year observation cohorts, empirical reality consistently uncovers policy trade-offs, structural plateaus, and unintended friction.</p>
+<p>Synthesizing longitudinal records released by official government and international bodies, this research evaluates whether structural interventions fulfill their intended outcomes or whether countervailing administrative burdens attenuate pedagogical returns.</p>
+<h2>2. Research Design & Dual Inferential Framework</h2>
+<p>To overcome the limitations of isolated cross-sectional observations and guard against erroneous statistical inferences, this study implements a four-pillar econometric pipeline adhering strictly to APA 7th standards:</p>
+<ol>
+<li><strong>Longitudinal Secular Trajectories</strong>: Ordinary Least Squares (OLS) time-series regressions modeling annual rates of change (slope b) alongside Fisher's z 95% Confidence Intervals (95% CI).</li>
+<li><strong>Factorial Two-Way ANOVA</strong>: Evaluating main effects across temporal periods (early vs. late implementation phases) and institutional cohorts using Type II Sum of Squares, with effect sizes quantified via partial eta-squared (partial η²).</li>
+<li><strong>Multivariate OLS Regression & Multicollinearity Pruning</strong>: Backward stepwise elimination ensuring all Variance Inflation Factors (VIF) remain strictly below 5.0, eliminating collinear bias.</li>
+<li><strong>Dual Frequentist-Bayesian Verification</strong>: Simultaneously assessing empirical patterns under classical Neyman-Pearson significance thresholds (p < .05) and continuous Bayes Factors (BF10) under JZS / BIC delta approximations (Jeffreys, 1961; Lee & Wagenmakers, 2013). This dual framework protects against over-interpreting trivial sample variations while quantifying evidence strength for competing hypotheses.</li>
+</ol>
+<h2>3. Quantitative Discoveries & Statistical Evidence</h2>
 <ul>
 <li><strong>Longitudinal Secular Trajectory</strong>: Longitudinal trend regression for Chronic Absenteeism_Rate Per_1000 for Junior High_Schools indicates an estimated slope of beta = 4.995 (95% CI [+2.878, +7.112], R^2 = 0.949, p = 0.0049), reflecting a net change of +38.3 rate per 1000 from 2016 (30.1rate per 1000) to 2024 (68.4rate per 1000).</li>
 </ul>
-<h2>3. Policy & Real-World Implications</h2>
+<figure style="margin: 28px 0; text-align: center;"><img src="japan_school_absenteeism_bullying_correlation.png" alt="Figure 2: Empirical Bivariate Fit & Confidence Band" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);" /><figcaption style="margin-top: 8px; font-size: 14px; color: #64748b; font-style: italic;">Figure 2: Empirical Bivariate Fit & Confidence Band</figcaption></figure>
+<p><em>Figure 2: Bivariate empirical regression model and 95% Confidence Band.</em></p>
+<h2>4. Policy & Practical Implications</h2>
 <p>These findings carry vital implications for educational economists, school district leaders, and public policymakers:</p>
 <ol>
-<li><strong>Avoid Linear Expenditure Fallacies</strong>: Adding fiscal resources or digital hardware without addressing administrative workflow friction or pedagogical integration fails to produce proportional student gains.</li>
+<li><strong>Avoid Linear Expenditure & Hardware Fallacies</strong>: Adding fiscal resources or digital hardware without addressing administrative workflow friction or pedagogical integration fails to produce proportional student gains.</li>
 <li><strong>Account for Hidden Operational Overhead</strong>: Structural reforms often compress one area of burden only to displace it onto unmeasured administrative tasks, attenuating direct educational impact.</li>
-<li><strong>Rigorous Multicollinearity Verification</strong>: Evaluating empirical patterns under dual frequentist significance and continuous Bayesian evidence factors (BF10) provides a much safer basis for large-scale policy decisions.</li>
+<li><strong>Ground Policy in Dual Evidence</strong>: Evaluating empirical patterns under dual frequentist significance and continuous Bayesian evidence factors (BF10) prevents overreacting to short-term variance and ensures policies rest on decisive empirical foundations.</li>
 </ol>
+<h2>5. Methodological Limitations & Future Scope</h2>
+<p>Several methodological limitations should be kept in mind when interpreting these findings:</p>
+<ul>
+<li><strong>Aggregate Administrative Data</strong>: Observations reflect macro-level administrative and municipal aggregations; caution is advised against committing the ecological fallacy by imputing aggregate trends directly to individual student behaviors.</li>
+<li><strong>Observational Counterfactuals</strong>: While longitudinal regressions control for secular movement, causal attributions remain constrained without quasi-experimental counterfactual controls. Future studies should link municipal panel datasets to estimate fixed-effects econometric models.</li>
+</ul>
 <hr />
-<h2>📖 Read the Full Peer-Reviewed Academic Paper</h2>
-<p>The complete academic paper—featuring full APA 7th tables (Table 1: Descriptive & Correlation Matrix with Bayes Factors, Table 2: Factorial Two-Way ANOVA, Table 3: Multivariate OLS & VIF Diagnostics), comprehensive literature reviews, and methodological derivations—is available on our primary portal:</p>
-<p>👉 <strong><a href="https://seda68.wordpress.com" target="_blank" rel="noopener noreferrer"><strong>Read the Full Academic Paper on WordPress</strong></a></strong></p>
-<p>📄 <strong><a href="https://seda68.wordpress.com" target="_blank" rel="noopener noreferrer"><strong>Download Publication-Ready PDF (with Embedded Figures)</strong></a></strong></p>
-<p><em>Originally published at <a href="https://seda68.wordpress.com" target="_blank" rel="noopener noreferrer"><strong>seda68.wordpress.com</strong></a> by the Society for Educational Data Analysis (SEDA). All analyses are conducted using verified official public datasets.</em></p>
-<hr />
+<h3>Citation & Academic Attribution</h3>
+<p>Society for Educational Data Analysis (SEDA). (2026). <em>The Institutional Vigilance Paradox: How Aggressive Bullying Recognition and Alternative Digital Attendance Reshape Student Safety Nets: A Longitudinal Empirical Investigation of Japanese Public Open Data</em>. SEDA Empirical Research Monograph Series.</p>
+<p><em>Data Source: Official administrative open datasets released by government authorities under Open Data terms.</em></p>
 <p><strong>Recommended Medium Tags</strong>: `#Education #DataScience #OpenData #PublicPolicy #Statistics #Japan`</p>
     </div>
   </div>
@@ -169,24 +318,61 @@
   <script>
     function copyForMedium() {
       const content = document.getElementById('medium-article-content');
-      const htmlBlob = new Blob([content.innerHTML], { type: 'text/html' });
-      const textBlob = new Blob([content.innerText], { type: 'text/plain' });
-      navigator.clipboard.write([
-        new ClipboardItem({
-          'text/html': htmlBlob,
-          'text/plain': textBlob
-        })
-      ]).then(() => {
-        const btn = document.getElementById('copyBtn');
-        btn.innerText = '✅ コピー完了！Mediumで Ctrl+V してください';
-        btn.style.background = '#059669';
-        setTimeout(() => {
-          btn.innerText = '📋 Medium用にコピー';
-          btn.style.background = '#10b981';
-        }, 4000);
-      }).catch(err => {
-        alert('クリップボードのコピーに失敗しました: ' + err);
-      });
+      try {
+        const htmlBlob = new Blob([content.innerHTML], { type: 'text/html' });
+        const textBlob = new Blob([content.innerText], { type: 'text/plain' });
+        navigator.clipboard.write([
+          new ClipboardItem({
+            'text/html': htmlBlob,
+            'text/plain': textBlob
+          })
+        ]).then(() => {
+          showCopyFeedback('copyArticleBtn', '✅ 本文をコピーしました！Mediumで Ctrl+V してください', '#10b981');
+        }).catch(err => {
+          fallbackSelectAndCopy(content);
+        });
+      } catch (e) {
+        fallbackSelectAndCopy(content);
+      }
+    }
+
+    function fallbackSelectAndCopy(element) {
+      const range = document.createRange();
+      range.selectNode(element);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.execCommand('copy');
+      selection.removeAllRanges();
+      showCopyFeedback('copyArticleBtn', '✅ 本文をコピーしました！Mediumで Ctrl+V してください', '#10b981');
+    }
+
+    function copyCanonicalUrl() {
+      const input = document.getElementById('canonicalUrlInput');
+      input.select();
+      input.setSelectionRange(0, 99999);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(input.value).then(() => {
+          showCopyFeedback('copyUrlBtn', '✅ URLをコピーしました！', '#2563eb');
+        }).catch(() => {
+          document.execCommand('copy');
+          showCopyFeedback('copyUrlBtn', '✅ URLをコピーしました！', '#2563eb');
+        });
+      } else {
+        document.execCommand('copy');
+        showCopyFeedback('copyUrlBtn', '✅ URLをコピーしました！', '#2563eb');
+      }
+    }
+
+    function showCopyFeedback(btnId, message, defaultBg) {
+      const btn = document.getElementById(btnId);
+      const origText = btn.innerHTML;
+      btn.innerText = message;
+      btn.style.background = '#059669';
+      setTimeout(() => {
+        btn.innerHTML = origText;
+        btn.style.background = defaultBg;
+      }, 3500);
     }
   </script>
 </body>

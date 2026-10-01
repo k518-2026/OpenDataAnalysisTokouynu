@@ -1,4 +1,4 @@
-"""Unit tests for Medium executive summary generation."""
+"""Unit tests for Medium executive summary generation adhering to Trust & Safety policies."""
 from pathlib import Path
 import pytest
 
@@ -29,24 +29,31 @@ def test_generate_summary_structure(tmp_path):
         figure_paths=[Path("trend.png"), Path("corr.png")],
     )
 
-    # 1. Structure checks
+    # 1. Structure checks (Standalone deep-dive article)
     assert "# " in summary_md
     assert "### " in summary_md
     assert "Society for Educational Data Analysis (SEDA)" in summary_md
-    assert "## 1. The Core Paradox (TL;DR)" in summary_md
-    assert "## 2. Three Key Empirical Discoveries" in summary_md
-    assert "## 3. Policy & Real-World Implications" in summary_md
-    assert "Read the Full Peer-Reviewed Academic Paper" in summary_md
-    assert wp_url in summary_md
-    assert "seda68.wordpress.com" in summary_md
+    assert "## 1. The Core Paradox & Empirical Context" in summary_md
+    assert "## 2. Research Design & Dual Inferential Framework" in summary_md
+    assert "## 3. Quantitative Discoveries & Statistical Evidence" in summary_md
+    assert "## 4. Policy & Practical Implications" in summary_md
+    assert "## 5. Methodological Limitations & Future Scope" in summary_md
+    assert "### Citation & Academic Attribution" in summary_md
     assert "**Recommended Medium Tags**:" in summary_md
 
-    # 2. Tofu / Subscript character checks
+    # 2. Strict anti-spam checks: ZERO promotional off-site gateway links in article body
+    assert "Read the Full Peer-Reviewed Academic Paper" not in summary_md
+    assert "Read the Full Academic Paper on WordPress" not in summary_md
+    assert "Download Publication-Ready PDF" not in summary_md
+    assert "👉" not in summary_md
+    assert "https://seda68.wordpress.com" not in summary_md
+
+    # 3. Tofu / Subscript character checks
     tofu_chars = ["\u2080", "\u2081", "\u2082", "\u209a", "\u1d62"]
     for ch in tofu_chars:
         assert ch not in summary_md, f"Found Unicode subscript '{hex(ord(ch))}' in Medium summary"
 
-    # 3. Standard APA notation
+    # 4. Standard APA notation
     assert "BF₁₀" not in summary_md
     assert "ηₚ²" not in summary_md
 
@@ -71,19 +78,24 @@ def test_generate_and_save(tmp_path):
     assert saved_path.exists()
     content = saved_path.read_text(encoding="utf-8")
     assert len(content) > 500
-    assert "seda68.wordpress.com" in content
+    # No off-site promotional links in markdown body
+    assert "👉" not in content
+    assert "Read the Full Academic Paper" not in content
 
-    # Assert HTML counterpart also exists and contains interactive copy helper
+    # Assert HTML counterpart also exists and contains interactive copy helper and Canonical URL setup
     html_path = out_file.with_suffix(".html")
     assert html_path.exists()
     html_text = html_path.read_text(encoding="utf-8")
     assert "<!DOCTYPE html>" in html_text
     assert "copyForMedium" in html_text
     assert "id=\"medium-article-content\"" in html_text
+    assert "canonicalUrlInput" in html_text
+    assert "copyCanonicalUrl" in html_text
+    assert "Customize canonical link" in html_text
+    assert "seda68.wordpress.com" in html_text
     assert "<h1>" in html_text
     assert "<h2>" in html_text
     assert "<strong>" in html_text
-    assert "<a href=" in html_text
 
 
 def test_build_summary_from_report_dir(tmp_path):
@@ -100,13 +112,16 @@ def test_build_summary_from_report_dir(tmp_path):
     assert out is not None
     assert out.exists()
     content = out.read_text(encoding="utf-8")
-    assert len(content) > 300
-    assert "seda68.wordpress.com" in content
+    assert len(content) > 500
+    assert "👉" not in content
+    assert "Read the Full Academic Paper" not in content
     
     html_out = out.with_suffix(".html")
     assert html_out.exists()
+    html_text = html_out.read_text(encoding="utf-8")
+    assert "canonicalUrlInput" in html_text
+    assert "Customize canonical link" in html_text
 
     # Clean up test files
     out.unlink()
     html_out.unlink()
-

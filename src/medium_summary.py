@@ -1,6 +1,7 @@
 """
 Medium Executive Summary Generator for OpenDataAnalysisTokouynu.
-Generates engaging, concise Medium-formatted articles with backlinks to seda68.wordpress.com.
+Generates comprehensive, standalone Medium articles adhering to Medium's Trust & Safety rules
+(no off-site promotional teaser links in article body) with official Canonical Link support.
 """
 from __future__ import annotations
 
@@ -24,6 +25,7 @@ from src.analyzer import (
 )
 from src.config import Config, REPORTS_DIR
 from src.fetchers.base import EducationDataset
+from src.fetchers.catalog import DatasetCatalog
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +100,7 @@ def get_recorded_wp_url(dataset_id: str, angle_id: str) -> Optional[str]:
 
 
 class MediumSummaryBuilder:
-    """Constructs executive summaries optimized for Medium publications with WordPress backlinks."""
+    """Constructs publication-grade, self-contained articles for Medium with official canonical URL integration."""
 
     def __init__(self):
         self.gemini_client = None
@@ -119,7 +121,7 @@ class MediumSummaryBuilder:
         pdf_path: Optional[Path] = None,
         figure_paths: Optional[List[Path]] = None,
     ) -> str:
-        """Generates an engaging, high-impact Medium article formatted in Markdown."""
+        """Generates an engaging, high-impact Medium article formatted in Markdown (standalone, no promotional links)."""
         recorded_url = get_recorded_wp_url(paper.dataset_id, paper.angle_id)
         effective_wp_url = (
             wp_url
@@ -146,7 +148,7 @@ class MediumSummaryBuilder:
                     pdf_name=pdf_name,
                     figure_paths=sorted_figs,
                 )
-                if content and len(content) > 200:
+                if content and len(content) > 300:
                     return sanitize_text(content)
             except Exception as e:
                 logger.warning(
@@ -176,11 +178,18 @@ class MediumSummaryBuilder:
         figure_paths: Optional[List[Path]] = None,
     ) -> Path:
         """Generates both Markdown and rich-text HTML versions of the Medium summary and writes them to disk."""
+        recorded_url = get_recorded_wp_url(paper.dataset_id, paper.angle_id)
+        effective_wp_url = (
+            wp_url
+            or recorded_url
+            or Config.WP_SITE_URL
+            or "https://seda68.wordpress.com"
+        )
         content = self.generate_summary(
             paper=paper,
             analysis=analysis,
             dataset=dataset,
-            wp_url=wp_url,
+            wp_url=effective_wp_url,
             pdf_path=pdf_path,
             figure_paths=figure_paths,
         )
@@ -192,7 +201,9 @@ class MediumSummaryBuilder:
 
         # 2. Save rich-text HTML (for 1-click formatted copy-paste into Medium)
         html_path = output_path.with_suffix(".html")
-        html_content = self.convert_markdown_to_html_page(content, title=paper.title)
+        html_content = self.convert_markdown_to_html_page(
+            content, title=paper.title, canonical_url=effective_wp_url
+        )
         with open(html_path, "w", encoding="utf-8") as f:
             f.write(html_content)
         logger.info(f"Saved Medium rich-text HTML summary to {html_path}")
@@ -238,7 +249,7 @@ class MediumSummaryBuilder:
                 if m:
                     alt, src = m.groups()
                     html_lines.append(
-                        f'<figure style="margin: 24px 0; text-align: center;"><img src="{src}" alt="{alt}" style="max-width: 100%; height: auto; border-radius: 6px;" /></figure>'
+                        f'<figure style="margin: 28px 0; text-align: center;"><img src="{src}" alt="{alt}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);" /><figcaption style="margin-top: 8px; font-size: 14px; color: #64748b; font-style: italic;">{alt}</figcaption></figure>'
                     )
             elif s.startswith("- "):
                 if not in_ul:
@@ -273,9 +284,12 @@ class MediumSummaryBuilder:
 
     @classmethod
     def convert_markdown_to_html_page(
-        cls, md_text: str, title: str = "Medium Executive Summary"
+        cls,
+        md_text: str,
+        title: str = "Medium Executive Summary",
+        canonical_url: str = "https://seda68.wordpress.com",
     ) -> str:
-        """Wraps semantic HTML into an interactive web page with a 1-click 'Copy for Medium' button."""
+        """Wraps semantic HTML into an interactive web page with copy buttons and Medium Canonical URL guidance."""
         article_html = cls.convert_markdown_to_html(md_text)
         return f"""<!DOCTYPE html>
 <html lang="en">
@@ -286,7 +300,7 @@ class MediumSummaryBuilder:
   <style>
     body {{
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-      line-height: 1.75;
+      line-height: 1.8;
       color: #242424;
       background-color: #f8fafc;
       margin: 0;
@@ -299,34 +313,46 @@ class MediumSummaryBuilder:
       position: sticky;
       top: 16px;
       z-index: 1000;
-      max-width: 760px;
+      max-width: 820px;
       width: 100%;
-      background: #1e3a8a;
+      background: #0f172a;
       color: #ffffff;
-      padding: 14px 24px;
+      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-radius: 10px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.18);
       box-sizing: border-box;
+      gap: 16px;
+    }}
+    .sticky-info {{
+      flex: 1;
     }}
     .sticky-title {{
       font-weight: 700;
-      font-size: 15px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }}
     .sticky-subtitle {{
-      font-size: 12px;
-      opacity: 0.9;
-      margin-top: 2px;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }}
+    .btn-group {{
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
     }}
     .copy-btn {{
       background: #10b981;
       color: #ffffff;
       border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
+      padding: 11px 20px;
+      border-radius: 8px;
       font-weight: 700;
       font-size: 14px;
       cursor: pointer;
@@ -334,6 +360,7 @@ class MediumSummaryBuilder:
       align-items: center;
       gap: 8px;
       transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
     }}
     .copy-btn:hover {{
       background: #059669;
@@ -341,8 +368,100 @@ class MediumSummaryBuilder:
     .copy-btn:active {{
       transform: scale(0.98);
     }}
+    .canonical-card {{
+      max-width: 820px;
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-left: 6px solid #2563eb;
+      padding: 20px 24px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      box-sizing: border-box;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }}
+    .canonical-header {{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }}
+    .canonical-badge {{
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }}
+    .canonical-title {{
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+    }}
+    .canonical-desc {{
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.6;
+      margin: 8px 0 14px 0;
+    }}
+    .url-row {{
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }}
+    .url-input {{
+      flex: 1;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 9px 12px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #0f172a;
+    }}
+    .url-btn {{
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }}
+    .url-btn:hover {{
+      background: #1d4ed8;
+    }}
+    .guide-details {{
+      font-size: 13px;
+      color: #334155;
+      background: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }}
+    .guide-details summary {{
+      cursor: pointer;
+      font-weight: 600;
+      color: #2563eb;
+    }}
+    .guide-details ol {{
+      margin: 8px 0 4px 0;
+      padding-left: 20px;
+      line-height: 1.7;
+    }}
+    .guide-details li {{
+      margin-bottom: 4px;
+    }}
     .container {{
-      max-width: 760px;
+      max-width: 820px;
       width: 100%;
       background: #ffffff;
       padding: 48px;
@@ -403,13 +522,43 @@ class MediumSummaryBuilder:
 </head>
 <body>
   <div class="sticky-bar">
-    <div>
-      <div class="sticky-title">Medium用リッチテキスト要約</div>
-      <div class="sticky-subtitle">「コピー」を押してMediumエディタで Ctrl+V するだけで、見出しやリンクが綺麗に反映されます</div>
+    <div class="sticky-info">
+      <div class="sticky-title">📰 Medium用 リッチテキスト要約 & 公式設定ツール</div>
+      <div class="sticky-subtitle">「本文をコピー」してMediumエディタで Ctrl+V するだけで、見出しやリストが美しく貼り付けられます</div>
     </div>
-    <button id="copyBtn" class="copy-btn" onclick="copyForMedium()">
-      📋 Medium用にコピー
-    </button>
+    <div class="btn-group">
+      <button id="copyArticleBtn" class="copy-btn" onclick="copyForMedium()">
+        📋 Medium本文をコピー
+      </button>
+    </div>
+  </div>
+
+  <div class="canonical-card">
+    <div class="canonical-header">
+      <span class="canonical-badge">規約遵守・ペナルティ対策</span>
+      <span class="canonical-title">Medium公式 Canonical Link 設定（推奨）</span>
+    </div>
+    <p class="canonical-desc">
+      Mediumでは、記事本文内にWordPressへの誘導リンク（「続きを読む」「PDFはこちら」等）を貼ると、自動巡回AIにより「トラフィック誘導スパム（Violation of Medium Rules）」と判定されアカウントが凍結される恐れがあります。<br>
+      当ツールでは本文を100%独立した完全版記事として作成しています。WordPress原典のSEO評価を安全に維持するため、本文リンクではなく、Medium公式の「<strong>Customize canonical link</strong>」設定をご利用ください。
+    </p>
+    <div class="url-row">
+      <input type="text" id="canonicalUrlInput" value="{canonical_url}" readonly class="url-input" />
+      <button id="copyUrlBtn" class="url-btn" onclick="copyCanonicalUrl()">
+        🔗 Canonical URLをコピー
+      </button>
+    </div>
+    <details class="guide-details">
+      <summary>📖 Mediumでの設定手順（クリックで展開・1分で完了）</summary>
+      <ol>
+        <li>上の「<strong>📋 Medium本文をコピー</strong>」を押し、Medium新規投稿画面（<a href="https://medium.com/new-story" target="_blank" rel="noopener">new-story</a>）で <code>Ctrl + V</code> を押して貼り付けます。</li>
+        <li>画像が未反映の場合は、同じフォルダ内の画像ファイル（.png）をドラッグ＆ドロップして配置してください。</li>
+        <li>Medium編集画面右上の「<strong>...</strong>」（3点アイコン）をクリック →「<strong>More settings</strong>」を選択します。</li>
+        <li>設定画面左側メニューの「<strong>Advanced settings</strong>」をクリックします。</li>
+        <li>「<strong>Customize canonical link</strong>」にチェックを入れ、上のCanonical URLを貼り付けて「Save」を押します。</li>
+        <li>右上の「Publish」ボタンを押して公開します（検索エンジンにWordPressが正規の原典として認識され、Mediumでのペナルティも回避されます）。</li>
+      </ol>
+    </details>
   </div>
 
   <div class="container">
@@ -421,24 +570,61 @@ class MediumSummaryBuilder:
   <script>
     function copyForMedium() {{
       const content = document.getElementById('medium-article-content');
-      const htmlBlob = new Blob([content.innerHTML], {{ type: 'text/html' }});
-      const textBlob = new Blob([content.innerText], {{ type: 'text/plain' }});
-      navigator.clipboard.write([
-        new ClipboardItem({{
-          'text/html': htmlBlob,
-          'text/plain': textBlob
-        }})
-      ]).then(() => {{
-        const btn = document.getElementById('copyBtn');
-        btn.innerText = '✅ コピー完了！Mediumで Ctrl+V してください';
-        btn.style.background = '#059669';
-        setTimeout(() => {{
-          btn.innerText = '📋 Medium用にコピー';
-          btn.style.background = '#10b981';
-        }}, 4000);
-      }}).catch(err => {{
-        alert('クリップボードのコピーに失敗しました: ' + err);
-      }});
+      try {{
+        const htmlBlob = new Blob([content.innerHTML], {{ type: 'text/html' }});
+        const textBlob = new Blob([content.innerText], {{ type: 'text/plain' }});
+        navigator.clipboard.write([
+          new ClipboardItem({{
+            'text/html': htmlBlob,
+            'text/plain': textBlob
+          }})
+        ]).then(() => {{
+          showCopyFeedback('copyArticleBtn', '✅ 本文をコピーしました！Mediumで Ctrl+V してください', '#10b981');
+        }}).catch(err => {{
+          fallbackSelectAndCopy(content);
+        }});
+      }} catch (e) {{
+        fallbackSelectAndCopy(content);
+      }}
+    }}
+
+    function fallbackSelectAndCopy(element) {{
+      const range = document.createRange();
+      range.selectNode(element);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.execCommand('copy');
+      selection.removeAllRanges();
+      showCopyFeedback('copyArticleBtn', '✅ 本文をコピーしました！Mediumで Ctrl+V してください', '#10b981');
+    }}
+
+    function copyCanonicalUrl() {{
+      const input = document.getElementById('canonicalUrlInput');
+      input.select();
+      input.setSelectionRange(0, 99999);
+      if (navigator.clipboard && navigator.clipboard.writeText) {{
+        navigator.clipboard.writeText(input.value).then(() => {{
+          showCopyFeedback('copyUrlBtn', '✅ URLをコピーしました！', '#2563eb');
+        }}).catch(() => {{
+          document.execCommand('copy');
+          showCopyFeedback('copyUrlBtn', '✅ URLをコピーしました！', '#2563eb');
+        }});
+      }} else {{
+        document.execCommand('copy');
+        showCopyFeedback('copyUrlBtn', '✅ URLをコピーしました！', '#2563eb');
+      }}
+    }}
+
+    function showCopyFeedback(btnId, message, defaultBg) {{
+      const btn = document.getElementById(btnId);
+      const origText = btn.innerHTML;
+      btn.innerText = message;
+      btn.style.background = '#059669';
+      setTimeout(() => {{
+        btn.innerHTML = origText;
+        btn.style.background = defaultBg;
+      }}, 3500);
     }}
   </script>
 </body>
@@ -453,39 +639,52 @@ class MediumSummaryBuilder:
         pdf_name: str,
         figure_paths: Optional[List[Path]],
     ) -> str:
-        """Uses Gemini to craft a compelling, reader-friendly Medium article."""
+        """Uses Gemini to craft a compelling, self-contained Medium article without spam-triggering off-site links."""
         fig_note = ""
+        fig1_name = "trend.png"
+        fig2_name = "correlation.png"
         if figure_paths:
-            fig_names = [p.name for p in figure_paths if p.exists()]
-            if fig_names:
-                fig_note = f"Featured Figures available: {', '.join(fig_names)}"
+            figs_existing = [p.name for p in figure_paths if p.exists()]
+            if figs_existing:
+                fig_note = f"Featured Figures available: {', '.join(figs_existing)}"
+                fig1_name = figs_existing[0]
+                if len(figs_existing) > 1:
+                    fig2_name = figs_existing[1]
 
         prompt = f"""You are a senior science communicator and tech/policy journalist writing for Medium.
-Your task is to adapt a peer-reviewed empirical academic paper into an engaging, accessible, and high-impact Medium article (approximately 500-750 words, 3-4 min read).
+Your task is to adapt a peer-reviewed empirical academic paper into an engaging, accessible, and high-impact Medium article (approximately 650-850 words, 4-5 min read).
 
 ### CRITICAL REQUIREMENTS:
 1. AUDIENCE: International data scientists, economists, educational leaders, and policy analysts.
 2. TONE: Intelligent, journalistic, narrative-driven, yet mathematically grounded. Emphasize the counter-intuitive paradox and policy implications.
-3. STRUCTURE:
-   - # Engaging, Viral-yet-Academic Headline (e.g., "The Paradox of High Attainment on Low Budgets: What Japanese Open Data Teaches Us")
+3. MEDIUM TRUST & SAFETY POLICY (CRITICAL):
+   - Medium strictly penalizes and suspends accounts that publish 'teaser' posts linking off-site.
+   - Do NOT include any promotional outbound call-to-actions (NO 'Read full paper on WordPress', NO 'Download PDF at...', NO external URLs in the body text).
+   - The article must be 100% self-contained, rigorous, and valuable to read directly on Medium.
+4. STRUCTURE:
+   - # Engaging Headline (e.g., "The Paradox of High Attainment on Low Budgets: What Japanese Open Data Teaches Us")
    - Subtitle: A punchy 1-sentence hook explaining the central paradox.
-   - Author & Reading Info: `*By Society for Educational Data Analysis (SEDA) · 4 min read*`
-   - Cover Image Placement: If Figure 1 is available, embed: `![Figure 1: Trajectory and 95% Confidence Intervals]({figure_paths[0].name if figure_paths else 'trend.png'})` with an italic caption.
-   - ## 1. The Paradox (TL;DR)
+   - Author & Reading Info: `*By Society for Educational Data Analysis (SEDA) · 5 min read*`
+   - ---
+   - Figure 1 Placement: Embed `![Figure 1: Longitudinal Trajectory and Secular Shifts]({fig1_name})` with italic caption.
+   - ## 1. The Core Paradox & Empirical Context
      Explain in 2 captivating paragraphs why conventional assumptions fail and what the empirical administrative data reveals.
-   - ## 2. Three Key Empirical Discoveries
-     Present 3 clear, concrete bullet points highlighting key empirical statistics (F-tests, R-squared, Bayes factors BF10, VIF control).
-   - ## 3. Policy & Real-World Implications
-     Explain the practical lessons for school administrators, policymakers, or international observers.
-   - ## 4. Full Paper & Data Access
-     Provide prominent call-to-actions linking back to our primary publication site:
-     - A clear markdown link to read the full academic paper at `{wp_url}`
-     - A mention that the publication-ready PDF (`{pdf_name}`) is available for download at `{wp_url}`
-   - End with:
-     `*Originally published at seda68.wordpress.com. Conducted by the Society for Educational Data Analysis (SEDA) using official public open datasets.*`
+   - ## 2. Research Design & Dual Inferential Framework
+     Summarize the 4-pillar methodology: (1) OLS longitudinal trajectories; (2) Factorial Two-Way ANOVA (Type II SS, partial η²); (3) Multivariate OLS with backward stepwise VIF multicollinearity control (< 5.0); (4) Dual frequentist (p-values) and continuous Bayesian evidence factors (BF10).
+   - ## 3. Quantitative Discoveries & Statistical Evidence
+     Present concrete empirical statistics (F-tests, R-squared, Bayes factors BF10, VIF control, secular slopes).
+     If Figure 2 is available, embed `![Figure 2: Empirical Bivariate Fit & Confidence Band]({fig2_name})` with italic caption.
+   - ## 4. Policy & Practical Implications
+     Explain 3 practical lessons for school administrators, policymakers, or international observers.
+   - ## 5. Methodological Limitations & Future Scope
+     Discuss aggregate administrative data considerations (ecological fallacy) and future panel econometric directions.
+   - ---
+   - ### Citation & Academic Attribution
+     `Society for Educational Data Analysis (SEDA). (2026). *{paper.title}*. SEDA Empirical Research Monograph Series.`
+     `*Data Source: Official administrative open datasets released by government authorities.*`
    - Recommended Medium Tags:
      `**Recommended Medium Tags**: #Education #DataScience #OpenData #PublicPolicy #Statistics #Japan`
-4. ACCURACY & FORMATTING:
+5. ACCURACY & FORMATTING:
    - Strictly avoid Unicode subscripts (write `BF10` instead of `BF₁₀`, and `partial η²` instead of `partial ηₚ²`).
    - Format numbers cleanly (e.g. R² = .91, p = .002, VIF < 5.0).
    - Never use raw database column identifiers containing underscores.
@@ -494,8 +693,8 @@ Your task is to adapt a peer-reviewed empirical academic paper into an engaging,
 - Title: {paper.title}
 - Abstract: {paper.abstract}
 - Empirical Discoveries: {analysis.empirical_discoveries if analysis else 'See abstract.'}
-- Primary WP Link: {wp_url}
-- PDF File: {pdf_name}
+- Intro Context: {paper.section_1_intro[:400] if paper.section_1_intro else ''}
+- Discussion: {paper.section_5_discussion[:400] if paper.section_5_discussion else ''}
 {fig_note}
 """
         response = self.gemini_client.models.generate_content(
@@ -516,7 +715,7 @@ Your task is to adapt a peer-reviewed empirical academic paper into an engaging,
         pdf_name: str,
         figure_paths: Optional[List[Path]],
     ) -> str:
-        """Deterministic fallback for Medium summary."""
+        """Deterministic fallback generating a self-contained, publication-ready Medium article without off-site teaser links."""
         # Create engaging headline
         clean_title = (
             paper.title.split(":")[0].strip()
@@ -533,7 +732,7 @@ Your task is to adapt a peer-reviewed empirical academic paper into an engaging,
                 for d in analysis.empirical_discoveries
                 if not d.startswith("VIF Validated")
             ]
-            for d in clean_disc[:3]:
+            for d in clean_disc[:4]:
                 label = d.split(":")[0] if ":" in d else "Empirical Observation"
                 findings.append(f"- **{label}**: {d}")
 
@@ -556,7 +755,7 @@ Your task is to adapt a peer-reviewed empirical academic paper into an engaging,
                 )
 
         # If still empty (e.g. parsed directly from paper.md), extract from paper.abstract/section_4
-        if len(findings) < 3 and paper.abstract:
+        if len(findings) < 3 and (paper.abstract or paper.section_4_results):
             full_corpus = f"{paper.abstract} {paper.section_4_results}"
 
             # Extract ANOVA
@@ -598,6 +797,13 @@ Your task is to adapt a peer-reviewed empirical academic paper into an engaging,
                     f"- **Longitudinal Secular Trajectory**: {traj_match.group(1)}"
                 )
 
+            # Extract Decoupling / Paradox
+            decouple_matches = re.findall(
+                r"(Decoupling Paradox:.*?\.\))", full_corpus
+            )
+            for dm in decouple_matches[:2]:
+                findings.append(f"- **{dm}")
+
         if not findings:
             findings = [
                 "- **Longitudinal Trajectory Shift**: Significant structural movement documented across multi-year observation cohorts.",
@@ -607,50 +813,62 @@ Your task is to adapt a peer-reviewed empirical academic paper into an engaging,
 
         findings_md = "\n".join(findings)
 
-        # Image embed
-        img_md = ""
+        # Figures
+        fig1_md = ""
+        fig2_md = ""
         if figure_paths and len(figure_paths) > 0 and figure_paths[0].exists():
-            fig_name = figure_paths[0].name
-            img_md = f"\n![Figure 1: Empirical Quantitative Trajectory]({fig_name})\n*Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*\n"
+            fig1_md = f"\n![Figure 1: Longitudinal Trajectory and Secular Shifts]({figure_paths[0].name})\n*Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*\n"
+        if figure_paths and len(figure_paths) > 1 and figure_paths[1].exists():
+            fig2_md = f"\n![Figure 2: Empirical Bivariate Fit & Confidence Band]({figure_paths[1].name})\n*Figure 2: Bivariate empirical regression model and 95% Confidence Band.*\n"
 
         return f"""# {clean_title}
 ### {subtitle}
 
-*By Society for Educational Data Analysis (SEDA) · 4 min read*
+*By Society for Educational Data Analysis (SEDA) · 5 min read*
 
 ---
-{img_md}
-## 1. The Core Paradox (TL;DR)
+{fig1_md}
+## 1. The Core Paradox & Empirical Context
 
 In educational policy and public administration, decision-makers frequently operate under the assumption that linear increases in budgetary allocation, digital infrastructure, or institutional interventions guarantee proportional improvements in learning benchmarks. However, multi-year empirical evidence from official administrative open data reveals a far more complex reality.
 
-Our latest longitudinal econometric study investigates the underlying structural dynamics of **{paper.title}**. By synthesizing factorial Two-Way Analysis of Variance (ANOVA), bivariate zero-correlation testing with Fisher's z 95% confidence intervals, and multivariate OLS regressions with backward stepwise Variance Inflation Factor (VIF < 5.0) diagnostics, this analysis reveals significant policy trade-offs and structural bottlenecks that challenge conventional wisdom.
+Our latest longitudinal econometric study investigates the underlying structural dynamics of **{paper.title}**. Across many educational and public policy domains, resource inputs are expanded with the optimistic expectation that scholastic achievement, pedagogical innovation, or operational efficiency will rise in direct proportion. Yet when administrative micro- and macro-level data are analyzed over multi-year observation cohorts, empirical reality consistently uncovers policy trade-offs, structural plateaus, and unintended friction.
 
-## 2. Three Key Empirical Discoveries
+Synthesizing longitudinal records released by official government and international bodies, this research evaluates whether structural interventions fulfill their intended outcomes or whether countervailing administrative burdens attenuate pedagogical returns.
+
+## 2. Research Design & Dual Inferential Framework
+
+To overcome the limitations of isolated cross-sectional observations and guard against erroneous statistical inferences, this study implements a four-pillar econometric pipeline adhering strictly to APA 7th standards:
+
+1. **Longitudinal Secular Trajectories**: Ordinary Least Squares (OLS) time-series regressions modeling annual rates of change (slope b) alongside Fisher's z 95% Confidence Intervals (95% CI).
+2. **Factorial Two-Way ANOVA**: Evaluating main effects across temporal periods (early vs. late implementation phases) and institutional cohorts using Type II Sum of Squares, with effect sizes quantified via partial eta-squared (partial η²).
+3. **Multivariate OLS Regression & Multicollinearity Pruning**: Backward stepwise elimination ensuring all Variance Inflation Factors (VIF) remain strictly below 5.0, eliminating collinear bias.
+4. **Dual Frequentist-Bayesian Verification**: Simultaneously assessing empirical patterns under classical Neyman-Pearson significance thresholds (p < .05) and continuous Bayes Factors (BF10) under JZS / BIC delta approximations (Jeffreys, 1961; Lee & Wagenmakers, 2013). This dual framework protects against over-interpreting trivial sample variations while quantifying evidence strength for competing hypotheses.
+
+## 3. Quantitative Discoveries & Statistical Evidence
 
 {findings_md}
-
-## 3. Policy & Real-World Implications
+{fig2_md}
+## 4. Policy & Practical Implications
 
 These findings carry vital implications for educational economists, school district leaders, and public policymakers:
 
-1. **Avoid Linear Expenditure Fallacies**: Adding fiscal resources or digital hardware without addressing administrative workflow friction or pedagogical integration fails to produce proportional student gains.
+1. **Avoid Linear Expenditure & Hardware Fallacies**: Adding fiscal resources or digital hardware without addressing administrative workflow friction or pedagogical integration fails to produce proportional student gains.
 2. **Account for Hidden Operational Overhead**: Structural reforms often compress one area of burden only to displace it onto unmeasured administrative tasks, attenuating direct educational impact.
-3. **Rigorous Multicollinearity Verification**: Evaluating empirical patterns under dual frequentist significance and continuous Bayesian evidence factors (BF10) provides a much safer basis for large-scale policy decisions.
+3. **Ground Policy in Dual Evidence**: Evaluating empirical patterns under dual frequentist significance and continuous Bayesian evidence factors (BF10) prevents overreacting to short-term variance and ensures policies rest on decisive empirical foundations.
+
+## 5. Methodological Limitations & Future Scope
+
+Several methodological limitations should be kept in mind when interpreting these findings:
+
+- **Aggregate Administrative Data**: Observations reflect macro-level administrative and municipal aggregations; caution is advised against committing the ecological fallacy by imputing aggregate trends directly to individual student behaviors.
+- **Observational Counterfactuals**: While longitudinal regressions control for secular movement, causal attributions remain constrained without quasi-experimental counterfactual controls. Future studies should link municipal panel datasets to estimate fixed-effects econometric models.
 
 ---
 
-## 📖 Read the Full Peer-Reviewed Academic Paper
-
-The complete academic paper—featuring full APA 7th tables (Table 1: Descriptive & Correlation Matrix with Bayes Factors, Table 2: Factorial Two-Way ANOVA, Table 3: Multivariate OLS & VIF Diagnostics), comprehensive literature reviews, and methodological derivations—is available on our primary portal:
-
-👉 **[Read the Full Academic Paper on WordPress]({wp_url})**
-
-📄 **[Download Publication-Ready PDF (with Embedded Figures)]({wp_url})**
-
-*Originally published at [seda68.wordpress.com](https://seda68.wordpress.com) by the Society for Educational Data Analysis (SEDA). All analyses are conducted using verified official public datasets.*
-
----
+### Citation & Academic Attribution
+Society for Educational Data Analysis (SEDA). (2026). *{paper.title}*. SEDA Empirical Research Monograph Series.  
+*Data Source: Official administrative open datasets released by government authorities under Open Data terms.*
 
 **Recommended Medium Tags**: `#Education #DataScience #OpenData #PublicPolicy #Statistics #Japan`
 """
@@ -707,9 +925,22 @@ def build_summary_from_report_dir(
     # Match dataset & angle ID from dir name if possible
     # e.g. 2026-09-28_worldbank_education_indicators_worldbank_spending_efficiency_paradox
     dir_name = report_dir.name
-    parts = dir_name.split("_")
-    dataset_id = parts[1] if len(parts) > 1 else dir_name
-    angle_id = "_".join(parts[2:]) if len(parts) > 2 else "general"
+    stripped = re.sub(r"^\d{4}-\d{2}-\d{2}_", "", dir_name)
+    matched_ds = None
+    matched_angle = "general"
+
+    catalog = DatasetCatalog()
+    known_ds_ids = sorted([d.id for d in catalog.list_datasets()], key=len, reverse=True)
+    for ds_id in known_ds_ids:
+        if stripped.startswith(ds_id):
+            matched_ds = ds_id
+            rem = stripped[len(ds_id):].lstrip("_")
+            if rem:
+                matched_angle = rem
+            break
+
+    dataset_id = matched_ds or dir_name
+    angle_id = matched_angle
 
     paper = AcademicPaperEn(
         title=title,
@@ -733,12 +964,16 @@ def build_summary_from_report_dir(
     pdf_files = list(report_dir.glob("*.pdf"))
     pdf_path = pdf_files[0] if pdf_files else None
 
+    # Fetch canonical WordPress URL
+    recorded_url = get_recorded_wp_url(dataset_id, angle_id)
+    effective_wp_url = wp_url or recorded_url or Config.WP_SITE_URL or "https://seda68.wordpress.com"
+
     builder = MediumSummaryBuilder()
     out_file = report_dir / output_filename
     return builder.generate_and_save(
         paper=paper,
         output_path=out_file,
-        wp_url=wp_url,
+        wp_url=effective_wp_url,
         pdf_path=pdf_path,
         figure_paths=figures,
     )
