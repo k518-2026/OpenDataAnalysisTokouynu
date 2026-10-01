@@ -63,9 +63,12 @@ def sanitize_text(text: str) -> str:
         text = text.replace(k, v)
     for raw_m, clean_m in ACADEMIC_METRIC_MAP.items():
         text = text.replace(raw_m, clean_m)
-    # Replace remaining underscores in identifiers (e.g. Elementary_Math -> Elementary Math)
-    text = re.sub(r"([A-Za-z0-9]+)_([A-Za-z0-9]+)", r"\1 \2", text)
-    return text
+    # Replace remaining underscores in identifiers (e.g. Elementary_Math -> Elementary Math),
+    # while preserving image file paths and URLs inside markdown links (e.g. ![...](file_name.png))
+    parts = re.split(r"(\[[^\]]*\]\([^)]*\))", text)
+    for i in range(0, len(parts), 2):
+        parts[i] = re.sub(r"([A-Za-z0-9]+)_([A-Za-z0-9]+)", r"\1 \2", parts[i])
+    return "".join(parts)
 
 
 def sort_figures(figs: List[Path]) -> List[Path]:
@@ -172,7 +175,7 @@ class MediumSummaryBuilder:
         pdf_path: Optional[Path] = None,
         figure_paths: Optional[List[Path]] = None,
     ) -> Path:
-        """Generates the Medium summary and writes it to disk."""
+        """Generates both Markdown and rich-text HTML versions of the Medium summary and writes them to disk."""
         content = self.generate_summary(
             paper=paper,
             analysis=analysis,
@@ -182,10 +185,264 @@ class MediumSummaryBuilder:
             figure_paths=figure_paths,
         )
         output_path.parent.mkdir(parents=True, exist_ok=True)
+        # 1. Save Markdown
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(content)
-        logger.info(f"Saved Medium summary to {output_path}")
+        logger.info(f"Saved Medium Markdown summary to {output_path}")
+
+        # 2. Save rich-text HTML (for 1-click formatted copy-paste into Medium)
+        html_path = output_path.with_suffix(".html")
+        html_content = self.convert_markdown_to_html_page(content, title=paper.title)
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        logger.info(f"Saved Medium rich-text HTML summary to {html_path}")
+
         return output_path
+
+    @staticmethod
+    def convert_markdown_to_html(md_text: str) -> str:
+        """Converts Medium markdown summary into clean semantic HTML."""
+        lines = md_text.splitlines()
+        html_lines = []
+        in_ul = False
+        in_ol = False
+
+        for line in lines:
+            s = line.strip()
+            if not s:
+                if in_ul:
+                    html_lines.append("</ul>")
+                    in_ul = False
+                if in_ol:
+                    html_lines.append("</ol>")
+                    in_ol = False
+                continue
+
+            if in_ul and not s.startswith("- "):
+                html_lines.append("</ul>")
+                in_ul = False
+            if in_ol and not re.match(r"^\d+\.\s+", s):
+                html_lines.append("</ol>")
+                in_ol = False
+
+            if s.startswith("# "):
+                html_lines.append(f"<h1>{s[2:].strip()}</h1>")
+            elif s.startswith("### "):
+                html_lines.append(f"<h3>{s[4:].strip()}</h3>")
+            elif s.startswith("## "):
+                html_lines.append(f"<h2>{s[3:].strip()}</h2>")
+            elif s == "---":
+                html_lines.append("<hr />")
+            elif s.startswith("![") and "](" in s:
+                m = re.match(r"!\[(.*?)\]\((.*?)\)", s)
+                if m:
+                    alt, src = m.groups()
+                    html_lines.append(
+                        f'<figure style="margin: 24px 0; text-align: center;"><img src="{src}" alt="{alt}" style="max-width: 100%; height: auto; border-radius: 6px;" /></figure>'
+                    )
+            elif s.startswith("- "):
+                if not in_ul:
+                    html_lines.append("<ul>")
+                    in_ul = True
+                item = s[2:].strip()
+                html_lines.append(f"<li>{item}</li>")
+            elif re.match(r"^\d+\.\s+", s):
+                if not in_ol:
+                    html_lines.append("<ol>")
+                    in_ol = True
+                item = re.sub(r"^\d+\.\s+", "", s)
+                html_lines.append(f"<li>{item}</li>")
+            else:
+                html_lines.append(f"<p>{s}</p>")
+
+        if in_ul:
+            html_lines.append("</ul>")
+        if in_ol:
+            html_lines.append("</ol>")
+
+        html = "\n".join(html_lines)
+        # Inline Markdown formatting: links first, then bold, then italics
+        html = re.sub(
+            r"\[(.*?)\]\((.*?)\)",
+            r'<a href="\2" target="_blank" rel="noopener noreferrer"><strong>\1</strong></a>',
+            html,
+        )
+        html = re.sub(r"\*\*(.*?)\*\*", r"<strong>\1</strong>", html)
+        html = re.sub(r"\*(.*?)\*", r"<em>\1</em>", html)
+        return html
+
+    @classmethod
+    def convert_markdown_to_html_page(
+        cls, md_text: str, title: str = "Medium Executive Summary"
+    ) -> str:
+        """Wraps semantic HTML into an interactive web page with a 1-click 'Copy for Medium' button."""
+        article_html = cls.convert_markdown_to_html(md_text)
+        return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{title} - Medium Ready Rich Text</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      line-height: 1.75;
+      color: #242424;
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }}
+    .sticky-bar {{
+      position: sticky;
+      top: 16px;
+      z-index: 1000;
+      max-width: 760px;
+      width: 100%;
+      background: #1e3a8a;
+      color: #ffffff;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      box-sizing: border-box;
+    }}
+    .sticky-title {{
+      font-weight: 700;
+      font-size: 15px;
+    }}
+    .sticky-subtitle {{
+      font-size: 12px;
+      opacity: 0.9;
+      margin-top: 2px;
+    }}
+    .copy-btn {{
+      background: #10b981;
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s, transform 0.1s;
+    }}
+    .copy-btn:hover {{
+      background: #059669;
+    }}
+    .copy-btn:active {{
+      transform: scale(0.98);
+    }}
+    .container {{
+      max-width: 760px;
+      width: 100%;
+      background: #ffffff;
+      padding: 48px;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      box-sizing: border-box;
+      border: 1px solid #e2e8f0;
+    }}
+    #medium-article-content h1 {{
+      font-size: 32px;
+      line-height: 1.25;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }}
+    #medium-article-content h3 {{
+      font-size: 20px;
+      line-height: 1.4;
+      font-weight: 400;
+      color: #475569;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }}
+    #medium-article-content h2 {{
+      font-size: 24px;
+      line-height: 1.3;
+      font-weight: 700;
+      margin-top: 36px;
+      margin-bottom: 12px;
+      color: #0f172a;
+    }}
+    #medium-article-content p {{
+      font-size: 18px;
+      line-height: 1.75;
+      margin-bottom: 20px;
+      color: #1e293b;
+    }}
+    #medium-article-content ul, #medium-article-content ol {{
+      font-size: 18px;
+      line-height: 1.75;
+      margin-bottom: 24px;
+      padding-left: 28px;
+      color: #1e293b;
+    }}
+    #medium-article-content li {{
+      margin-bottom: 10px;
+    }}
+    #medium-article-content hr {{
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 36px 0;
+    }}
+    #medium-article-content a {{
+      color: #1e3a8a;
+      text-decoration: underline;
+    }}
+  </style>
+</head>
+<body>
+  <div class="sticky-bar">
+    <div>
+      <div class="sticky-title">Medium用リッチテキスト要約</div>
+      <div class="sticky-subtitle">「コピー」を押してMediumエディタで Ctrl+V するだけで、見出しやリンクが綺麗に反映されます</div>
+    </div>
+    <button id="copyBtn" class="copy-btn" onclick="copyForMedium()">
+      📋 Medium用にコピー
+    </button>
+  </div>
+
+  <div class="container">
+    <div id="medium-article-content">
+{article_html}
+    </div>
+  </div>
+
+  <script>
+    function copyForMedium() {{
+      const content = document.getElementById('medium-article-content');
+      const htmlBlob = new Blob([content.innerHTML], {{ type: 'text/html' }});
+      const textBlob = new Blob([content.innerText], {{ type: 'text/plain' }});
+      navigator.clipboard.write([
+        new ClipboardItem({{
+          'text/html': htmlBlob,
+          'text/plain': textBlob
+        }})
+      ]).then(() => {{
+        const btn = document.getElementById('copyBtn');
+        btn.innerText = '✅ コピー完了！Mediumで Ctrl+V してください';
+        btn.style.background = '#059669';
+        setTimeout(() => {{
+          btn.innerText = '📋 Medium用にコピー';
+          btn.style.background = '#10b981';
+        }}, 4000);
+      }}).catch(err => {{
+        alert('クリップボードのコピーに失敗しました: ' + err);
+      }});
+    }}
+  </script>
+</body>
+</html>"""
 
     def _generate_with_gemini(
         self,

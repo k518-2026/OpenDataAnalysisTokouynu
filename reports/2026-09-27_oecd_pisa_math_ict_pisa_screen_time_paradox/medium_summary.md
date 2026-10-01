@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](oecd pisa_math ict_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](oecd_pisa_math_ict_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)

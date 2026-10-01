@@ -73,6 +73,18 @@ def test_generate_and_save(tmp_path):
     assert len(content) > 500
     assert "seda68.wordpress.com" in content
 
+    # Assert HTML counterpart also exists and contains interactive copy helper
+    html_path = out_file.with_suffix(".html")
+    assert html_path.exists()
+    html_text = html_path.read_text(encoding="utf-8")
+    assert "<!DOCTYPE html>" in html_text
+    assert "copyForMedium" in html_text
+    assert "id=\"medium-article-content\"" in html_text
+    assert "<h1>" in html_text
+    assert "<h2>" in html_text
+    assert "<strong>" in html_text
+    assert "<a href=" in html_text
+
 
 def test_build_summary_from_report_dir(tmp_path):
     # Test on an existing report directory
@@ -90,5 +102,11 @@ def test_build_summary_from_report_dir(tmp_path):
     content = out.read_text(encoding="utf-8")
     assert len(content) > 300
     assert "seda68.wordpress.com" in content
-    # Clean up test file
+    
+    html_out = out.with_suffix(".html")
+    assert html_out.exists()
+
+    # Clean up test files
     out.unlink()
+    html_out.unlink()
+

@@ -5,7 +5,7 @@
 
 ---
 
-![Figure 1: Empirical Quantitative Trajectory](japan school_absenteeism bullying_trend.png)
+![Figure 1: Empirical Quantitative Trajectory](japan_school_absenteeism_bullying_trend.png)
 *Figure 1: Longitudinal trajectories and 95% Confidence Intervals from official administrative records.*
 
 ## 1. The Core Paradox (TL;DR)
