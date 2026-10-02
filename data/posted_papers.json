@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026-10-02",
+    "title": "The Entrance Exam Washback Paradox: How High-Stakes Testing Standardized Python Adoption While Suppressing Creative Software Engineering (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation",
+    "dataset_id": "japan_high_school_informatics",
+    "angle_id": "entrance_exam_washback_paradox",
+    "wp_url": "https://seda68.wordpress.com/?p=latest",
+    "pdf_filename": "japan_high_school_informatics_entrance_exam_washback_paradox_paper.pdf",
+    "timestamp": "2026-10-02T21:07:22.029984"
+  },
+  {
     "date": "2026-10-01",
     "title": "The Jugyokenkyu Paradox: World-Class Collaborative Lesson Study Coexisting with Subdued Teacher Self-Efficacy in Japan (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation",
     "dataset_id": "oecd_talis_teacher_survey",

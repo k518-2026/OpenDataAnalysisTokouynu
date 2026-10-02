@@ -2,11 +2,12 @@
 
 Autonomous daily empirical working papers derived from Japanese government open data.
 
-**Total Published Papers**: `17`  
-**Last Updated**: `2026-10-01 21:06:45`
+**Total Published Papers**: `18`  
+**Last Updated**: `2026-10-02 21:07:22`
 
 | Date | Research Paper Title | Focus Topic | WP Post | PDF Download |
 | :--- | :--- | :--- | :---: | :---: |
+| 2026-10-02 | **The Entrance Exam Washback Paradox: How High-Stakes Testing Standardized Python Adoption While Suppressing Creative Software Engineering (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `entrance_exam_washback_paradox` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_high_school_informatics_entrance_exam_washback_paradox_paper.pdf) |
 | 2026-10-01 | **The Jugyokenkyu Paradox: World-Class Collaborative Lesson Study Coexisting with Subdued Teacher Self-Efficacy in Japan (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `talis_lesson_study_paradox` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/oecd_talis_teacher_survey_talis_lesson_study_paradox_paper.pdf) |
 | 2026-09-30 | **Evaluating the Longitudinal Impact of 1-to-1 Device Implementation on Mathematics Learning Engagement: A Longitudinal Empirical Investigation of Japanese Public Open Data** | `giga_device_impact` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_national_assessment_math_giga_device_impact_paper.pdf) |
 | 2026-09-29 | **The Decoupling of Achievement and Affective Value in Japanese Mathematics Education: A Longitudinal Empirical Investigation of Japanese Public Open Data** | `math_affective_gap` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_national_assessment_math_math_affective_gap_paper.pdf) |
