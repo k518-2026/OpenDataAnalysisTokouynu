@@ -2,11 +2,12 @@
 
 Autonomous daily empirical working papers derived from Japanese government open data.
 
-**Total Published Papers**: `18`  
-**Last Updated**: `2026-10-02 21:07:22`
+**Total Published Papers**: `19`  
+**Last Updated**: `2026-10-04 02:46:42`
 
 | Date | Research Paper Title | Focus Topic | WP Post | PDF Download |
 | :--- | :--- | :--- | :---: | :---: |
+| 2026-10-04 | **Institutional Role Models vs Curricular Flexibility: What Really Drives Female Participation in Japanese Collegiate Informatics? (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `stem_gender_catalyst_paradox` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_stem_cs_enrollment_stem_gender_catalyst_paradox_paper.pdf) |
 | 2026-10-02 | **The Entrance Exam Washback Paradox: How High-Stakes Testing Standardized Python Adoption While Suppressing Creative Software Engineering (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `entrance_exam_washback_paradox` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_high_school_informatics_entrance_exam_washback_paradox_paper.pdf) |
 | 2026-10-01 | **The Jugyokenkyu Paradox: World-Class Collaborative Lesson Study Coexisting with Subdued Teacher Self-Efficacy in Japan (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `talis_lesson_study_paradox` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/oecd_talis_teacher_survey_talis_lesson_study_paradox_paper.pdf) |
 | 2026-09-30 | **Evaluating the Longitudinal Impact of 1-to-1 Device Implementation on Mathematics Learning Engagement: A Longitudinal Empirical Investigation of Japanese Public Open Data** | `giga_device_impact` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_national_assessment_math_giga_device_impact_paper.pdf) |
