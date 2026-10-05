@@ -28,7 +28,7 @@ Accordingly, we test two overarching empirical hypotheses:
 - Hypothesis 2 (H2): Relational associations reveal structural trade-offs, where isolated resource growth does not translate into proportional outcome gains.
 
 ## 3. Methodology & Empirical Dataset
-The empirical data for this study were compiled from official public statistical releases published by OECD (Organization for Economic Co-operation and Development) Directorate for Education and Skills (Source URL: https://www.oecd.org/education/talis/). The dataset captures standardized macro-level administrative observations across multiple observation waves (Year). All values were operationalized in accordance with ministerial measurement standards, measured primarily in index / % / hours.
+The empirical data for this study were compiled from official public statistical releases published by OECD (Organization for Economic Co-operation and Development) Directorate for Education and Skills. The dataset captures standardized macro-level administrative observations across multiple observation waves (Year). All values were operationalized in accordance with ministerial measurement standards, measured primarily in index / % / hours.
 
 Our quantitative methodology integrates descriptive statistical profiling with longitudinal Ordinary Least Squares (OLS) estimation, bivariate relational modeling, and multivariate regression with Variance Inflation Factor (VIF) diagnostics. To prevent collinear contamination, candidate predictor sets were evaluated to ensure VIF < 5.0 across all models. Statistical significance was evaluated at alpha = .05 (two-tailed), and model robustness was confirmed using adjusted R^2.
 
@@ -56,7 +56,7 @@ In international comparative terms, Japan's structured, centralized approach to 
 Several methodological limitations must be acknowledged. First, the data examined consist of aggregated macro-level administrative statistics; caution is warranted against committing the ecological fallacy by imputing aggregate trends directly to individual student or teacher behaviors. Second, while OLS trend regressions capture longitudinal linear associations, causal inference remains constrained without quasi-experimental counterfactual controls. Future studies should link panel data across municipal jurisdictions to estimate fixed-effects econometric models.
 
 ## 7. References
-- OECD. (2019). TALIS 2018 Results (Volume I): Teachers and School Leaders as Valued Professionals. OECD Publishing. https://doi.org/10.1787/1d0bc92a-en
+- OECD. (2019). TALIS 2018 Results (Volume I): Teachers and School Leaders as Valued Professionals. OECD Publishing. DOI: 10.1787/1d0bc92a-en
 - Tschannen-Moran, M., & Hoy, A. W. (2001). Teacher efficacy: Capturing an elusive construct. Teaching and Teacher Education, 17(7), 783-805.
 - DuFour, R. (2004). What is a 'professional learning community'? Educational Leadership, 61(8), 6-11.
 

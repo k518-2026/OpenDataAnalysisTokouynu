@@ -27,9 +27,9 @@ To overcome the limitations of isolated cross-sectional observations and guard a
 
 ## 3. Quantitative Discoveries & Statistical Evidence
 
-- **Decoupling Paradox**: Decoupling Paradox: Increased common test algorithm drill hours does not yield proportional positive gains in student autonomous inquiry project rate (%) (b = -0.35, p = .008).
-- **Empirical Observation**: Multivariate OLS on 'python programming adoption rate (%)' explained 99.3% of variance (R² = .99, Adj. R² = .99, F = 517.43, p < .001, Model BF10 = 4.85e8 [Decisive evidence for H1]). All variance inflation factors remained well below 5.0 (maximum VIF = 1.41 < 5.0), confirming the absence of severe multicollinearity.
-- **Longitudinal Trajectory Shift**: Longitudinal Trajectory Shift: 'common test algorithm drill hours' exhibited an overall change of +20.3% (+483.33%) between 2020 and 2024.
+- **Factorial ANOVA Effect**: The main effect of temporal period (early [<= 2022] vs. late) reached statistical significance, F(1, 6) = 15.46, p = .008, partial η² = .72, with a Bayes factor of BF10 = 185.09 providing Decisive evidence for H1. Similarly, the main effect of school track was F(1, 6) = 2.62, p = .157, partial η² = .30, BF10 = 1.94 (Anecdotal evidence for H1).
+- **Multicollinearity-Controlled OLS**: Multivariate OLS on 'python programming adoption rate (%)' explained 99.3% of variance (R² = .99, Adj. R² = .99, F = 517.43, p < .001, Model BF10 = 4.85e8 [Decisive evidence for H1]).
+- **Longitudinal Secular Trajectory**: Longitudinal trend regression for python programming adoption rate (%) for Academic College_Prep indicates an estimated slope of b = 12.78 (95% CI [10.45, 15.11], R² = .99, p < .001), reflecting a net secular shift of +50.2 % from 2020 (32.4%) to 2024 (82.6%).
 
 ![Figure 2: Empirical Bivariate Fit & Confidence Band](japan_high_school_informatics_correlation.png)
 *Figure 2: Bivariate empirical regression model and 95% Confidence Band.*

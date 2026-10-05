@@ -27,10 +27,9 @@ To overcome the limitations of isolated cross-sectional observations and guard a
 
 ## 3. Quantitative Discoveries & Statistical Evidence
 
-- **Empirical Observation**: Multivariate OLS on 'faculty female ratio (%)' explained 99.6% of variance (R² = 1.00, Adj. R² = .99, F = 856.86, p < .001, Model BF10 = 4.85e8 [Decisive evidence for H1]). All variance inflation factors remained well below 5.0 (maximum VIF = 1.02 < 5.0), confirming the absence of severe multicollinearity.
-- **Longitudinal Trajectory Shift**: Longitudinal Trajectory Shift: 'industry internship rate (%)' exhibited an overall change of +26.7% (+137.63%) between 2016 and 2024.
-- **Factorial Variance Partition**: Two-Way ANOVA confirmed a significant effect for Main Effect: Temporal Period (Early [<= 2020] vs. Late) (F(1, 6) = 20.11, p = .004, partial η² = .77, BF10 = 493.49).
-- **Multivariate OLS & Multicollinearity Control**: Model explains 99.6% of variance (R² = 1.00, Adj. R² = .99, Model BF10 = 4.85e8) with all VIF values strictly below 5.0.
+- **Factorial ANOVA Effect**: The main effect of temporal period (early [<= 2020] vs. late) reached statistical significance, F(1, 6) = 20.11, p = .004, partial η² = .77, with a Bayes factor of BF10 = 493.49 providing Decisive evidence for H1. Similarly, the main effect of academic field was F(1, 6) = 138.22, p < .001, partial η² = .96, BF10 = 2.54e6 (Decisive evidence for H1).
+- **Multicollinearity-Controlled OLS**: Multivariate OLS on 'faculty female ratio (%)' explained 99.6% of variance (R² = 1.00, Adj. R² = .99, F = 856.86, p < .001, Model BF10 = 4.85e8 [Decisive evidence for H1]).
+- **Longitudinal Secular Trajectory**: Longitudinal Trajectory Shift: 'industry internship rate (%)' exhibited an overall change of +26.7% (+137.63%) between 2016 and 2024.
 
 ![Figure 2: Empirical Bivariate Fit & Confidence Band](japan_stem_cs_enrollment_correlation.png)
 *Figure 2: Bivariate empirical regression model and 95% Confidence Band.*

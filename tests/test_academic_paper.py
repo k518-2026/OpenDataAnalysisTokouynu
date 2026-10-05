@@ -149,4 +149,33 @@ def test_academic_nomenclature_and_apa_formatting():
         assert "BF₁₀" not in article_html and "BF₁₀" not in article_md
         assert "ηₚ²" not in article_html and "ηₚ²" not in article_md
 
+        # 8. No <a href="..."> links or raw https://doi.org/ URLs in WordPress HTML or Markdown
+        assert "<a " not in article_html, f"Found '<a ' link in HTML for {ds.id}"
+        assert "https://doi.org/" not in article_html, f"Found raw doi.org URL in HTML for {ds.id}"
+        assert "https://doi.org/" not in article_md, f"Found raw doi.org URL in Markdown for {ds.id}"
+
+
+def test_wordpress_email_html_sanitization():
+    from src.publishers.wordpress_mail import WordPressMailPublisher
+
+    sample_html = (
+        '<h2>7. References</h2>\n'
+        '<ul>\n'
+        '<li>Eccles, J. S., & Wigfield, A. (2002). <a href="https://doi.org/10.1146/annurev.psych.53.100901.135153">https://doi.org/10.1146/annurev.psych.53.100901.135153</a></li>\n'
+        '<li>OECD. (2023). PISA 2022 Results. https://doi.org/10.1787/53f23881-en</li>\n'
+        '<li>Source: <a href="https://www.mext.go.jp/" target="_blank">Ministry of Education (MEXT)</a></li>\n'
+        '</ul>\n'
+    )
+
+    sanitized = WordPressMailPublisher.sanitize_html_for_email(sample_html)
+
+    assert "<a " not in sanitized
+    assert "</a>" not in sanitized
+    assert "https://doi.org/" not in sanitized
+    assert "DOI: 10.1146/annurev.psych.53.100901.135153" in sanitized
+    assert "DOI: 10.1787/53f23881-en" in sanitized
+    assert "Ministry of Education (MEXT)" in sanitized
+    assert "DOI: DOI:" not in sanitized
+
+
 

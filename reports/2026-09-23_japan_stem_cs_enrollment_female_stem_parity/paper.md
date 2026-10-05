@@ -28,7 +28,7 @@ Accordingly, we test two overarching empirical hypotheses:
 - Hypothesis 2 (H2): Statistically significant associations exist among observed metrics, reflecting systemic institutional dependencies.
 
 ## 3. Methodology & Empirical Dataset
-The empirical data for this study were compiled from official public statistical releases published by Ministry of Education, Culture, Sports, Science and Technology (MEXT) Higher Education Bureau (Source URL: https://www.mext.go.jp/b_menu/toukei/chousa01/kihon/1267995.htm). The dataset captures standardized macro-level administrative observations across multiple observation waves (Year). All values were operationalized in accordance with ministerial measurement standards, measured primarily in students.
+The empirical data for this study were compiled from official public statistical releases published by Ministry of Education, Culture, Sports, Science and Technology (MEXT) Higher Education Bureau. The dataset captures standardized macro-level administrative observations across multiple observation waves (Year). All values were operationalized in accordance with ministerial measurement standards, measured primarily in students.
 
 Our quantitative methodology integrates descriptive statistical profiling (Mean, Median, Standard Deviation, Interquartile Range, and Skewness) with longitudinal Ordinary Least Squares (OLS) linear trend estimation and Pearson bivariate correlation analysis. Statistical significance was evaluated at the alpha = .05 threshold (two-tailed), and model explanatory power was evaluated via the coefficient of determination (R^2).
 
@@ -51,7 +51,7 @@ Several methodological limitations must be acknowledged. First, the data examine
 
 ## 7. References
 - Lent, R. W., Brown, S. D., & Hackett, G. (1994). Toward a unifying social cognitive theory of career and academic interest, choice, and performance. Journal of Vocational Behavior, 45(1), 79-122.
-- Cheryan, S., Ziegler, S. A., Montoya, A. K., & Schmader, T. (2017). Why are some STEM fields more gender balanced than others? Psychological Bulletin, 143(1), 1-35. https://doi.org/10.1037/bul0000052
+- Cheryan, S., Ziegler, S. A., Montoya, A. K., & Schmader, T. (2017). Why are some STEM fields more gender balanced than others? Psychological Bulletin, 143(1), 1-35. DOI: 10.1037/bul0000052
 - Ministry of Education, Culture, Sports, Science and Technology [MEXT]. (2023). School Basic Survey. Statistics Bureau & MEXT.
 - Archer, L., Dawson, E., DeWitt, J., Seakins, A., & Wong, B. (2015). 'Science capital': A conceptual, methodological, and empirical argument for extending bourdieusian notions of capital beyond the arts. Journal of Research in Science Teaching, 52(7), 922-948.
 

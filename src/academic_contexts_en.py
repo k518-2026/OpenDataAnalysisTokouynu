@@ -22,11 +22,11 @@ ACADEMIC_CONTEXTS_EN: Dict[str, Dict[str, Any]] = {
             "questions regarding how classroom device utilization relates to subject affinity and scholastic attainment."
         ),
         "key_references": [
-            "Eccles, J. S., & Wigfield, A. (2002). Motivational beliefs, values, and goals. Annual Review of Psychology, 53(1), 109-132. https://doi.org/10.1146/annurev.psych.53.100901.135153",
-            "Deci, E. L., & Ryan, R. M. (2000). The 'what' and 'why' of goal pursuits: Human needs and the self-determination of behavior. Psychological Inquiry, 11(4), 227-268. https://doi.org/10.1207/S15327965PLI1104_01",
+            "Eccles, J. S., & Wigfield, A. (2002). Motivational beliefs, values, and goals. Annual Review of Psychology, 53(1), 109-132. DOI: 10.1146/annurev.psych.53.100901.135153",
+            "Deci, E. L., & Ryan, R. M. (2000). The 'what' and 'why' of goal pursuits: Human needs and the self-determination of behavior. Psychological Inquiry, 11(4), 227-268. DOI: 10.1207/S15327965PLI1104_01",
             "Ministry of Education, Culture, Sports, Science and Technology [MEXT]. (2023). Report on the National Assessment of Academic Ability and Learning Conditions. National Institute for Educational Policy Research (NIER).",
             "Watanabe, K., & Shimizu, N. (2021). Longitudinal trajectories of mathematics engagement in Japanese elementary and junior high schools. Japan Journal of Educational Technology, 45(2), 145-156.",
-            "OECD. (2023). PISA 2022 Results (Volume I): The State of Learning and Equity in Education. OECD Publishing. https://doi.org/10.1787/53f23881-en",
+            "OECD. (2023). PISA 2022 Results (Volume I): The State of Learning and Equity in Education. OECD Publishing. DOI: 10.1787/53f23881-en",
         ],
     },
     "japan_mext_ict_informatization": {
@@ -62,7 +62,7 @@ ACADEMIC_CONTEXTS_EN: Dict[str, Dict[str, Any]] = {
         ),
         "key_references": [
             "Lent, R. W., Brown, S. D., & Hackett, G. (1994). Toward a unifying social cognitive theory of career and academic interest, choice, and performance. Journal of Vocational Behavior, 45(1), 79-122.",
-            "Cheryan, S., Ziegler, S. A., Montoya, A. K., & Schmader, T. (2017). Why are some STEM fields more gender balanced than others? Psychological Bulletin, 143(1), 1-35. https://doi.org/10.1037/bul0000052",
+            "Cheryan, S., Ziegler, S. A., Montoya, A. K., & Schmader, T. (2017). Why are some STEM fields more gender balanced than others? Psychological Bulletin, 143(1), 1-35. DOI: 10.1037/bul0000052",
             "Ministry of Education, Culture, Sports, Science and Technology [MEXT]. (2023). School Basic Survey. Statistics Bureau & MEXT.",
             "Archer, L., Dawson, E., DeWitt, J., Seakins, A., & Wong, B. (2015). 'Science capital': A conceptual, methodological, and empirical argument for extending bourdieusian notions of capital beyond the arts. Journal of Research in Science Teaching, 52(7), 922-948.",
         ],
@@ -82,7 +82,7 @@ ACADEMIC_CONTEXTS_EN: Dict[str, Dict[str, Any]] = {
             "Bakker, A. B., & Demerouti, E. (2007). The job demands-resources model: State of the art. Journal of Managerial Psychology, 22(3), 309-328.",
             "Skaalvik, E. M., & Skaalvik, S. (2011). Teacher job satisfaction and motivation to leave the teaching profession: Relations with school context, feeling of belonging, and emotional exhaustion. Teaching and Teacher Education, 27(6), 1029-1038.",
             "Ministry of Education, Culture, Sports, Science and Technology [MEXT]. (2023). Comprehensive Survey on Teacher Work Styles and Working Conditions. Government of Japan.",
-            "OECD. (2019). TALIS 2018 Results (Volume I): Teachers and School Leaders as Valued Professionals. OECD Publishing. https://doi.org/10.1787/1d0bc92a-en",
+            "OECD. (2019). TALIS 2018 Results (Volume I): Teachers and School Leaders as Valued Professionals. OECD Publishing. DOI: 10.1787/1d0bc92a-en",
         ],
     },
     "japan_school_absenteeism_bullying": {
@@ -116,7 +116,7 @@ ACADEMIC_CONTEXTS_EN: Dict[str, Dict[str, Any]] = {
         ),
         "key_references": [
             "Rogers, E. M. (2003). Diffusion of innovations (5th ed.). Free Press.",
-            "Wing, J. M. (2006). Computational thinking. Communications of the ACM, 49(3), 33-35. https://doi.org/10.1145/1118178.1118215",
+            "Wing, J. M. (2006). Computational thinking. Communications of the ACM, 49(3), 33-35. DOI: 10.1145/1118178.1118215",
             "MEXT. (2022). High School Curriculum Guidelines Commentary: Information Section. Ministry of Education, Culture, Sports, Science and Technology.",
             "Grover, S., & Pea, R. (2013). Computational thinking in K-12: A review of the state of the field. Educational Researcher, 42(1), 38-43.",
         ],
@@ -163,7 +163,7 @@ ACADEMIC_CONTEXTS_EN: Dict[str, Dict[str, Any]] = {
             "gender score differentials, digital tool integration, and resilience against systemic disruptions offers critical comparative insights."
         ),
         "key_references": [
-            "OECD. (2023). PISA 2022 Results (Volume I): The State of Learning and Equity in Education. OECD Publishing. https://doi.org/10.1787/53f23881-en",
+            "OECD. (2023). PISA 2022 Results (Volume I): The State of Learning and Equity in Education. OECD Publishing. DOI: 10.1787/53f23881-en",
             "Niss, M. (2003). Mathematical competencies and the learning of mathematics: The Danish KOM project. Roskilde University.",
         ],
     },
@@ -178,7 +178,7 @@ ACADEMIC_CONTEXTS_EN: Dict[str, Dict[str, Any]] = {
             "support structures empower educators across jurisdictions."
         ),
         "key_references": [
-            "OECD. (2019). TALIS 2018 Results (Volume I): Teachers and School Leaders as Valued Professionals. OECD Publishing. https://doi.org/10.1787/1d0bc92a-en",
+            "OECD. (2019). TALIS 2018 Results (Volume I): Teachers and School Leaders as Valued Professionals. OECD Publishing. DOI: 10.1787/1d0bc92a-en",
             "Tschannen-Moran, M., & Hoy, A. W. (2001). Teacher efficacy: Capturing an elusive construct. Teaching and Teacher Education, 17(7), 783-805.",
             "DuFour, R. (2004). What is a 'professional learning community'? Educational Leadership, 61(8), 6-11.",
         ],
@@ -233,7 +233,7 @@ def get_academic_context(dataset_id: str) -> Dict[str, Any]:
         ),
         "key_references": [
             "Cabinet Office, Government of Japan. (2023). Annual Report on the Japanese Economy and Public Finance. National Printing Bureau.",
-            "Statistics Bureau, Ministry of Internal Affairs and Communications. (2023). e-Stat: Portal Site of Official Statistics of Japan. https://www.e-stat.go.jp/",
+            "Statistics Bureau, Ministry of Internal Affairs and Communications. (2023). e-Stat: Portal Site of Official Statistics of Japan.",
             "Wooldridge, J. M. (2020). Introductory Econometrics: A Modern Approach (7th ed.). Cengage Learning.",
         ],
     }

@@ -28,7 +28,7 @@ Accordingly, we test two overarching empirical hypotheses:
 - Hypothesis 2 (H2): Relational associations reveal structural trade-offs, where isolated resource growth does not translate into proportional outcome gains.
 
 ## 3. Methodology & Empirical Dataset
-The empirical data for this study were compiled from official public statistical releases published by Ministry of Education, Culture, Sports, Science and Technology (MEXT) & National Center for University Entrance Examinations (Source URL: https://www.mext.go.jp/a_menu/shotou/zyouhou/detail/mext_00001.html). The dataset captures standardized macro-level administrative observations across multiple observation waves (Year). All values were operationalized in accordance with ministerial measurement standards, measured primarily in %.
+The empirical data for this study were compiled from official public statistical releases published by Ministry of Education, Culture, Sports, Science and Technology (MEXT) & National Center for University Entrance Examinations. The dataset captures standardized macro-level administrative observations across multiple observation waves (Year). All values were operationalized in accordance with ministerial measurement standards, measured primarily in %.
 
 Our quantitative methodology integrates three analytical pillars adhering strictly to APA 7th standards: (1) Factorial Two-Way Analysis of Variance (ANOVA) with Type II Sum of Squares to estimate main effects and interaction parameters, quantifying effect sizes via partial eta-squared (partial η²); (2) Bivariate Zero-Correlation Tests evaluating Pearson r via Student's t-distribution with Fisher's z 95% Confidence Intervals (95% CI); and (3) Multivariate Ordinary Least Squares (OLS) Multiple Regression with backward stepwise Variance Inflation Factor (VIF) elimination ensuring all predictor VIF values remain strictly below 5.0. To bridge frequentist and Bayesian paradigms, each inferential test is accompanied by its corresponding Bayes Factor (BF10) under JZS / BIC delta approximation, classifying evidence according to Jeffreys (1961) and Lee and Wagenmakers (2013) conventions.
 
@@ -59,7 +59,7 @@ Several methodological limitations must be acknowledged. First, the data examine
 
 ## 7. References
 - Rogers, E. M. (2003). Diffusion of innovations (5th ed.). Free Press.
-- Wing, J. M. (2006). Computational thinking. Communications of the ACM, 49(3), 33-35. https://doi.org/10.1145/1118178.1118215
+- Wing, J. M. (2006). Computational thinking. Communications of the ACM, 49(3), 33-35. DOI: 10.1145/1118178.1118215
 - MEXT. (2022). High School Curriculum Guidelines Commentary: Information Section. Ministry of Education, Culture, Sports, Science and Technology.
 - Grover, S., & Pea, R. (2013). Computational thinking in K-12: A review of the state of the field. Educational Researcher, 42(1), 38-43.
 

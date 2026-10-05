@@ -28,7 +28,7 @@ Accordingly, we test two overarching empirical hypotheses:
 - Hypothesis 2 (H2): Relational associations reveal structural trade-offs, where isolated resource growth does not translate into proportional outcome gains.
 
 ## 3. Methodology & Empirical Dataset
-The empirical data for this study were compiled from official public statistical releases published by Ministry of Education, Culture, Sports, Science and Technology (MEXT) & National Center for University Entrance Examinations (Source URL: https://www.mext.go.jp/a_menu/shotou/zyouhou/detail/mext_00001.html). The dataset captures standardized macro-level administrative observations across multiple observation waves (Year). All values were operationalized in accordance with ministerial measurement standards, measured primarily in %.
+The empirical data for this study were compiled from official public statistical releases published by Ministry of Education, Culture, Sports, Science and Technology (MEXT) & National Center for University Entrance Examinations. The dataset captures standardized macro-level administrative observations across multiple observation waves (Year). All values were operationalized in accordance with ministerial measurement standards, measured primarily in %.
 
 Our quantitative methodology integrates descriptive statistical profiling with longitudinal Ordinary Least Squares (OLS) estimation, bivariate relational modeling, and multivariate regression with Variance Inflation Factor (VIF) diagnostics. To prevent collinear contamination, candidate predictor sets were evaluated to ensure VIF < 5.0 across all models. Statistical significance was evaluated at alpha = .05 (two-tailed), and estimation precision was substantiated by reporting 95% Confidence Intervals (95% CI).
 
@@ -57,7 +57,7 @@ Several methodological limitations must be acknowledged. First, the data examine
 
 ## 7. References
 - Rogers, E. M. (2003). Diffusion of innovations (5th ed.). Free Press.
-- Wing, J. M. (2006). Computational thinking. Communications of the ACM, 49(3), 33-35. https://doi.org/10.1145/1118178.1118215
+- Wing, J. M. (2006). Computational thinking. Communications of the ACM, 49(3), 33-35. DOI: 10.1145/1118178.1118215
 - MEXT. (2022). High School Curriculum Guidelines Commentary: Information Section. Ministry of Education, Culture, Sports, Science and Technology.
 - Grover, S., & Pea, R. (2013). Computational thinking in K-12: A review of the state of the field. Educational Researcher, 42(1), 38-43.
 

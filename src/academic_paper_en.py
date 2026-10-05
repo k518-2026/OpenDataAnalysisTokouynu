@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import json
 import logging
+import re
 from typing import Any, Dict, List, Optional
 
 from google import genai
@@ -324,6 +325,26 @@ class AcademicPaperGeneratorEn:
                 return ""
             for k, v in tofu_map.items():
                 s = s.replace(k, v)
+            # Strip <a href="..."> tags and convert DOI URLs to plain text 'DOI: 10.xxxx/...'
+            s = re.sub(
+                r'<a\b[^>]*href=["\']https?://(?:dx\.)?doi\.org/(10\.[^"\'\s>]+)["\'][^>]*>.*?</a>',
+                r'DOI: \1',
+                s,
+                flags=re.IGNORECASE | re.DOTALL,
+            )
+            s = re.sub(
+                r'<a\b[^>]*>(?:DOI:\s*)?(10\.[^<]+)</a>',
+                r'DOI: \1',
+                s,
+                flags=re.IGNORECASE,
+            )
+            s = re.sub(r'<a\b[^>]*>(.*?)</a>', r'\1', s, flags=re.IGNORECASE | re.DOTALL)
+            s = re.sub(
+                r'(?:DOI:\s*)?https?://(?:dx\.)?doi\.org/(10\.[^\s<>\"\)\]】』]+)',
+                r'DOI: \1',
+                s,
+            )
+            s = re.sub(r'(?:DOI:\s*)+', 'DOI: ', s)
             return s
 
         paper.title = clean_tofu(paper.title)
@@ -373,11 +394,12 @@ Write a comprehensive, rigorous English academic paper adhering strictly to inte
    - Strictly adhere to APA 7th statistical formatting: omit leading zeros for numbers bounded between 0 and 1 (e.g., r = .66, R^2 = .98, p < .001, eta_p^2 = .78). Never write "p = 0.0" or "p = 0.0000" (use p < .001 instead).
    - Format confidence intervals cleanly without plus signs: 95% CI [2.10, 2.72].
    - Maintain a sophisticated, formal academic register suitable for top-tier international journals (e.g., Computers & Education, Higher Education, British Journal of Educational Technology). Avoid conversational rhetorical questions and informal filler phrases.
+   - Do NOT include any HTML <a href="..."> tags or clickable hyperlinks. Always format DOIs in references using plain text notation (e.g., "DOI: 10.xxxx/...") instead of "https://doi.org/...".
 
 ### Dataset & Empirical Context:
 - Dataset ID: {dataset.id}
 - Dataset Title: {dataset.title} (Japanese: {dataset.title_ja})
-- Official Data Source: {dataset.source_name} ({dataset.source_url})
+- Official Data Source: {dataset.source_name}
 - Scientific Discipline: {context.get('discipline')}
 - Theoretical Framework: {context.get('theoretical_framework')}
 - Policy Context: {context.get('policy_context')}
@@ -407,7 +429,7 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
   "section_5_discussion": "3 paragraphs interpreting the findings in light of existing literature, educational practice in Japan, and global policy implications.",
   "section_6_limitations": "1-2 paragraphs detailing methodological constraints, ecological fallacy cautions, and specific recommendations for future longitudinal inquiry.",
   "references": [
-    "5-8 standard APA 7th style references including official Japanese reports and foundational academic papers."
+    "5-8 standard APA 7th style references including official Japanese reports and foundational academic papers (use plain text 'DOI: 10.xxxx/...' without URLs or HTML links)."
   ]
 }}
 """
@@ -620,8 +642,8 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
         )
 
         method = (
-            f"The empirical data for this study were compiled from official public statistical releases published by {dataset.source_name} "
-            f"(Source URL: {dataset.source_url}). The dataset captures standardized macro-level administrative observations across "
+            f"The empirical data for this study were compiled from official public statistical releases published by {dataset.source_name}. "
+            f"The dataset captures standardized macro-level administrative observations across "
             f"multiple observation waves ({dataset.time_col}). All values were operationalized in accordance with ministerial measurement "
             f"standards, measured primarily in {dataset.unit}.\n\n"
             f"Our quantitative methodology integrates three analytical pillars adhering strictly to APA 7th standards: "
@@ -668,7 +690,7 @@ Respond ONLY with a valid JSON object matching the following structure (do NOT e
             f"{dataset.source_name}. (2023). Annual Statistical Report on Japanese Education and Society. Government of Japan.",
             "Jeffreys, H. (1961). Theory of Probability (3rd ed.). Oxford University Press.",
             "Lee, M. D., & Wagenmakers, E.-J. (2013). Bayesian Cognitive Modeling: A Practical Course. Cambridge University Press.",
-            "OECD. (2023). Education at a Glance 2023: OECD Indicators. OECD Publishing. https://doi.org/10.1787/e13bef63-en",
+            "OECD. (2023). Education at a Glance 2023: OECD Indicators. OECD Publishing. DOI: 10.1787/e13bef63-en",
             "Wooldridge, J. M. (2020). Introductory Econometrics: A Modern Approach (7th ed.). Cengage Learning.",
         ])
 

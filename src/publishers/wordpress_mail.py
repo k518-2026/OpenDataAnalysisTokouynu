@@ -11,6 +11,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import logging
 from pathlib import Path
+import re
 import smtplib
 from typing import List, Optional
 
@@ -30,6 +31,55 @@ class WordPressMailPublisher(BasePublisher):
 
     def __init__(self):
         self.builder = EduReportBuilder()
+
+    @staticmethod
+    def sanitize_html_for_email(html_text: str) -> str:
+        """
+        Sanitizes HTML content specifically for WordPress Post by Email:
+        1. Strips all <a href="..."> tags while preserving anchor text.
+        2. Normalizes DOI links and bare DOI URLs into plain text notation 'DOI: 10.xxxx/...'.
+        3. Prevents outbound and inbound email anti-spam/anti-phishing filters from flagging the post.
+        """
+        if not html_text:
+            return ""
+
+        cleaned = html_text
+
+        # 1. Convert <a href="...doi.org/10.xxx">...</a> to DOI: 10.xxx
+        cleaned = re.sub(
+            r'<a\b[^>]*href=["\']https?://(?:dx\.)?doi\.org/(10\.[^"\'\s>]+)["\'][^>]*>.*?</a>',
+            r'DOI: \1',
+            cleaned,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+
+        # 2. Convert <a href="...">DOI: 10.xxx</a> to DOI: 10.xxx
+        cleaned = re.sub(
+            r'<a\b[^>]*>(?:DOI:\s*)?(10\.[^<]+)</a>',
+            r'DOI: \1',
+            cleaned,
+            flags=re.IGNORECASE,
+        )
+
+        # 3. Strip any remaining <a> tags, keeping inner text
+        cleaned = re.sub(
+            r'<a\b[^>]*>(.*?)</a>',
+            r'\1',
+            cleaned,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+
+        # 4. Convert bare DOI URLs (https://doi.org/10.xxxx) to plain 'DOI: 10.xxxx'
+        cleaned = re.sub(
+            r'(?:DOI:\s*)?https?://(?:dx\.)?doi\.org/(10\.[^\s<>\"\)\]】』]+)',
+            r'DOI: \1',
+            cleaned,
+        )
+
+        # 5. Clean up any accidental duplicate "DOI: DOI: "
+        cleaned = re.sub(r'(?:DOI:\s*)+', 'DOI: ', cleaned)
+
+        return cleaned
 
     def publish(
         self,
@@ -73,22 +123,17 @@ class WordPressMailPublisher(BasePublisher):
         for idx in range(len(figure_paths)):
             cid_urls.append(f"cid:fig_{idx}")
 
-        # Construct raw public GitHub link for PDF fallback
-        pdf_download_url = None
-        if pdf_path:
-            pdf_download_url = (
-                f"https://raw.githubusercontent.com/{Config.GITHUB_REPOSITORY}/"
-                f"{Config.GITHUB_BRANCH}/reports/pdf/{pdf_path.name}"
-            )
-
         html_body = self.builder.build_article_html(
             paper=paper,
             analysis=analysis,
             dataset=dataset,
             figure_urls=cid_urls,
             peer_review=peer_review,
-            pdf_download_url=pdf_download_url,
+            pdf_download_url=None,
         )
+
+        # Sanitize HTML content for email delivery (strip <a href="..."> tags, keep plain text notation like 'DOI: 10.xxxx/...')
+        html_body = self.sanitize_html_for_email(html_body)
 
         full_html = f"{status_tag} {cat_tag} {tags_code}\n\n{html_body}"
 

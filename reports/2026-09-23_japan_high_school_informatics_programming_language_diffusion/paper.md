@@ -29,7 +29,7 @@ Accordingly, we test two overarching empirical hypotheses:
 - Hypothesis 2 (H2): Statistically significant associations exist among observed metrics, reflecting systemic institutional dependencies.
 
 ## 3. Methodology & Empirical Dataset
-The empirical data for this study were compiled from official public statistical releases published by 文部科学省・全国高等学校情報教育研究会 (Source URL: https://www.mext.go.jp/a_menu/shotou/zyouhou/detail/1416756.htm). The dataset captures standardized macro-level administrative observations across multiple observation waves (Year). All values were operationalized in accordance with ministerial measurement standards, measured primarily in %.
+The empirical data for this study were compiled from official public statistical releases published by 文部科学省・全国高等学校情報教育研究会. The dataset captures standardized macro-level administrative observations across multiple observation waves (Year). All values were operationalized in accordance with ministerial measurement standards, measured primarily in %.
 
 Our quantitative methodology integrates descriptive statistical profiling (Mean, Median, Standard Deviation, Interquartile Range, and Skewness) with longitudinal Ordinary Least Squares (OLS) linear trend estimation and Pearson bivariate correlation analysis. Statistical significance was evaluated at the alpha = .05 threshold (two-tailed), and model explanatory power was evaluated via the coefficient of determination (R^2).
 

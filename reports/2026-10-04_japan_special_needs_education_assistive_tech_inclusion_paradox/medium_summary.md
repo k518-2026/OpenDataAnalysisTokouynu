@@ -27,10 +27,9 @@ To overcome the limitations of isolated cross-sectional observations and guard a
 
 ## 3. Quantitative Discoveries & Statistical Evidence
 
-- **Empirical Observation**: Multivariate OLS on 'specialized support staff ratio' explained 99.0% of variance (R² = .99, Adj. R² = .99, F = 339.77, p < .001, Model BF10 = 4.85e8 [Decisive evidence for H1]). All variance inflation factors remained well below 5.0 (maximum VIF = 2.25 < 5.0), confirming the absence of severe multicollinearity.
-- **Longitudinal Trajectory Shift**: Longitudinal Trajectory Shift: 'assistive technology adoption (%)' exhibited an overall change of +70.3% (+595.76%) between 2016 and 2024.
-- **Factorial Variance Partition**: Two-Way ANOVA confirmed a significant effect for Main Effect: Temporal Period (Early [<= 2020] vs. Late) (F(1, 6) = 22.66, p = .003, partial η² = .79, BF10 = 786.37).
-- **Multivariate OLS & Multicollinearity Control**: Model explains 99.0% of variance (R² = .99, Adj. R² = .99, Model BF10 = 4.85e8) with all VIF values strictly below 5.0.
+- **Factorial ANOVA Effect**: The main effect of temporal period (early [<= 2020] vs. late) reached statistical significance, F(1, 6) = 22.66, p = .003, partial η² = .79, with a Bayes factor of BF10 = 786.37 providing Decisive evidence for H1. Similarly, the main effect of school level was F(1, 6) = 30.85, p = .001, partial η² = .84, BF10 = 2,763.3 (Decisive evidence for H1).
+- **Multicollinearity-Controlled OLS**: Multivariate OLS on 'specialized support staff ratio' explained 99.0% of variance (R² = .99, Adj. R² = .99, F = 339.77, p < .001, Model BF10 = 4.85e8 [Decisive evidence for H1]).
+- **Longitudinal Secular Trajectory**: Longitudinal Trajectory Shift: 'assistive technology adoption (%)' exhibited an overall change of +70.3% (+595.76%) between 2016 and 2024.
 
 ![Figure 2: Empirical Bivariate Fit & Confidence Band](japan_special_needs_education_correlation.png)
 *Figure 2: Bivariate empirical regression model and 95% Confidence Band.*

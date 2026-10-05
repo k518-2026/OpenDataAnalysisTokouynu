@@ -37,43 +37,30 @@ class EduReportBuilder:
         peer_review: Optional[PeerReviewReportEn] = None,
         pdf_download_url: Optional[str] = None,
     ) -> str:
-        """Assembles a full-featured HTML post for WordPress with in-paper figures and APA 7th tables."""
-        # 1. Download Buttons (if PDF available)
-        btn_html = ""
-        if pdf_download_url:
-            btn_html = f"""
-<div style="margin: 20px 0 28px 0; display: flex; gap: 12px; flex-wrap: wrap;">
-  <a href="{pdf_download_url}" target="_blank" rel="noopener noreferrer" style="background: #1e3a8a; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; font-size: 0.9em; display: inline-flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <svg style="width:16px;height:16px;margin-right:8px;fill:currentColor;" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/><path d="M8 11a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/></svg>
-    Download Full Academic Paper (PDF)
-  </a>
-</div>
-"""
-
-        # 2. Main Paper HTML with embedded figures inside Section 4
+        """Assembles a full-featured HTML post for WordPress with in-paper figures and APA 7th tables (without <a href="..."> links)."""
+        # 1. Main Paper HTML with embedded figures inside Section 4
         paper_html = paper.to_html(figure_urls=figure_urls)
 
-        # 3. APA Table 1: Descriptive Statistics and Bivariate Correlation with BF10
+        # 2. APA Table 1: Descriptive Statistics and Bivariate Correlation with BF10
         table1_html = self._build_apa_table1_html(analysis, dataset)
 
-        # 4. APA Table 2: Two-Way Factorial ANOVA with BF10
+        # 3. APA Table 2: Two-Way Factorial ANOVA with BF10
         table2_html = self._build_apa_table2_html(analysis)
 
-        # 5. APA Table 3: Multivariate OLS & VIF Diagnostics with Model BF10
+        # 4. APA Table 3: Multivariate OLS & VIF Diagnostics with Model BF10
         table3_html = self._build_apa_table3_html(analysis)
 
-        # 6. Metadata Footer
+        # 5. Metadata Footer (plain text notation without <a href="..."> links)
         meta_footer = f"""
 <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 40px 0 20px 0;" />
 <div style="font-size: 0.85em; color: #94a3b8; line-height: 1.6;">
-  <strong>Source Citation:</strong> Data retrieved from official repository: <a href="{dataset.source_url}" target="_blank" rel="noopener noreferrer" style="color: #0284c7;">{dataset.source_name}</a>.<br />
+  <strong>Source Citation:</strong> Data retrieved from official repository: <span style="color: #0369a1; font-weight: 600;">{dataset.source_name}</span>.<br />
   <strong>Academic Publisher:</strong> Society for Educational Data Analysis (SEDA) &bull; Automated Empirical Research Pipeline.
 </div>
 """
 
         # Assemble everything
         combined = f"""
-{btn_html}
 {paper_html}
 
 {table1_html}
