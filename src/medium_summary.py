@@ -127,7 +127,7 @@ class MediumSummaryBuilder:
             wp_url
             or recorded_url
             or Config.WP_SITE_URL
-            or "https://seda68.wordpress.com"
+            or "https://seda2030.wordpress.com"
         )
         pdf_name = (
             pdf_path.name
@@ -183,7 +183,7 @@ class MediumSummaryBuilder:
             wp_url
             or recorded_url
             or Config.WP_SITE_URL
-            or "https://seda68.wordpress.com"
+            or "https://seda2030.wordpress.com"
         )
         content = self.generate_summary(
             paper=paper,
@@ -287,7 +287,7 @@ class MediumSummaryBuilder:
         cls,
         md_text: str,
         title: str = "Medium Executive Summary",
-        canonical_url: str = "https://seda68.wordpress.com",
+        canonical_url: str = "https://seda2030.wordpress.com",
     ) -> str:
         """Wraps semantic HTML into an interactive web page with copy buttons and Medium Canonical URL guidance."""
         article_html = cls.convert_markdown_to_html(md_text)

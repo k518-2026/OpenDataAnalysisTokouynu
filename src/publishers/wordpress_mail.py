@@ -91,7 +91,7 @@ class WordPressMailPublisher(BasePublisher):
         pdf_path: Optional[Path] = None,
         dry_run: bool = False,
     ) -> Optional[str]:
-        target_site = Config.WP_SITE_URL or "https://seda68.wordpress.com"
+        target_site = Config.WP_SITE_URL or "https://seda2030.wordpress.com"
 
         if dry_run:
             logger.info(f"Dry-run mode: Simulating WordPress email publication to {target_site} via {Config.WP_POST_EMAIL or 'post-by-email'}.")

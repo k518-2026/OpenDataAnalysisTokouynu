@@ -92,7 +92,7 @@ def test_generate_and_save(tmp_path):
     assert "canonicalUrlInput" in html_text
     assert "copyCanonicalUrl" in html_text
     assert "Customize canonical link" in html_text
-    assert "seda68.wordpress.com" in html_text
+    assert "seda2030.wordpress.com" in html_text
     assert "<h1>" in html_text
     assert "<h2>" in html_text
     assert "<strong>" in html_text

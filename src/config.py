@@ -40,7 +40,7 @@ class Config:
     BLOG_PUBLISHER_TYPE: str = os.getenv("BLOG_PUBLISHER_TYPE", "wordpress_mail").strip().lower()
 
     # WordPress site settings
-    WP_SITE_URL: str = os.getenv("WP_SITE_URL", "https://seda68.wordpress.com").strip().rstrip("/")
+    WP_SITE_URL: str = os.getenv("WP_SITE_URL", "https://seda2030.wordpress.com").strip().rstrip("/")
     WP_USER: str = os.getenv("WP_USER", "").strip()
     WP_APP_PASSWORD: str = os.getenv("WP_APP_PASSWORD", "").replace(" ", "").strip()
     WP_POST_STATUS: str = os.getenv("WP_POST_STATUS", "publish").strip()
