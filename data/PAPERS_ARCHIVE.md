@@ -2,11 +2,12 @@
 
 Autonomous daily empirical working papers derived from Japanese government open data.
 
-**Total Published Papers**: `20`  
-**Last Updated**: `2026-10-04 23:46:21`
+**Total Published Papers**: `21`  
+**Last Updated**: `2026-10-09 22:57:28`
 
 | Date | Research Paper Title | Focus Topic | WP Post | PDF Download |
 | :--- | :--- | :--- | :---: | :---: |
+| 2026-10-09 | **The Cognitive Elite vs Affective Burnout Paradox: Why Japanese Math Excellence Decouples from Student Self-Efficacy (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `timss_affective_collapse_paradox` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_timss_math_science_timss_affective_collapse_paradox_paper.pdf) |
 | 2026-10-04 | **Assistive Technology as an Inclusion Catalyst: Disentangling Hardware Diffusion from Human Staffing Bottlenecks in Japanese Special Education (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `assistive_tech_inclusion_paradox` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_special_needs_education_assistive_tech_inclusion_paradox_paper.pdf) |
 | 2026-10-04 | **Institutional Role Models vs Curricular Flexibility: What Really Drives Female Participation in Japanese Collegiate Informatics? (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `stem_gender_catalyst_paradox` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_stem_cs_enrollment_stem_gender_catalyst_paradox_paper.pdf) |
 | 2026-10-02 | **The Entrance Exam Washback Paradox: How High-Stakes Testing Standardized Python Adoption While Suppressing Creative Software Engineering (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `entrance_exam_washback_paradox` | [Read Article](https://seda68.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_high_school_informatics_entrance_exam_washback_paradox_paper.pdf) |
