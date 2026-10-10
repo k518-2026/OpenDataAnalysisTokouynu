@@ -1,9 +1,9 @@
 name: Daily Japanese Open Data Empirical Analysis & English Paper Publisher
 
 on:
-  # Daily scheduled execution at 06:00 JST (21:00 UTC previous day)
+  # Daily scheduled execution at 04:23 JST (19:23 UTC previous day)
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '23 19 * * *'
 
   # Manual execution trigger from GitHub Actions tab
   workflow_dispatch:
