@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-10-13",
+    "title": "The Work-Style Reform Squeeze: How Bukatsu Reductions Failed to Arrest Teacher Burnout Due to Inflexible Administrative Overhead (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation",
+    "dataset_id": "japan_teacher_workload_survey",
+    "angle_id": "work_style_reform_squeeze_paradox",
+    "wp_url": "https://seda2030.wordpress.com/?p=latest",
+    "pdf_filename": "japan_teacher_workload_survey_work_style_reform_squeeze_paradox_paper.pdf",
+    "timestamp": "2026-10-13T23:20:28.510808"
+  },
+  {
+    "date": "2026-10-13",
     "title": "The Institutional Vigilance Paradox: How Aggressive Bullying Recognition and Alternative Digital Attendance Reshape Student Safety Nets (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation",
     "dataset_id": "japan_school_absenteeism_bullying",
     "angle_id": "proactive_vigilance_paradox",
