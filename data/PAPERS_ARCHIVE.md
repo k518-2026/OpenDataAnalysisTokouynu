@@ -2,11 +2,12 @@
 
 Autonomous daily empirical working papers derived from Japanese government open data.
 
-**Total Published Papers**: `27`  
-**Last Updated**: `2026-10-16 22:09:46`
+**Total Published Papers**: `28`  
+**Last Updated**: `2026-10-17 21:32:54`
 
 | Date | Research Paper Title | Focus Topic | WP Post | PDF Download |
 | :--- | :--- | :--- | :---: | :---: |
+| 2026-10-17 | **The Decoupling of Achievement and Affective Value in Japanese Mathematics Education: A Longitudinal Empirical Investigation of Japanese Public Open Data: A Distinct Longitudinal Evaluation** | `math_affective_gap` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_national_assessment_math_math_affective_gap_paper.pdf) |
 | 2026-10-16 | **The High-Efficiency Expenditure Paradox: Why Japanese Educational Attainment Outperforms Higher-Spending OECD Counterparts (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `worldbank_spending_efficiency_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/worldbank_education_indicators_worldbank_spending_efficiency_paradox_paper.pdf) |
 | 2026-10-15 | **The Digital Exposure Paradox in PISA: How Classroom Disciplinary Climate Buffers Excessive Screen Distraction (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `pisa_screen_time_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/oecd_pisa_math_ict_pisa_screen_time_paradox_paper.pdf) |
 | 2026-10-14 | **The Digital Native Operational Illusion: Why High Device Saturation Fails to Guarantee Production-Level Computing Competencies (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `unesco_digital_native_illusion_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/unesco_world_ict_skills_unesco_digital_native_illusion_paradox_paper.pdf) |
