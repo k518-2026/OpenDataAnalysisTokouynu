@@ -2,11 +2,12 @@
 
 Autonomous daily empirical working papers derived from Japanese government open data.
 
-**Total Published Papers**: `31`  
-**Last Updated**: `2026-10-20 22:26:04`
+**Total Published Papers**: `32`  
+**Last Updated**: `2026-10-21 22:29:33`
 
 | Date | Research Paper Title | Focus Topic | WP Post | PDF Download |
 | :--- | :--- | :--- | :---: | :---: |
+| 2026-10-21 | **Institutional Role Models vs Curricular Flexibility: What Really Drives Female Participation in Japanese Collegiate Informatics? (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `stem_gender_catalyst_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_stem_cs_enrollment_stem_gender_catalyst_paradox_paper.pdf) |
 | 2026-10-20 | **The Entrance Exam Washback Paradox: How High-Stakes Testing Standardized Python Adoption While Suppressing Creative Software Engineering (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `entrance_exam_washback_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_high_school_informatics_entrance_exam_washback_paradox_paper.pdf) |
 | 2026-10-19 | **The Jugyokenkyu Paradox: World-Class Collaborative Lesson Study Coexisting with Subdued Teacher Self-Efficacy in Japan (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `talis_lesson_study_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/oecd_talis_teacher_survey_talis_lesson_study_paradox_paper.pdf) |
 | 2026-10-18 | **Evaluating the Longitudinal Impact of 1-to-1 Device Implementation on Mathematics Learning Engagement: A Longitudinal Empirical Investigation of Japanese Public Open Data: A Distinct Longitudinal Evaluation** | `giga_device_impact` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_national_assessment_math_giga_device_impact_paper.pdf) |
