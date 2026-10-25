@@ -2,11 +2,12 @@
 
 Autonomous daily empirical working papers derived from Japanese government open data.
 
-**Total Published Papers**: `35`  
-**Last Updated**: `2026-10-24 21:42:20`
+**Total Published Papers**: `36`  
+**Last Updated**: `2026-10-25 21:55:50`
 
 | Date | Research Paper Title | Focus Topic | WP Post | PDF Download |
 | :--- | :--- | :--- | :---: | :---: |
+| 2026-10-25 | **The Institutional Vigilance Paradox: How Aggressive Bullying Recognition and Alternative Digital Attendance Reshape Student Safety Nets (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `proactive_vigilance_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_school_absenteeism_bullying_proactive_vigilance_paradox_paper.pdf) |
 | 2026-10-24 | **The GIGA Pedagogical Gap Paradox: Hardware Saturation vs Inquiry-Based Lesson Integration (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `giga_pedagogical_gap_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_mext_ict_informatization_giga_pedagogical_gap_paradox_paper.pdf) |
 | 2026-10-23 | **The Cognitive Elite vs Affective Burnout Paradox: Why Japanese Math Excellence Decouples from Student Self-Efficacy (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `timss_affective_collapse_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_timss_math_science_timss_affective_collapse_paradox_paper.pdf) |
 | 2026-10-22 | **Assistive Technology as an Inclusion Catalyst: Disentangling Hardware Diffusion from Human Staffing Bottlenecks in Japanese Special Education (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `assistive_tech_inclusion_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_special_needs_education_assistive_tech_inclusion_paradox_paper.pdf) |
