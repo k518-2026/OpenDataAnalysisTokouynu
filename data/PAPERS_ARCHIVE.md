@@ -2,11 +2,12 @@
 
 Autonomous daily empirical working papers derived from Japanese government open data.
 
-**Total Published Papers**: `51`  
-**Last Updated**: `2026-11-11 00:06:52`
+**Total Published Papers**: `52`  
+**Last Updated**: `2026-11-12 01:35:36`
 
 | Date | Research Paper Title | Focus Topic | WP Post | PDF Download |
 | :--- | :--- | :--- | :---: | :---: |
+| 2026-11-12 | **The Digital Exposure Paradox in PISA: How Classroom Disciplinary Climate Buffers Excessive Screen Distraction (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `pisa_screen_time_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/oecd_pisa_math_ict_pisa_screen_time_paradox_paper.pdf) |
 | 2026-11-11 | **The Digital Native Operational Illusion: Why High Device Saturation Fails to Guarantee Production-Level Computing Competencies (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `unesco_digital_native_illusion_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/unesco_world_ict_skills_unesco_digital_native_illusion_paradox_paper.pdf) |
 | 2026-11-10 | **The Work-Style Reform Squeeze: How Bukatsu Reductions Failed to Arrest Teacher Burnout Due to Inflexible Administrative Overhead (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `work_style_reform_squeeze_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_teacher_workload_survey_work_style_reform_squeeze_paradox_paper.pdf) |
 | 2026-11-08 | **The Institutional Vigilance Paradox: How Aggressive Bullying Recognition and Alternative Digital Attendance Reshape Student Safety Nets (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `proactive_vigilance_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_school_absenteeism_bullying_proactive_vigilance_paradox_paper.pdf) |
