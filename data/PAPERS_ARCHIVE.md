@@ -2,11 +2,12 @@
 
 Autonomous daily empirical working papers derived from Japanese government open data.
 
-**Total Published Papers**: `52`  
-**Last Updated**: `2026-11-12 01:35:36`
+**Total Published Papers**: `53`  
+**Last Updated**: `2026-11-13 00:35:07`
 
 | Date | Research Paper Title | Focus Topic | WP Post | PDF Download |
 | :--- | :--- | :--- | :---: | :---: |
+| 2026-11-13 | **The High-Efficiency Expenditure Paradox: Why Japanese Educational Attainment Outperforms Higher-Spending OECD Counterparts (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `worldbank_spending_efficiency_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/worldbank_education_indicators_worldbank_spending_efficiency_paradox_paper.pdf) |
 | 2026-11-12 | **The Digital Exposure Paradox in PISA: How Classroom Disciplinary Climate Buffers Excessive Screen Distraction (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `pisa_screen_time_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/oecd_pisa_math_ict_pisa_screen_time_paradox_paper.pdf) |
 | 2026-11-11 | **The Digital Native Operational Illusion: Why High Device Saturation Fails to Guarantee Production-Level Computing Competencies (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `unesco_digital_native_illusion_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/unesco_world_ict_skills_unesco_digital_native_illusion_paradox_paper.pdf) |
 | 2026-11-10 | **The Work-Style Reform Squeeze: How Bukatsu Reductions Failed to Arrest Teacher Burnout Due to Inflexible Administrative Overhead (A Longitudinal Empirical Investigation of Japanese Public Open Data): A Distinct Longitudinal Evaluation** | `work_style_reform_squeeze_paradox` | [Read Article](https://seda2030.wordpress.com/?p=latest) | [PDF](../reports/pdf/japan_teacher_workload_survey_work_style_reform_squeeze_paradox_paper.pdf) |
